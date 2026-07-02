@@ -16,11 +16,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="calm">
-      <body className="min-h-screen text-slate-900 dark:text-slate-100">
+    <html lang="en" data-theme="calm" className="overflow-x-hidden">
+      <body className="min-h-screen w-full overflow-x-hidden antialiased text-slate-900 dark:text-slate-100">
         <AuthProvider>
-          <Header />
-          {children}
+          <div className="flex min-h-screen w-full flex-col overflow-x-hidden">
+            <Header />
+            <div className="flex-1 w-full min-w-0">
+              {children}
+            </div>
+          </div>
         </AuthProvider>
       </body>
     </html>

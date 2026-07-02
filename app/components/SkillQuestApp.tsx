@@ -62,33 +62,35 @@ export default function SkillQuestApp() {
       <UserNameModal onSave={updateHeroName} />
 
       {/* 🌌 UPDATE 1: Deep Sci-Fi Background Gradient */}
-      <main className="min-h-screen px-3.5 py-6 sm:px-10 sm:py-10 lg:px-16 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200">
-        <section className="mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2.5 sm:gap-3 rounded-full bg-cyan-900/30 border border-cyan-500/20 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-cyan-300 shadow-lg shadow-cyan-900/20 backdrop-blur-md">
+      <main className="min-h-screen w-full overflow-x-hidden px-3.5 py-6 sm:px-6 md:px-10 lg:px-16 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200">
+        <section className="mx-auto w-full max-w-7xl min-w-0">
+          <div className="grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-start w-full min-w-0">
+            <div className="space-y-6 w-full min-w-0">
+              <div className="inline-flex max-w-full items-center gap-2 sm:gap-3 rounded-full bg-cyan-900/30 border border-cyan-500/20 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-cyan-300 shadow-lg shadow-cyan-900/20 backdrop-blur-md">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-pulse shrink-0" />
-                <span>SkillQuest — Initializing learning protocol</span>
+                <span className="truncate">SkillQuest — Initializing learning protocol</span>
               </div>
-              <div className="max-w-2xl space-y-6">
+              <div className="max-w-2xl space-y-6 w-full min-w-0">
                 <div>
                   <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400/80">
                     Neural Uplink Active
                   </p>
                   {/* 🌌 UPDATE 2: Fixed Dark Mode Text Clashing */}
-                  <h1 className="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 sm:text-6xl">
+                  <h1 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 lg:text-6xl break-words">
                     Turn every skill into an epic quest.
                   </h1>
                   <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-slate-300/80 font-light">
                     Discover more active journeys, engage the core protocol, and complete quests with live guild telemetry.
                   </p>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <CharacterSheet />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 w-full min-w-0">
+                  <div className="w-full min-w-0">
+                    <CharacterSheet />
+                  </div>
                   {/* 🌌 UPDATE 3: Glassmorphic Guild Feed Wrapper */}
-                  <div className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+                  <div className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0 overflow-hidden">
                     <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-slate-400">Guild Feed</p>
-                    <div className="mt-4">
+                    <div className="mt-4 w-full min-w-0">
                       <GuildFeed compact />
                     </div>
                   </div>
@@ -96,9 +98,9 @@ export default function SkillQuestApp() {
               </div>
             </div>
 
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-6 sm:space-y-8 w-full min-w-0">
               {/* 🌌 UPDATE 4: Glassmorphic Journey Map */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400/80">Quest Board</p>
@@ -106,34 +108,34 @@ export default function SkillQuestApp() {
                   </div>
                   <SunMedium className="h-7 w-7 sm:h-8 sm:w-8 text-fuchsia-400 shrink-0" />
                 </div>
-                <div className="mt-6 sm:mt-10 grid gap-4">
-                  <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-4 sm:p-5 shadow-inner">
+                <div className="mt-6 sm:mt-10 grid grid-cols-1 gap-4 w-full min-w-0">
+                  <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-4 sm:p-5 shadow-inner w-full min-w-0">
                     <p className="text-sm text-slate-400">Start</p>
                     <div className="mt-4 flex items-center gap-4 rounded-3xl bg-black/40 p-4 border border-white/5">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-300 shrink-0">
                         <Sparkles className="h-6 w-6" />
                       </div>
-                      <div>
-                        <p className="font-semibold text-white">Intro adventure</p>
-                        <p className="text-sm text-slate-400">Pick a quest below and open it for details.</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-white truncate">Intro adventure</p>
+                        <p className="text-xs sm:text-sm text-slate-400">Pick a quest below and open it for details.</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-4 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-6 shadow-inner">
-                    <div className="flex items-center justify-between text-sm text-slate-400">
+                  <div className="space-y-4 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-4 sm:p-6 shadow-inner w-full min-w-0">
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-slate-400">
                       <span>{completedQuests.length} completed</span>
                       <span>{QUESTS.length - completedQuests.length} remaining</span>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 w-full min-w-0">
                       {QUESTS.slice(0, 3).map((q) => (
                         <button
                           key={q.id}
                           type="button"
                           onClick={() => setSelectedQuest(q)}
-                          className="rounded-3xl bg-black/40 border border-white/5 p-4 text-left transition hover:bg-white/10"
+                          className="rounded-3xl bg-black/40 border border-white/5 p-4 text-left transition hover:bg-white/10 w-full min-w-0"
                         >
-                          <p className="text-sm text-cyan-400/80">{q.category}</p>
-                          <p className="mt-2 font-semibold text-white">{q.title}</p>
+                          <p className="text-xs sm:text-sm text-cyan-400/80 truncate">{q.category}</p>
+                          <p className="mt-2 font-semibold text-white text-sm sm:text-base line-clamp-2">{q.title}</p>
                         </button>
                       ))}
                     </div>
@@ -142,8 +144,7 @@ export default function SkillQuestApp() {
               </div>
 
               {/* 🌌 UPDATE 5: Glassmorphic Proof of Completion */}
-              {/* 🌌 UPDATE 5: Glassmorphic Proof of Completion */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0 overflow-hidden">
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400/80">
@@ -158,17 +159,17 @@ export default function SkillQuestApp() {
                 <p className="mt-3 sm:mt-4 text-sm sm:text-base text-slate-300/80 font-light">
                   Submit a screenshot or photo to show your achievement and win the guild&apos;s applause.
                 </p>
-                <div className="mt-6">
+                <div className="mt-6 w-full min-w-0">
                   <ProofUpload userName={userName} />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-12 sm:mt-16 grid gap-8 xl:grid-cols-[0.7fr_0.3fr]">
-            <div className="space-y-8">
+          <div className="mt-12 sm:mt-16 grid grid-cols-1 gap-8 xl:grid-cols-[0.7fr_0.3fr] w-full min-w-0">
+            <div className="space-y-8 w-full min-w-0">
               {/* 🌌 UPDATE 6: Glassmorphic Questlines Box */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3 sm:gap-4">
                     <Gift className="h-7 w-7 sm:h-8 sm:w-8 text-fuchsia-400 shrink-0" />
@@ -177,8 +178,8 @@ export default function SkillQuestApp() {
                       <h2 className="text-2xl sm:text-3xl font-bold text-white">Active journeys</h2>
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <div className="relative">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                    <div className="relative w-full sm:w-auto">
                       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
                         type="search"
@@ -188,7 +189,7 @@ export default function SkillQuestApp() {
                         className="w-full sm:w-auto rounded-full border border-white/10 bg-black/40 py-2 pl-9 pr-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
                       />
                     </div>
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none w-full max-w-full">
                       {categories.map((cat) => (
                         <button
                           key={cat}
@@ -207,7 +208,7 @@ export default function SkillQuestApp() {
                   </div>
                 </div>
 
-                <div className="mt-8 grid gap-6">
+                <div className="mt-8 grid grid-cols-1 gap-6 w-full min-w-0">
                   {filteredQuests.length === 0 ? (
                     <p className="py-8 text-center text-slate-400">No quests match your search.</p>
                   ) : (
@@ -224,29 +225,29 @@ export default function SkillQuestApp() {
               </div>
             </div>
 
-            <aside className="space-y-6">
+            <aside className="space-y-6 w-full min-w-0">
               {/* 🌌 UPDATE 7: Side Highlights Wrapper */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0 overflow-hidden">
                 <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400/80">Guild Highlights</p>
-                <div className="mt-6">
+                <div className="mt-6 w-full min-w-0">
                   <GuildFeed />
                 </div>
               </div>
               
               {/* 🌌 UPDATE 8: Glassmorphic Quest Highlights */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0">
                 <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400/80">Quest Highlights</p>
-                <div className="mt-6 grid gap-4">
+                <div className="mt-6 grid grid-cols-1 gap-4 w-full min-w-0">
                   {QUESTS.slice(0, 4).map((quest) => (
-                    <div key={quest.id} className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-4 shadow-sm">
+                    <div key={quest.id} className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md p-4 shadow-sm w-full min-w-0">
                       <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-semibold text-white">{quest.title}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{quest.title}</p>
                           <p className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-400">{quest.category}</p>
                         </div>
                         <span className="rounded-full bg-cyan-900/40 border border-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-300 shrink-0">{quest.level}</span>
                       </div>
-                      <p className="mt-3 text-sm text-slate-300/80">{quest.description}</p>
+                      <p className="mt-3 text-sm text-slate-300/80 line-clamp-2">{quest.description}</p>
                       <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-300">
                         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1">{quest.category}</span>
                         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1">{quest.xpReward} XP</span>
@@ -256,8 +257,12 @@ export default function SkillQuestApp() {
                   ))}
                 </div>
               </div>
-              <Achievements />
-              <LiveChallenge />
+              <div className="w-full min-w-0">
+                <Achievements />
+              </div>
+              <div className="w-full min-w-0">
+                <LiveChallenge />
+              </div>
             </aside>
           </div>
         </section>
