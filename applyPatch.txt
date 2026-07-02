@@ -1,0 +1,1 @@
+\n*** Begin Patch\n*** Update File: app/components/SkillQuestApp.tsx\n@@\n               </div>\n               <LiveChallenge />\n             </aside>\n*** End Patch\n

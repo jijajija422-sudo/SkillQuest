@@ -1,4 +1,4 @@
-// File: C:\Users\jija0\OneDrive\Desktop\NEW PROJECT\app\layout.tsx
+// File: C:\Users\jija0\OneDrive\Desktop\web\SkillQuest\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
