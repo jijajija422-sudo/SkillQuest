@@ -54,24 +54,26 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-3 sm:p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-md p-2 sm:p-4 sm:items-center animate-in fade-in duration-200"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="quest-modal-title"
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+        className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-white/10 bg-slate-900 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-white"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-slate-100 bg-white/95 p-4 sm:p-6 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+        <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-900/95 p-5 sm:p-6 backdrop-blur-xl">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <div className={`flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border ${
+              completed ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-300" : "bg-cyan-950/60 border-cyan-500/40 text-cyan-300"
+            }`}>
               <QuestIcon name={quest.icon} className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
-            <div>
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-slate-500">{quest.category}</p>
-              <h2 id="quest-modal-title" className="mt-0.5 sm:mt-1 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-cyan-400 truncate">{quest.category}</p>
+              <h2 id="quest-modal-title" className="mt-0.5 text-lg sm:text-2xl font-black text-white leading-tight break-words">
                 {quest.title}
               </h2>
             </div>
@@ -79,31 +81,36 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+            className="rounded-full bg-white/5 border border-white/10 p-2.5 text-slate-400 hover:bg-white/15 hover:text-white transition shrink-0"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="space-y-6 p-4 sm:p-6">
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">{quest.description}</p>
+        <div className="space-y-6 p-5 sm:p-6">
+          <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed font-light">{quest.description}</p>
 
-          <div className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
-            <Trophy className="h-8 w-8 text-amber-500" />
-            <div>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{quest.level} Quest</p>
-              <p className="font-semibold text-slate-900 dark:text-white">+{quest.xpReward} XP reward</p>
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 shadow-inner">
+            <div className="flex items-center gap-3">
+              <Trophy className="h-7 w-7 text-amber-400 shrink-0" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{quest.level} Quest</p>
+                <p className="text-sm sm:text-base font-bold text-amber-300">+{quest.xpReward} XP Reward</p>
+              </div>
             </div>
-            <div className="ml-auto text-right">
-              <p className="text-sm text-slate-500">{doneCount}/{quest.requirements.length}</p>
-              <p className="text-xs text-slate-400">requirements</p>
+            <div className="text-right">
+              <span className="text-lg font-black text-white">{doneCount}/{quest.requirements.length}</span>
+              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Steps Done</p>
             </div>
           </div>
 
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">Requirements</h3>
-            <ul className="space-y-2">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-cyan-400">Action Steps Checklist</h3>
+              <span className="text-xs text-slate-400">Tap to complete</span>
+            </div>
+            <ul className="space-y-2.5">
               {quest.requirements.map((req) => {
                 const isDone = checked[req.id];
                 return (
@@ -111,23 +118,23 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
                     <button
                       type="button"
                       onClick={() => toggleRequirement(req.id)}
-                      className={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                      className={`flex w-full items-start gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 transform active:scale-[0.98] ${
                         isDone
-                          ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20"
-                          : "border-slate-200 bg-white hover:border-sky-200 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-sky-700"
+                          ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-200 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                          : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-500/40 text-slate-200"
                       }`}
                     >
                       {isDone ? (
-                        <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+                        <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                       ) : (
-                        <Circle className="mt-0.5 h-5 w-5 shrink-0 text-slate-300" />
+                        <Circle className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" />
                       )}
                       <div>
-                        <p className={`font-medium ${isDone ? "text-emerald-800 dark:text-emerald-300" : "text-slate-900 dark:text-white"}`}>
+                        <p className={`font-semibold text-sm sm:text-base ${isDone ? "text-emerald-300 line-through opacity-90" : "text-white"}`}>
                           {req.label}
                         </p>
                         {req.description && (
-                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{req.description}</p>
+                          <p className="mt-1 text-xs sm:text-sm text-slate-400 leading-relaxed">{req.description}</p>
                         )}
                       </div>
                     </button>
@@ -138,30 +145,30 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           </div>
 
           {!completed && (
-            <div className="rounded-2xl border border-dashed border-sky-300 bg-sky-50/50 p-5 dark:border-sky-700 dark:bg-sky-950/30">
+            <div className="rounded-3xl border border-dashed border-cyan-500/40 bg-cyan-950/20 p-5 sm:p-6 shadow-inner">
               <div className="mb-3 flex items-center gap-2">
-                <Camera className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                <h3 className="font-semibold text-slate-900 dark:text-white">Proof of Completion</h3>
+                <Camera className="h-5 w-5 text-cyan-400" />
+                <h3 className="font-bold text-white text-base">Submit Proof of Completion</h3>
               </div>
-              <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-                Upload a screenshot or photo to complete this quest and share it with the guild.
+              <p className="mb-4 text-xs sm:text-sm text-slate-300/80 leading-relaxed">
+                Check off all steps above, then attach a screenshot or image link to claim your XP reward and inspire the guild!
               </p>
               <ProofUpload
                 questId={quest.id}
                 questTitle={quest.title}
                 userName={userName}
                 disabled={!allChecked}
-                disabledReason="Complete all requirements above first"
+                disabledReason="⚠️ Complete all action steps in the checklist above first"
                 onSuccess={(url) => onComplete(quest.id, url)}
               />
             </div>
           )}
 
           {completed && (
-            <div className="rounded-2xl bg-emerald-50 p-4 text-center dark:bg-emerald-900/20">
-              <BadgeCheck className="mx-auto h-8 w-8 text-emerald-500" />
-              <p className="mt-2 font-semibold text-emerald-800 dark:text-emerald-300">Quest completed!</p>
-              <p className="text-sm text-emerald-600 dark:text-emerald-400">Your proof is live in the guild feed.</p>
+            <div className="rounded-3xl border border-emerald-500/40 bg-emerald-950/40 p-6 text-center shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+              <BadgeCheck className="mx-auto h-10 w-10 text-emerald-400 animate-bounce" />
+              <p className="mt-2 text-lg font-black text-white">Quest Completed! 🎉</p>
+              <p className="text-xs sm:text-sm text-emerald-300 mt-1">Your proof is recorded in guild telemetry.</p>
             </div>
           )}
         </div>
