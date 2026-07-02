@@ -54,7 +54,7 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-3 sm:p-4 sm:items-center"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -64,14 +64,14 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-slate-100 bg-white/95 p-6 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
-              <QuestIcon name={quest.icon} className="h-7 w-7" />
+        <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-slate-100 bg-white/95 p-4 sm:p-6 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+              <QuestIcon name={quest.icon} className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{quest.category}</p>
-              <h2 id="quest-modal-title" className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-slate-500">{quest.category}</p>
+              <h2 id="quest-modal-title" className="mt-0.5 sm:mt-1 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
                 {quest.title}
               </h2>
             </div>
@@ -79,15 +79,15 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="space-y-6 p-6">
-          <p className="text-slate-600 dark:text-slate-300">{quest.description}</p>
+        <div className="space-y-6 p-4 sm:p-6">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">{quest.description}</p>
 
           <div className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
             <Trophy className="h-8 w-8 text-amber-500" />

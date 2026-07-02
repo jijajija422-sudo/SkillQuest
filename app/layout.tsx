@@ -1,11 +1,17 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Header from "./components/Header";
 import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   title: "SkillQuest",
   description: "SkillQuest - The RPG quest board for self-learners.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

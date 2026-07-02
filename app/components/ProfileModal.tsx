@@ -123,33 +123,33 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
         </div>
 
         {/* Avatar & Title Row */}
-        <div className="px-8 -mt-12 flex flex-wrap items-end justify-between gap-4 pb-4 border-b border-white/10">
-          <div className="flex items-end gap-5">
-            <div className="relative h-24 w-24 rounded-3xl border-2 border-cyan-400/80 bg-slate-800 shadow-xl overflow-hidden flex items-center justify-center text-3xl font-bold bg-gradient-to-br from-cyan-600 to-indigo-800">
+        <div className="px-4 sm:px-8 -mt-10 sm:-mt-12 flex flex-wrap items-end justify-between gap-4 pb-4 border-b border-white/10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-5">
+            <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-3xl border-2 border-cyan-400/80 bg-slate-800 shadow-xl overflow-hidden flex items-center justify-center text-2xl sm:text-3xl font-bold bg-gradient-to-br from-cyan-600 to-indigo-800 shrink-0">
               {avatarUrl ? (
                 <img src={avatarUrl} alt={displayedProfile.name} className="h-full w-full object-cover" />
               ) : (
                 <span>{displayedProfile.name.charAt(0).toUpperCase()}</span>
               )}
-              <span className="absolute bottom-1 right-1 rounded-lg bg-black/80 px-2 py-0.5 text-xs font-black text-cyan-300 border border-cyan-500/40">
+              <span className="absolute bottom-1 right-1 rounded-lg bg-black/80 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-black text-cyan-300 border border-cyan-500/40">
                 Lvl {displayedProfile.level}
               </span>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-black tracking-tight text-white">{displayedProfile.name}</h2>
-                <span className="rounded-full bg-cyan-950/80 border border-cyan-500/30 px-3 py-0.5 text-xs font-semibold text-cyan-300">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">{displayedProfile.name}</h2>
+                <span className="rounded-full bg-cyan-950/80 border border-cyan-500/30 px-2.5 sm:px-3 py-0.5 text-xs font-semibold text-cyan-300">
                   {displayedProfile.classTitle || "Fullstack Paladin"}
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mt-1">{titleForLevel(displayedProfile.level)}</p>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1">{titleForLevel(displayedProfile.level)}</p>
             </div>
           </div>
 
           {!isOwnProfile && (
             <button
               onClick={handleFollowToggle}
-              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition shadow-md ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold transition shadow-md shrink-0 ${
                 isFollowing
                   ? "border border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"
                   : "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:from-cyan-400 hover:to-indigo-500 shadow-cyan-500/25"
@@ -171,10 +171,10 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-white/10 px-8 bg-slate-950/40">
+        <div className="flex overflow-x-auto scrollbar-none border-b border-white/10 px-3 sm:px-8 bg-slate-950/40">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`py-3 px-4 text-sm font-semibold border-b-2 transition ${
+            className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition ${
               activeTab === "overview" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
             }`}
           >
@@ -182,7 +182,7 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
           </button>
           <button
             onClick={() => setActiveTab("feed")}
-            className={`py-3 px-4 text-sm font-semibold border-b-2 transition ${
+            className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition ${
               activeTab === "feed" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
             }`}
           >
@@ -191,7 +191,7 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
           {isOwnProfile && (
             <button
               onClick={() => setActiveTab("edit")}
-              className={`py-3 px-4 text-sm font-semibold border-b-2 transition flex items-center gap-2 ${
+              className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition flex items-center gap-1.5 sm:gap-2 ${
                 activeTab === "edit" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
               }`}
             >
@@ -202,7 +202,7 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
         </div>
 
         {/* Tab Body */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8">
           {activeTab === "overview" && (
             <div className="space-y-6">
               {/* Bio Card */}
