@@ -43,49 +43,54 @@ export default function Header() {
           <div className="flex flex-wrap items-center gap-3">
             <ProofUpload userName={profile.name} compact />
 
-            {user || profile.id !== "guest" ? (
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full pl-3 pr-2 py-1.5 shadow-inner">
-                <button
-                  type="button"
-                  onClick={() => setProfileModalOpen(true)}
-                  className="flex items-center gap-2 hover:opacity-80 transition text-left"
-                >
-                  {displayAvatar ? (
-                    <img src={displayAvatar} alt={profile.name} className="h-6 w-6 rounded-full object-cover border border-cyan-400" />
-                  ) : (
-                    <div className="h-6 w-6 rounded-full bg-cyan-600 flex items-center justify-center text-xs font-bold text-white">
-                      {profile.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="text-sm font-medium text-white max-w-[120px] truncate">{profile.name}</span>
-                  <span className="text-xs bg-cyan-900/60 border border-cyan-500/40 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">Lvl {profile.level}</span>
-                </button>
-                <button
-                  onClick={() => setProfileModalOpen(true)}
-                  title="View / Edit Profile"
-                  className="rounded-full p-1.5 text-cyan-400 hover:bg-white/10 hover:text-cyan-300 transition"
-                >
-                  <UserIcon className="h-4 w-4" />
-                </button>
-                {user && (
-                  <button
-                    onClick={logout}
-                    title="Sign out"
-                    className="rounded-full p-1.5 text-slate-400 hover:bg-white/10 hover:text-white transition"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
+            {/* Profile Pill */}
+            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full pl-3 pr-2 py-1.5 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setProfileModalOpen(true)}
+                className="flex items-center gap-2 hover:opacity-80 transition text-left"
+              >
+                {displayAvatar ? (
+                  <img src={displayAvatar} alt={profile.name} className="h-6 w-6 rounded-full object-cover border border-cyan-400" />
+                ) : (
+                  <div className="h-6 w-6 rounded-full bg-cyan-600 flex items-center justify-center text-xs font-bold text-white">
+                    {profile.name.charAt(0).toUpperCase()}
+                  </div>
                 )}
-              </div>
-          ) : (
-            <button
-              onClick={login}
-              className="inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-cyan-950/50 px-4 py-2 text-sm font-semibold text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)] hover:bg-cyan-900/60 transition"
-            >
-              <LogIn className="h-4 w-4 text-cyan-400" />
-              Sign in with Google
-            </button>
-          )}
+                <span className="text-sm font-medium text-white max-w-[120px] truncate">{profile.name}</span>
+                <span className="text-xs bg-cyan-900/60 border border-cyan-500/40 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">Lvl {profile.level}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setProfileModalOpen(true)}
+                title="View / Edit Profile"
+                className="rounded-full p-1.5 text-cyan-400 hover:bg-white/10 hover:text-cyan-300 transition"
+              >
+                <UserIcon className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Log In / Log Out Buttons */}
+            {user ? (
+              <button
+                type="button"
+                onClick={logout}
+                title="Sign Out"
+                className="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-950/50 px-3.5 py-1.5 text-sm font-semibold text-rose-300 hover:bg-rose-900/60 transition shadow-sm"
+              >
+                <LogOut className="h-4 w-4 text-rose-400" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={login}
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-gradient-to-r from-cyan-600/80 to-indigo-600/80 px-4 py-1.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:from-cyan-500 hover:to-indigo-500 transition"
+              >
+                <LogIn className="h-4 w-4 text-cyan-200" />
+                <span>Sign In</span>
+              </button>
+            )}
 
           <button
             onClick={() => setOpen(true)}
