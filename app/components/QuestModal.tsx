@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, BadgeCheck, Circle, Trophy, Camera, Sparkles, CheckCircle2 } from "lucide-react";
+import { X, BadgeCheck, Circle, Trophy, Camera, Sparkles, CheckCircle2, MessageSquare } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { QuestIcon } from "./QuestIcon";
 import ProofUpload from "./ProofUpload";
@@ -16,6 +16,7 @@ interface QuestModalProps {
 
 export default function QuestModal({ quest, completed, onClose, onComplete, userName }: QuestModalProps) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [reflection, setReflection] = useState("");
 
   useEffect(() => {
     if (!quest) return;
@@ -215,20 +216,39 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
               <div className="mb-3 flex items-center gap-2.5">
                 <Camera className={`h-5 w-5 ${allChecked ? "text-emerald-400 animate-bounce" : "text-cyan-400"}`} />
                 <h3 className="font-bold text-white text-base">
-                  {allChecked ? "✨ All Steps Complete! Attach Proof Below:" : "Submit Proof of Completion"}
+                  {allChecked ? "✨ All Steps Complete! Share Your Story Below:" : "Submit Proof of Completion"}
                 </h3>
               </div>
               <p className="mb-4 text-xs sm:text-sm text-slate-300/90 leading-relaxed font-normal">
                 {allChecked
-                  ? "You have checked off every requirement! Attach a screenshot or image link now to claim your XP reward and earn guild recognition."
-                  : "Check off all action steps in the checklist above, then attach a screenshot or image link to claim your XP reward!"}
+                  ? "Amazing work! Write how you felt about completing this quest, then upload your proof image to claim your XP and inspire the guild."
+                  : "Complete all action steps above, then write a short reflection and upload your proof image to claim your XP reward!"}
               </p>
+
+              {/* Reflection textarea — always visible so user can draft while completing steps */}
+              <div className="mb-5 space-y-1.5">
+                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-400">
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  <span>Your reflection <span className="text-slate-500 normal-case font-normal tracking-normal">(optional — share how it felt!)</span></span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={reflection}
+                  onChange={(e) => setReflection(e.target.value)}
+                  maxLength={400}
+                  placeholder="How did completing this quest make you feel? What was the hardest part? What did you learn? The guild wants to hear your story!"
+                  className="w-full resize-none rounded-2xl border border-white/15 bg-black/40 p-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition leading-relaxed"
+                />
+                <p className="text-right text-[11px] text-slate-500">{reflection.length}/400</p>
+              </div>
+
               <ProofUpload
                 questId={quest.id}
                 questTitle={quest.title}
                 userName={userName}
                 disabled={!allChecked}
-                disabledReason="⚠️ Complete all action steps in the checklist above first"
+                disabledReason="Complete all action steps in the checklist above first"
+                externalCaption={reflection}
                 onSuccess={(url) => onComplete(quest.id, url)}
               />
             </div>

@@ -26,6 +26,8 @@ export interface GuildCompletion {
   questTitle: string;
   badge: string;
   imageUrl: string;
+  caption?: string;       // reflection / description written by the user when posting
+  isCustom?: boolean;     // true if this was a user-defined custom achievement
   applause: number;
   applaudedBy: string[];
   createdAt: number;

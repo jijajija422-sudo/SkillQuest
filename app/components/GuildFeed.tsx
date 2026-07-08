@@ -230,7 +230,12 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                       {timeAgo(item.createdAt)}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                    {item.isCustom && (
+                      <span className="rounded-full bg-fuchsia-900/60 border border-fuchsia-500/40 px-2.5 py-1 text-[10px] font-black text-fuchsia-300 uppercase tracking-widest">
+                        ✨ Custom
+                      </span>
+                    )}
                     <span className="rounded-full bg-cyan-900/50 border border-cyan-500/30 px-3 py-1 text-xs font-semibold text-cyan-300">
                       {item.badge}
                     </span>
@@ -267,6 +272,14 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                     )}
                   </div>
                 </div>
+
+                {/* Caption / reflection */}
+                {item.caption && (
+                  <div className="mt-3.5 rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-fuchsia-400 mb-1">💬 Reflection</p>
+                    <p className="text-sm text-slate-300 leading-relaxed italic">&ldquo;{item.caption}&rdquo;</p>
+                  </div>
+                )}
 
                 <div className="relative mt-4 overflow-hidden rounded-2xl border border-white/5 bg-slate-950">
                   <img

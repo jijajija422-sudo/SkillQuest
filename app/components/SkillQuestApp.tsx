@@ -2,11 +2,10 @@
 
 import { useCallback, useMemo, useState } from "react";
 import {
-  Camera,
+  PenLine,
   Gift,
   Search,
   Sparkles,
-  SunMedium,
   Compass,
   Map,
   User,
@@ -22,9 +21,9 @@ import { QUESTS } from "@/lib/quests";
 import { useAuth } from "@/lib/auth-context";
 import QuestCard from "./QuestCard";
 import QuestModal from "./QuestModal";
+import CustomQuestModal from "./CustomQuestModal";
 import GuildFeed from "./GuildFeed";
 import CharacterSheet from "./CharacterSheet";
-import ProofUpload from "./ProofUpload";
 import LiveChallenge from "./LiveChallenge";
 import Achievements from "./Achievements";
 import Toast from "./Toast";
@@ -34,6 +33,7 @@ import type { Quest } from "@/lib/types";
 export default function SkillQuestApp() {
   const [activeTab, setActiveTab] = useState<"feed" | "quests" | "profile">("feed");
   const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null);
+  const [customQuestOpen, setCustomQuestOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Completed">("All");
@@ -272,14 +272,24 @@ export default function SkillQuestApp() {
                     <h2 className="mt-1 sm:mt-2 text-2xl sm:text-4xl font-black text-white">Journey Map & Mastery</h2>
                   </div>
                   
-                  {/* Overall Completion Pill */}
-                  <div className="flex items-center gap-4 bg-black/50 border border-white/10 rounded-2xl p-3.5 px-5 shadow-inner">
-                    <div className="text-right">
-                      <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Overall Mastery</p>
-                      <p className="text-lg font-black text-emerald-400">{completedQuests.length} / {QUESTS.length} Quests</p>
-                    </div>
-                    <div className="h-10 w-10 rounded-full bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                      {totalProgressPercent}%
+                  {/* Overall Completion Pill + Share Achievement Button */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setCustomQuestOpen(true)}
+                      className="inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 border border-fuchsia-300/30 px-5 py-3 text-sm font-black text-white shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:shadow-[0_0_35px_rgba(217,70,239,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                    >
+                      <PenLine className="h-4 w-4" />
+                      <span>✨ Share Your Own Achievement</span>
+                    </button>
+                    <div className="flex items-center gap-4 bg-black/50 border border-white/10 rounded-2xl p-3.5 px-5 shadow-inner">
+                      <div className="text-right">
+                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Overall Mastery</p>
+                        <p className="text-lg font-black text-emerald-400">{completedQuests.length} / {QUESTS.length} Quests</p>
+                      </div>
+                      <div className="h-10 w-10 rounded-full bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                        {totalProgressPercent}%
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -494,27 +504,6 @@ export default function SkillQuestApp() {
                   )}
                 </div>
               </div>
-
-              {/* Proof of Completion Upload Box */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0 overflow-hidden">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400 font-bold">
-                      Proof of Completion
-                    </p>
-                    <h2 className="mt-1 sm:mt-2 text-xl sm:text-2xl font-bold text-white">
-                      Upload quest evidence
-                    </h2>
-                  </div>
-                  <Camera className="h-7 w-7 sm:h-8 sm:w-8 text-slate-300 shrink-0" />
-                </div>
-                <p className="mt-3 sm:mt-4 text-sm sm:text-base text-slate-300/80 font-normal">
-                  Submit a screenshot or photo to show your achievement and win the guild&apos;s applause.
-                </p>
-                <div className="mt-6 w-full min-w-0">
-                  <ProofUpload userName={userName} />
-                </div>
-              </div>
             </div>
           )}
 
@@ -543,6 +532,11 @@ export default function SkillQuestApp() {
         onClose={() => setSelectedQuest(null)}
         onComplete={handleComplete}
         userName={userName}
+      />
+
+      <CustomQuestModal
+        isOpen={customQuestOpen}
+        onClose={() => setCustomQuestOpen(false)}
       />
 
       <Toast message={toast ?? ""} visible={!!toast} onClose={() => setToast(null)} />
