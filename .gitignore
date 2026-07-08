@@ -1,1 +1,48 @@
-node_modules
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files (CRITICAL SECURITY)
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# temporary / scratch patch scripts & dumps
+*.ps1
+file_dump.txt
+inspect_files.js
+patch_*.js
+write_feed_*.js
+rewrite_feed_*.js
+.*_patch*.js
+.patch*
+.temp_patch.js
+applyPatch.txt
+aurora-proof.jpg.png
+*.log
