@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HandHeart, Clock, Loader2, Users, UserPlus, UserCheck } from "lucide-react";
+import { HandHeart, Clock, Loader2, Users, UserPlus, UserCheck, Trash2, AlertTriangle } from "lucide-react";
 import type { GuildCompletion, UserProfile } from "@/lib/types";
-import { isFirebaseConfigured, subscribeToFeed, applaudCompletion, fetchUserProfileDb, fetchPublicProfilesDb } from "@/lib/firebase";
-import { subscribeLocalFeed, applaudLocal } from "@/lib/feed-storage";
+import { isFirebaseConfigured, subscribeToFeed, applaudCompletion, fetchUserProfileDb, fetchPublicProfilesDb, deleteCompletion } from "@/lib/firebase";
+import { subscribeLocalFeed, applaudLocal, deleteLocalCompletion } from "@/lib/feed-storage";
 import { useAuth } from "@/lib/auth-context";
 import ProfileModal from "./ProfileModal";
 
@@ -26,6 +26,8 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
   const [items, setItems] = useState<GuildCompletion[]>([]);
   const [loading, setLoading] = useState(true);
   const [applauding, setApplauding] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   
   const [communityHeroes, setCommunityHeroes] = useState<UserProfile[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null);
@@ -84,6 +86,23 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
       console.error("Failed to applaud completion:", error);
     } finally {
       setApplauding(null);
+    }
+  }
+
+  async function handleDelete(item: GuildCompletion) {
+    setDeletingId(item.id);
+    setItems((currentItems) => currentItems.filter((feedItem) => feedItem.id !== item.id));
+    try {
+      if (isFirebaseConfigured()) {
+        await deleteCompletion(item.id);
+      } else {
+        deleteLocalCompletion(item.id);
+      }
+    } catch (error) {
+      console.error("Failed to delete completion:", error);
+    } finally {
+      setDeletingId(null);
+      setConfirmDeleteId(null);
     }
   }
 
@@ -185,6 +204,9 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
         {displayItems.map((item) => {
           const hasApplauded = item.applaudedBy.includes(userId);
+          const canDelete =
+            (item.userId && (item.userId === myProfile.id || (user && item.userId === user.uid))) ||
+            (!item.userId && item.userName === myProfile.name);
           return (
             <article
               key={item.id}
@@ -195,7 +217,7 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                   <div>
                     <button
                       type="button"
-                      onClick={() => handleOpenUser(item.userName, (item as any).userId)}
+                      onClick={() => handleOpenUser(item.userName, item.userId)}
                       className="font-bold text-white hover:text-cyan-400 transition underline decoration-cyan-500/40 underline-offset-4"
                     >
                       {item.userName}
@@ -208,9 +230,42 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                       {timeAgo(item.createdAt)}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-cyan-900/50 border border-cyan-500/30 px-3 py-1 text-xs font-semibold text-cyan-300">
-                    {item.badge}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="rounded-full bg-cyan-900/50 border border-cyan-500/30 px-3 py-1 text-xs font-semibold text-cyan-300">
+                      {item.badge}
+                    </span>
+                    {canDelete && (
+                      confirmDeleteId === item.id ? (
+                        <div className="flex items-center gap-1.5 animate-fadeIn">
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(item)}
+                            disabled={deletingId === item.id}
+                            className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-rose-500 transition shadow-[0_0_12px_rgba(244,63,94,0.4)]"
+                          >
+                            {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
+                            <span>Confirm</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="rounded-full bg-white/10 border border-white/15 px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/20 transition"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDeleteId(item.id)}
+                          title="Delete your post"
+                          className="rounded-full bg-white/5 border border-white/10 p-1.5 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
 
                 <div className="relative mt-4 overflow-hidden rounded-2xl border border-white/5 bg-slate-950">

@@ -85,6 +85,7 @@ export default function ProofUpload({
 
       const payload = {
         userName: activeName,
+        userId: profile.id,
         questId: questId ?? "general",
         questTitle: title,
         badge,

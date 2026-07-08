@@ -21,6 +21,7 @@ export interface Quest {
 export interface GuildCompletion {
   id: string;
   userName: string;
+  userId?: string;
   questId: string;
   questTitle: string;
   badge: string;

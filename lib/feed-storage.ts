@@ -78,6 +78,25 @@ function notifyListeners() {
   listeners.forEach((listener) => listener(feed));
 }
 
+const DELETED_KEY = "skillquest-deleted-feed-ids";
+
+function getDeletedIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(DELETED_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addDeletedId(id: string): void {
+  const current = getDeletedIds();
+  if (!current.includes(id)) {
+    localStorage.setItem(DELETED_KEY, JSON.stringify([...current, id]));
+  }
+}
+
 function readFeed(): GuildCompletion[] {
   if (typeof window === "undefined") return SEED;
   try {
@@ -85,7 +104,8 @@ function readFeed(): GuildCompletion[] {
     if (stored) {
       const parsed = JSON.parse(stored) as GuildCompletion[];
       const feed = parsed.length ? parsed : SEED;
-      const missingSeeds = SEED.filter((seed) => !feed.some((item) => item.id === seed.id));
+      const deletedIds = getDeletedIds();
+      const missingSeeds = SEED.filter((seed) => !feed.some((item) => item.id === seed.id) && !deletedIds.includes(seed.id));
       if (missingSeeds.length > 0) {
         const mergedFeed = [...feed, ...missingSeeds];
         localStorage.setItem(FEED_KEY, JSON.stringify(mergedFeed));
@@ -147,4 +167,11 @@ export function subscribeLocalFeed(callback: (feed: GuildCompletion[]) => void) 
   return () => {
     listeners = listeners.filter((l) => l !== callback);
   };
+}
+
+export function deleteLocalCompletion(itemId: string) {
+  addDeletedId(itemId);
+  const current = getLocalFeed();
+  const updated = current.filter((item) => item.id !== itemId);
+  writeFeed(updated);
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Camera, Sparkles, Trophy, Users, UserCheck, UserPlus, Shield, Edit3, Image as ImageIcon, Check, Loader2 } from "lucide-react";
+import { X, Camera, Sparkles, Trophy, Users, UserCheck, UserPlus, Shield, Edit3, Image as ImageIcon, Check, Loader2, Trash2, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { uploadImage } from "@/lib/upload";
-import { subscribeToFeed } from "@/lib/firebase";
+import { subscribeToFeed, isFirebaseConfigured, deleteCompletion } from "@/lib/firebase";
+import { subscribeLocalFeed, deleteLocalCompletion } from "@/lib/feed-storage";
 import type { UserProfile, GuildCompletion } from "@/lib/types";
 import { titleForLevel, xpForLevel } from "@/lib/user";
 
@@ -32,6 +33,8 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
 
   const [activeTab, setActiveTab] = useState<"overview" | "edit" | "feed">("overview");
   const [feed, setFeed] = useState<GuildCompletion[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Editing state
   const [name, setName] = useState(displayedProfile.name || "");
@@ -53,14 +56,35 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
 
   useEffect(() => {
     if (!isOpen) return;
-    const unsub = subscribeToFeed((allCompletions) => {
+    const filterCompletions = (allCompletions: GuildCompletion[]) => {
       const userCompletions = allCompletions.filter(
-        (c) => c.userName === displayedProfile.name || (c as any).userId === displayedProfile.id
+        (c) => c.userName === displayedProfile.name || c.userId === displayedProfile.id
       );
       setFeed(userCompletions);
-    });
-    return () => unsub();
+    };
+
+    if (isFirebaseConfigured()) {
+      return subscribeToFeed(filterCompletions);
+    }
+    return subscribeLocalFeed(filterCompletions);
   }, [isOpen, displayedProfile]);
+
+  async function handleDelete(item: GuildCompletion) {
+    setDeletingId(item.id);
+    setFeed((current) => current.filter((i) => i.id !== item.id));
+    try {
+      if (isFirebaseConfigured()) {
+        await deleteCompletion(item.id);
+      } else {
+        deleteLocalCompletion(item.id);
+      }
+    } catch (error) {
+      console.error("Failed to delete completion:", error);
+    } finally {
+      setDeletingId(null);
+      setConfirmDeleteId(null);
+    }
+  }
 
   if (!isOpen || !displayedProfile) return null;
 
@@ -271,9 +295,42 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="font-bold text-white text-sm truncate">{item.questTitle}</p>
-                        <span className="rounded-full bg-cyan-950 border border-cyan-500/30 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
-                          +{item.badge}
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="rounded-full bg-cyan-950 border border-cyan-500/30 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
+                            +{item.badge}
+                          </span>
+                          {isOwnProfile && (
+                            confirmDeleteId === item.id ? (
+                              <div className="flex items-center gap-1 animate-fadeIn">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDelete(item)}
+                                  disabled={deletingId === item.id}
+                                  className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2 py-0.5 text-[10px] font-bold text-white hover:bg-rose-500 transition shadow-[0_0_10px_rgba(244,63,94,0.4)]"
+                                >
+                                  {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
+                                  <span>Confirm</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setConfirmDeleteId(null)}
+                                  className="rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-[10px] font-medium text-slate-300 hover:bg-white/20 transition"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setConfirmDeleteId(item.id)}
+                                title="Delete post"
+                                className="rounded-full bg-white/5 border border-white/10 p-1 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            )
+                          )}
+                        </div>
                       </div>
                       <p className="text-xs text-slate-400 mt-1">Completed by {item.userName}</p>
                       <div className="mt-2 flex items-center gap-3 text-xs text-fuchsia-400 font-semibold">

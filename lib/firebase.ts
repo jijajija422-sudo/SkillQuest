@@ -14,7 +14,8 @@ import {
   getDoc,
   setDoc,
   getDocs,
-  limit
+  limit,
+  deleteDoc
 } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import type { GuildCompletion, UserProfile } from "./types";
@@ -89,6 +90,13 @@ export async function applaudCompletion(itemId: string, userId: string) {
     applaudedBy: arrayUnion(userId),
     applause: increment(1)
   });
+}
+
+// DATABASE: Delete a quest completion from Firestore
+export async function deleteCompletion(itemId: string) {
+  if (!isFirebaseConfigured() || !db) return;
+  const itemRef = doc(db, "feed", itemId);
+  await deleteDoc(itemRef);
 }
 
 // FIRESTORE PROFILES: Fetch a user profile by UID
