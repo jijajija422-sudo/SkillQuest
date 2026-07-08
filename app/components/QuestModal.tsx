@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, BadgeCheck, Circle, Trophy, Camera } from "lucide-react";
+import { X, BadgeCheck, Circle, Trophy, Camera, Sparkles, CheckCircle2 } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { QuestIcon } from "./QuestIcon";
 import ProofUpload from "./ProofUpload";
@@ -51,29 +51,64 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
 
   const allChecked = quest.requirements.every((r) => checked[r.id]);
   const doneCount = quest.requirements.filter((r) => checked[r.id]).length;
+  const progressPercent = Math.round((doneCount / quest.requirements.length) * 100);
+
+  const levelStyles: Record<string, { badge: string; iconBg: string; border: string }> = {
+    Novice: {
+      badge: "bg-emerald-950/80 border-emerald-500/40 text-emerald-300",
+      iconBg: "bg-emerald-900/40 border-emerald-500/40 text-emerald-300",
+      border: "border-emerald-500/30",
+    },
+    Journeyman: {
+      badge: "bg-sky-950/80 border-sky-500/40 text-sky-300",
+      iconBg: "bg-sky-900/40 border-sky-500/40 text-sky-300",
+      border: "border-sky-500/30",
+    },
+    Adventurer: {
+      badge: "bg-cyan-950/80 border-cyan-500/40 text-cyan-300",
+      iconBg: "bg-cyan-900/40 border-cyan-500/40 text-cyan-300",
+      border: "border-cyan-500/30",
+    },
+    Epic: {
+      badge: "bg-purple-950/80 border-purple-500/40 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)]",
+      iconBg: "bg-purple-900/40 border-purple-500/40 text-purple-300",
+      border: "border-purple-500/30",
+    },
+    Legendary: {
+      badge: "bg-amber-950/80 border-amber-500/50 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]",
+      iconBg: "bg-amber-900/40 border-amber-500/50 text-amber-300",
+      border: "border-amber-500/40",
+    },
+  };
+
+  const style = levelStyles[quest.level] || levelStyles.Adventurer;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-md p-2 sm:p-4 sm:items-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 sm:items-center animate-in fade-in duration-200"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="quest-modal-title"
     >
       <div
-        className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-white/10 bg-slate-900 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-white"
+        className={`max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] border ${style.border} bg-slate-950 shadow-[0_0_60px_rgba(0,0,0,0.9)] text-white`}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Sticky Header Banner */}
         <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-900/95 p-5 sm:p-6 backdrop-blur-xl">
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
             <div className={`flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border ${
-              completed ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-300" : "bg-cyan-950/60 border-cyan-500/40 text-cyan-300"
+              completed ? "bg-emerald-950/60 border-emerald-500/50 text-emerald-300" : style.iconBg
             }`}>
               <QuestIcon name={quest.icon} className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-cyan-400 truncate">{quest.category}</p>
-              <h2 id="quest-modal-title" className="mt-0.5 text-lg sm:text-2xl font-black text-white leading-tight break-words">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] text-cyan-400 truncate">{quest.category}</span>
+                <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide ${style.badge}`}>{quest.level}</span>
+              </div>
+              <h2 id="quest-modal-title" className="mt-1 text-lg sm:text-2xl font-black text-white leading-tight break-words">
                 {quest.title}
               </h2>
             </div>
@@ -88,27 +123,53 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           </button>
         </div>
 
+        {/* Modal Content Body */}
         <div className="space-y-6 p-5 sm:p-6">
-          <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed font-light">{quest.description}</p>
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">{quest.description}</p>
 
-          <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 shadow-inner">
-            <div className="flex items-center gap-3">
-              <Trophy className="h-7 w-7 text-amber-400 shrink-0" />
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{quest.level} Quest</p>
-                <p className="text-sm sm:text-base font-bold text-amber-300">+{quest.xpReward} XP Reward</p>
+          {/* XP & Progress Summary Card */}
+          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4 sm:p-5 shadow-inner space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shrink-0">
+                  <Trophy className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Reward Bounty</p>
+                  <p className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4 fill-amber-300" />
+                    <span>+{quest.xpReward} XP & {quest.level} Badge</span>
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="text-xl sm:text-2xl font-black text-white">{doneCount}/{quest.requirements.length}</span>
+                <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-semibold">Steps Done</p>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-lg font-black text-white">{doneCount}/{quest.requirements.length}</span>
-              <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Steps Done</p>
+
+            {/* Live Progress Bar inside Modal */}
+            <div className="space-y-1.5 pt-1">
+              <div className="flex justify-between text-xs font-semibold text-slate-400">
+                <span>Checklist Progress</span>
+                <span className={allChecked ? "text-emerald-400 font-bold" : "text-cyan-300"}>{progressPercent}%</span>
+              </div>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/60 border border-white/10 p-0.5">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${
+                    completed || allChecked ? "from-emerald-400 to-teal-300" : "from-cyan-400 via-indigo-500 to-purple-500"
+                  }`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
             </div>
           </div>
 
+          {/* Interactive Checklist */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-cyan-400">Action Steps Checklist</h3>
-              <span className="text-xs text-slate-400">Tap to complete</span>
+              <span className="text-xs text-slate-400 font-medium">Tap each item when finished</span>
             </div>
             <ul className="space-y-2.5">
               {quest.requirements.map((req) => {
@@ -120,21 +181,21 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
                       onClick={() => toggleRequirement(req.id)}
                       className={`flex w-full items-start gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 transform active:scale-[0.98] ${
                         isDone
-                          ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-200 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                          ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
                           : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-500/40 text-slate-200"
                       }`}
                     >
                       {isDone ? (
-                        <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+                        <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)] transition-transform scale-110" />
                       ) : (
                         <Circle className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" />
                       )}
                       <div>
-                        <p className={`font-semibold text-sm sm:text-base ${isDone ? "text-emerald-300 line-through opacity-90" : "text-white"}`}>
+                        <p className={`font-bold text-sm sm:text-base ${isDone ? "text-emerald-300 line-through opacity-90" : "text-white"}`}>
                           {req.label}
                         </p>
                         {req.description && (
-                          <p className="mt-1 text-xs sm:text-sm text-slate-400 leading-relaxed">{req.description}</p>
+                          <p className="mt-1 text-xs sm:text-sm text-slate-400 leading-relaxed font-normal">{req.description}</p>
                         )}
                       </div>
                     </button>
@@ -144,14 +205,23 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
             </ul>
           </div>
 
+          {/* Completion Status or Proof Upload */}
           {!completed && (
-            <div className="rounded-3xl border border-dashed border-cyan-500/40 bg-cyan-950/20 p-5 sm:p-6 shadow-inner">
-              <div className="mb-3 flex items-center gap-2">
-                <Camera className="h-5 w-5 text-cyan-400" />
-                <h3 className="font-bold text-white text-base">Submit Proof of Completion</h3>
+            <div className={`rounded-3xl border p-5 sm:p-6 shadow-inner transition duration-300 ${
+              allChecked
+                ? "border-emerald-500/60 bg-emerald-950/30 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+                : "border-dashed border-cyan-500/40 bg-cyan-950/20"
+            }`}>
+              <div className="mb-3 flex items-center gap-2.5">
+                <Camera className={`h-5 w-5 ${allChecked ? "text-emerald-400 animate-bounce" : "text-cyan-400"}`} />
+                <h3 className="font-bold text-white text-base">
+                  {allChecked ? "✨ All Steps Complete! Attach Proof Below:" : "Submit Proof of Completion"}
+                </h3>
               </div>
-              <p className="mb-4 text-xs sm:text-sm text-slate-300/80 leading-relaxed">
-                Check off all steps above, then attach a screenshot or image link to claim your XP reward and inspire the guild!
+              <p className="mb-4 text-xs sm:text-sm text-slate-300/90 leading-relaxed font-normal">
+                {allChecked
+                  ? "You have checked off every requirement! Attach a screenshot or image link now to claim your XP reward and earn guild recognition."
+                  : "Check off all action steps in the checklist above, then attach a screenshot or image link to claim your XP reward!"}
               </p>
               <ProofUpload
                 questId={quest.id}
@@ -165,10 +235,12 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           )}
 
           {completed && (
-            <div className="rounded-3xl border border-emerald-500/40 bg-emerald-950/40 p-6 text-center shadow-[0_0_25px_rgba(16,185,129,0.2)]">
-              <BadgeCheck className="mx-auto h-10 w-10 text-emerald-400 animate-bounce" />
-              <p className="mt-2 text-lg font-black text-white">Quest Completed! 🎉</p>
-              <p className="text-xs sm:text-sm text-emerald-300 mt-1">Your proof is recorded in guild telemetry.</p>
+            <div className="rounded-3xl border border-emerald-500/50 bg-emerald-950/50 p-6 text-center shadow-[0_0_35px_rgba(16,185,129,0.25)]">
+              <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400 animate-bounce" />
+              <p className="mt-2 text-xl font-black text-white">Quest Completed! 🎉</p>
+              <p className="text-xs sm:text-sm text-emerald-300 mt-1 font-semibold">
+                Your proof is permanently recorded in guild telemetry.
+              </p>
             </div>
           )}
         </div>
