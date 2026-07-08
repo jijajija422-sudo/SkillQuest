@@ -24,7 +24,7 @@ export default function QuestCard({ quest, completed, onClick }: QuestCardProps)
   }, [quest.id]);
 
   const doneCount = Object.values(checked).filter(Boolean).length;
-  const displayProgress = completed ? 100 : Math.max(quest.progress, Math.round((doneCount / quest.requirements.length) * 100));
+  const displayProgress = completed ? 100 : Math.round((doneCount / quest.requirements.length) * 100);
 
   const levelStyles: Record<string, { badge: string; hover: string; bar: string; iconBg: string }> = {
     Novice: {

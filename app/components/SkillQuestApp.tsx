@@ -89,7 +89,20 @@ export default function SkillQuestApp() {
     return list.sort((a, b) => {
       if (sortBy === "xp-desc") return b.xpReward - a.xpReward;
       if (sortBy === "level-asc") return (levelWeights[a.level] || 1) - (levelWeights[b.level] || 1);
-      if (sortBy === "progress-desc") return b.progress - a.progress;
+      if (sortBy === "progress-desc") {
+        const getProg = (q: Quest) => {
+          if (completedQuests.includes(q.id)) return 100;
+          try {
+            const raw = typeof window !== "undefined" ? localStorage.getItem(`skillquest-checks-${q.id}`) : null;
+            if (!raw) return 0;
+            const checked = JSON.parse(raw);
+            return Math.round((Object.values(checked).filter(Boolean).length / q.requirements.length) * 100);
+          } catch {
+            return 0;
+          }
+        };
+        return getProg(b) - getProg(a);
+      }
       // default: recommended puts active/in-progress first, then high XP
       const aDone = completedQuests.includes(a.id);
       const bDone = completedQuests.includes(b.id);

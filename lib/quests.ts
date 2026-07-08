@@ -8,7 +8,7 @@ export const QUESTS: Quest[] = [
     category: "Coding & Tech",
     icon: "Code2",
     level: "Epic",
-    progress: 80,
+    progress: 0,
     xpReward: 500,
     description:
       "Build and deploy a full-stack Next.js application with server components and API routes. Prove your mastery with a live deployment screenshot.",
@@ -25,7 +25,7 @@ export const QUESTS: Quest[] = [
     category: "Coding & Tech",
     icon: "Cpu",
     level: "Epic",
-    progress: 35,
+    progress: 0,
     xpReward: 580,
     description:
       "Create a helpful AI chatbot or autonomous agent that solves a specific problem or assists users with daily workflows.",
@@ -42,7 +42,7 @@ export const QUESTS: Quest[] = [
     category: "Coding & Tech",
     icon: "Globe",
     level: "Legendary",
-    progress: 10,
+    progress: 0,
     xpReward: 850,
     description:
       "Give back to the developer community by finding an issue, writing clean code, and submitting a Pull Request to a public repository.",
@@ -59,7 +59,7 @@ export const QUESTS: Quest[] = [
     category: "Coding & Tech",
     icon: "Gamepad2",
     level: "Epic",
-    progress: 20,
+    progress: 0,
     xpReward: 620,
     description:
       "Design and code a playable 2D or 3D mini-game demo using Godot, Unity, Unreal, or HTML5 Canvas.",
@@ -76,7 +76,7 @@ export const QUESTS: Quest[] = [
     category: "Coding & Tech",
     icon: "Terminal",
     level: "Journeyman",
-    progress: 40,
+    progress: 0,
     xpReward: 450,
     description:
       "Assemble a custom mechanical keyboard from switches and keycaps, or build/upgrade a desktop PC workstation.",
@@ -95,7 +95,7 @@ export const QUESTS: Quest[] = [
     category: "Culinary & Baking",
     icon: "ChefHat",
     level: "Adventurer",
-    progress: 45,
+    progress: 0,
     xpReward: 350,
     description:
       "Master traditional French culinary techniques by preparing a multi-course meal from scratch with authentic ingredients.",
@@ -112,7 +112,7 @@ export const QUESTS: Quest[] = [
     category: "Culinary & Baking",
     icon: "Cake",
     level: "Epic",
-    progress: 30,
+    progress: 0,
     xpReward: 520,
     description:
       "Nurture a wild yeast starter, perform stretch-and-folds, and bake a crusty sourdough loaf with an open crumb.",
@@ -129,7 +129,7 @@ export const QUESTS: Quest[] = [
     category: "Culinary & Baking",
     icon: "Coffee",
     level: "Journeyman",
-    progress: 60,
+    progress: 0,
     xpReward: 380,
     description:
       "Extract a balanced espresso shot and steam velvety microfoam milk to pour Rosetta, Heart, or Tulip latte art.",
@@ -146,7 +146,7 @@ export const QUESTS: Quest[] = [
     category: "Culinary & Baking",
     icon: "Utensils",
     level: "Adventurer",
-    progress: 20,
+    progress: 0,
     xpReward: 410,
     description:
       "Recreate an authentic street food delicacy from another culture, such as Japanese Takoyaki, Mexican Tacos al Pastor, or Taiwanese Bao.",
@@ -165,7 +165,7 @@ export const QUESTS: Quest[] = [
     category: "Arts & Crafts",
     icon: "Palette",
     level: "Adventurer",
-    progress: 50,
+    progress: 0,
     xpReward: 440,
     description:
       "Create an original digital artwork or character illustration using Procreate, Photoshop, Krita, or Illustrator.",
@@ -182,7 +182,7 @@ export const QUESTS: Quest[] = [
     category: "Arts & Crafts",
     icon: "Scissors",
     level: "Journeyman",
-    progress: 40,
+    progress: 0,
     xpReward: 360,
     description:
       "Learn yarn stitching techniques to handcraft a cozy beanie, patterned scarf, or adorable amigurumi plushie.",
@@ -199,7 +199,7 @@ export const QUESTS: Quest[] = [
     category: "Arts & Crafts",
     icon: "Hammer",
     level: "Adventurer",
-    progress: 30,
+    progress: 0,
     xpReward: 470,
     description:
       "Design a functional mechanical tool or intricate figurine in Blender/Fusion360 and bring it to life on a 3D printer.",
@@ -216,7 +216,7 @@ export const QUESTS: Quest[] = [
     category: "Arts & Crafts",
     icon: "Camera",
     level: "Adventurer",
-    progress: 25,
+    progress: 0,
     xpReward: 340,
     description:
       "Tell a compelling narrative about your city, nature, or daily life through a curated photographic photo essay.",
@@ -235,7 +235,7 @@ export const QUESTS: Quest[] = [
     category: "Music & Audio",
     icon: "Music2",
     level: "Journeyman",
-    progress: 55,
+    progress: 0,
     xpReward: 400,
     description:
       "Write an original melody, arrange chord progressions, and record a performance clip or DAW production track.",
@@ -252,7 +252,7 @@ export const QUESTS: Quest[] = [
     category: "Music & Audio",
     icon: "Music2",
     level: "Journeyman",
-    progress: 50,
+    progress: 0,
     xpReward: 390,
     description:
       "Plan an engaging topic, record high-clarity vocal audio, and edit/publish your first podcast episode or audio essay.",
@@ -271,7 +271,7 @@ export const QUESTS: Quest[] = [
     category: "Fitness & Outdoors",
     icon: "Dumbbell",
     level: "Legendary",
-    progress: 20,
+    progress: 0,
     xpReward: 750,
     description:
       "Commit to 30 days of consistent physical activity—whether lifting weights, calisthenics, yoga, or martial arts.",
@@ -288,7 +288,7 @@ export const QUESTS: Quest[] = [
     category: "Fitness & Outdoors",
     icon: "Mountain",
     level: "Adventurer",
-    progress: 15,
+    progress: 0,
     xpReward: 480,
     description:
       "Plan an outdoor trekking expedition, navigate wilderness trails, and reach the summit of a local mountain or scenic ridge.",
@@ -305,7 +305,7 @@ export const QUESTS: Quest[] = [
     category: "Fitness & Outdoors",
     icon: "Footprints",
     level: "Journeyman",
-    progress: 50,
+    progress: 0,
     xpReward: 390,
     description:
       "Train your cardiovascular endurance until you can run 5 kilometers (3.1 miles) continuously without stopping.",
@@ -322,7 +322,7 @@ export const QUESTS: Quest[] = [
     category: "Fitness & Outdoors",
     icon: "Flame",
     level: "Epic",
-    progress: 25,
+    progress: 0,
     xpReward: 550,
     description:
       "Develop shoulder strength, core stability, and wrist mobility to hold a 10-second freestanding handstand with perfect form.",
@@ -339,7 +339,7 @@ export const QUESTS: Quest[] = [
     category: "Fitness & Outdoors",
     icon: "Bike",
     level: "Adventurer",
-    progress: 35,
+    progress: 0,
     xpReward: 430,
     description:
       "Tune up your bicycle and complete a scenic 25+ mile long-distance cycling route through countryside, coast, or city greenways.",
@@ -358,7 +358,7 @@ export const QUESTS: Quest[] = [
     category: "Mindfulness & Reading",
     icon: "BookOpen",
     level: "Adventurer",
-    progress: 33,
+    progress: 0,
     xpReward: 420,
     description:
       "Expand your intellectual horizons by reading three non-fiction books on philosophy, science, history, or psychology.",
@@ -375,7 +375,7 @@ export const QUESTS: Quest[] = [
     category: "Mindfulness & Reading",
     icon: "Smile",
     level: "Journeyman",
-    progress: 40,
+    progress: 0,
     xpReward: 350,
     description:
       "Cultivate mental clarity and emotional resilience with 14 consecutive days of mindfulness meditation and gratitude journaling.",
@@ -392,7 +392,7 @@ export const QUESTS: Quest[] = [
     category: "Mindfulness & Reading",
     icon: "Languages",
     level: "Epic",
-    progress: 30,
+    progress: 0,
     xpReward: 510,
     description:
       "Learn essential vocabulary and grammar in a new foreign language until you can hold a 5-minute spontaneous conversation.",
@@ -409,7 +409,7 @@ export const QUESTS: Quest[] = [
     category: "Mindfulness & Reading",
     icon: "Sun",
     level: "Novice",
-    progress: 60,
+    progress: 0,
     xpReward: 250,
     description:
       "Transform your chaotic desk and cluttered computer hard drive into a minimalist, distraction-free sanctuary for peak focus.",
@@ -428,7 +428,7 @@ export const QUESTS: Quest[] = [
     category: "Community & Gaming",
     icon: "Trophy",
     level: "Epic",
-    progress: 40,
+    progress: 0,
     xpReward: 560,
     description:
       "Write an exciting fantasy questline and Game Master a live Dungeons & Dragons or Tabletop RPG session for your friends.",
@@ -445,7 +445,7 @@ export const QUESTS: Quest[] = [
     category: "Community & Gaming",
     icon: "Users",
     level: "Legendary",
-    progress: 10,
+    progress: 0,
     xpReward: 800,
     description:
       "Make a tangible positive difference in your local community by volunteering at a food bank, animal shelter, or park cleanup.",
@@ -462,7 +462,7 @@ export const QUESTS: Quest[] = [
     category: "Community & Gaming",
     icon: "Leaf",
     level: "Adventurer",
-    progress: 30,
+    progress: 0,
     xpReward: 400,
     description:
       "Reduce your environmental footprint by eliminating single-use plastics, composting food scraps, and shopping sustainably for a week.",
@@ -481,7 +481,7 @@ export const QUESTS: Quest[] = [
     category: "Design & Career",
     icon: "Briefcase",
     level: "Adventurer",
-    progress: 30,
+    progress: 0,
     xpReward: 450,
     description:
       "Craft a stunning personal portfolio website or case study deck that showcases your professional skills and unique creative voice.",
