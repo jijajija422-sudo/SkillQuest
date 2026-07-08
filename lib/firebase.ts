@@ -99,6 +99,26 @@ export async function deleteCompletion(itemId: string) {
   await deleteDoc(itemRef);
 }
 
+// DATABASE: Add a comment to a feed post
+export async function addComment(itemId: string, comment: import("./types").GuildComment) {
+  if (!isFirebaseConfigured() || !db) return;
+  const itemRef = doc(db, "feed", itemId);
+  await updateDoc(itemRef, {
+    comments: arrayUnion(comment),
+  });
+}
+
+// DATABASE: Delete a comment from a feed post
+export async function deleteComment(itemId: string, commentId: string) {
+  if (!isFirebaseConfigured() || !db) return;
+  const itemRef = doc(db, "feed", itemId);
+  const snapshot = await getDoc(itemRef);
+  if (!snapshot.exists()) return;
+  const data = snapshot.data();
+  const updatedComments = (data.comments || []).filter((c: { id: string }) => c.id !== commentId);
+  await updateDoc(itemRef, { comments: updatedComments });
+}
+
 // FIRESTORE PROFILES: Fetch a user profile by UID
 export async function fetchUserProfileDb(uid: string): Promise<UserProfile | null> {
   if (!isFirebaseConfigured() || !db) return null;

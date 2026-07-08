@@ -175,3 +175,27 @@ export function deleteLocalCompletion(itemId: string) {
   const updated = current.filter((item) => item.id !== itemId);
   writeFeed(updated);
 }
+
+export function addCommentLocal(itemId: string, comment: import("./types").GuildComment) {
+  const current = getLocalFeed();
+  const updated = current.map((item) => {
+    if (item.id !== itemId) return item;
+    return {
+      ...item,
+      comments: [...(item.comments ?? []), comment],
+    };
+  });
+  writeFeed(updated);
+}
+
+export function deleteCommentLocal(itemId: string, commentId: string) {
+  const current = getLocalFeed();
+  const updated = current.map((item) => {
+    if (item.id !== itemId) return item;
+    return {
+      ...item,
+      comments: (item.comments ?? []).filter((c) => c.id !== commentId),
+    };
+  });
+  writeFeed(updated);
+}

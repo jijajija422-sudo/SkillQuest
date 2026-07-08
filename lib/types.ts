@@ -18,6 +18,15 @@ export interface Quest {
   requirements: QuestRequirement[];
 }
 
+export interface GuildComment {
+  id: string;
+  userId: string;
+  userName: string;
+  avatarUrl?: string;
+  text: string;
+  createdAt: number;
+}
+
 export interface GuildCompletion {
   id: string;
   userName: string;
@@ -28,6 +37,7 @@ export interface GuildCompletion {
   imageUrl: string;
   caption?: string;       // reflection / description written by the user when posting
   isCustom?: boolean;     // true if this was a user-defined custom achievement
+  comments?: GuildComment[];
   applause: number;
   applaudedBy: string[];
   createdAt: number;

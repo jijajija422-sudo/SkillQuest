@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { X, Camera, Sparkles, Trophy, Users, UserCheck, UserPlus, Shield, Edit3, Image as ImageIcon, Check, Loader2, Trash2, AlertTriangle } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  X, Sparkles, Trophy, Users, UserCheck, UserPlus, Edit3,
+  Image as ImageIcon, Check, Loader2, Trash2, AlertTriangle,
+  Camera, MessageSquare, Send, Star, Zap, Award, BookOpen, ChevronRight
+} from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { uploadImage } from "@/lib/upload";
 import { subscribeToFeed, isFirebaseConfigured, deleteCompletion } from "@/lib/firebase";
@@ -23,68 +27,82 @@ const CLASS_PRESETS = [
   "Cloud Architect",
   "UI Wizard",
   "Code Alchemist",
+  "Creative Explorer",
+  "Fitness Warrior",
+  "Culinary Artist",
 ];
+
+function timeAgo(ts: number): string {
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+const badgeColors: Record<string, string> = {
+  Bronze: "bg-amber-900/60 border-amber-500/40 text-amber-300",
+  Silver: "bg-slate-700/60 border-slate-400/40 text-slate-300",
+  Gold: "bg-yellow-900/60 border-yellow-500/40 text-yellow-300",
+  Platinum: "bg-cyan-900/60 border-cyan-500/40 text-cyan-300",
+  Legendary: "bg-fuchsia-900/60 border-fuchsia-500/40 text-fuchsia-300",
+};
 
 export default function ProfileModal({ isOpen, onClose, targetProfile }: ProfileModalProps) {
   const { profile: myProfile, updateProfileDetails, followUser, unfollowUser } = useAuth();
-  
   const isOwnProfile = !targetProfile || targetProfile.id === myProfile.id || targetProfile.id === "guest";
-  const displayedProfile = isOwnProfile ? myProfile : targetProfile;
+  const displayedProfile = isOwnProfile ? myProfile : targetProfile!;
 
-  const [activeTab, setActiveTab] = useState<"overview" | "edit" | "feed">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "quests" | "edit">("overview");
   const [feed, setFeed] = useState<GuildCompletion[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  // Editing state
-  const [name, setName] = useState(displayedProfile.name || "");
-  const [bio, setBio] = useState(displayedProfile.bio || "");
-  const [classTitle, setClassTitle] = useState(displayedProfile.classTitle || "Fullstack Paladin");
-  const [avatarUrl, setAvatarUrl] = useState(displayedProfile.avatarUrl || "");
+  // Edit state
+  const [name, setName] = useState(displayedProfile?.name || "");
+  const [bio, setBio] = useState(displayedProfile?.bio || "");
+  const [classTitle, setClassTitle] = useState(displayedProfile?.classTitle || CLASS_PRESETS[0]);
+  const [avatarUrl, setAvatarUrl] = useState(displayedProfile?.avatarUrl || "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
+    if (!isOpen) return;
+    setActiveTab("overview");
+  }, [isOpen, targetProfile]);
+
+  useEffect(() => {
     if (displayedProfile) {
       setName(displayedProfile.name || "");
-      setBio(displayedProfile.bio || "Exploring the digital realm and mastering new quests.");
-      setClassTitle(displayedProfile.classTitle || "Fullstack Paladin");
+      setBio(displayedProfile.bio || "");
+      setClassTitle(displayedProfile.classTitle || CLASS_PRESETS[0]);
       setAvatarUrl(displayedProfile.avatarUrl || "");
     }
   }, [displayedProfile, isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
-    const filterCompletions = (allCompletions: GuildCompletion[]) => {
-      const userCompletions = allCompletions.filter(
-        (c) => c.userName === displayedProfile.name || c.userId === displayedProfile.id
-      );
-      setFeed(userCompletions);
+    if (!isOpen || !displayedProfile) return;
+    const filterCompletions = (all: GuildCompletion[]) => {
+      setFeed(all.filter((c) => c.userName === displayedProfile.name || c.userId === displayedProfile.id));
     };
-
-    if (isFirebaseConfigured()) {
-      return subscribeToFeed(filterCompletions);
-    }
+    if (isFirebaseConfigured()) return subscribeToFeed(filterCompletions);
     return subscribeLocalFeed(filterCompletions);
   }, [isOpen, displayedProfile]);
 
-  async function handleDelete(item: GuildCompletion) {
-    setDeletingId(item.id);
-    setFeed((current) => current.filter((i) => i.id !== item.id));
-    try {
-      if (isFirebaseConfigured()) {
-        await deleteCompletion(item.id);
-      } else {
-        deleteLocalCompletion(item.id);
-      }
-    } catch (error) {
-      console.error("Failed to delete completion:", error);
-    } finally {
-      setDeletingId(null);
-      setConfirmDeleteId(null);
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    if (isOpen) {
+      document.addEventListener("keydown", onKey);
+      document.body.style.overflow = "hidden";
     }
-  }
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen || !displayedProfile) return null;
 
@@ -93,249 +111,345 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
   const followingCount = (displayedProfile.following || []).length;
   const xpNeeded = xpForLevel(displayedProfile.level);
   const xpPct = Math.min(100, Math.round((displayedProfile.xp / xpNeeded) * 100));
+  const completedCount = displayedProfile.completedQuests?.length ?? 0;
+  const totalXP = displayedProfile.xp ?? 0;
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  async function handleDelete(item: GuildCompletion) {
+    setDeletingId(item.id);
+    setFeed((c) => c.filter((i) => i.id !== item.id));
+    try {
+      if (isFirebaseConfigured()) await deleteCompletion(item.id);
+      else deleteLocalCompletion(item.id);
+    } catch { /* ignore */ } finally {
+      setDeletingId(null); setConfirmDeleteId(null);
+    }
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    try {
-      const url = await uploadImage(file);
-      setAvatarUrl(url);
-    } catch (err) {
-      console.error("Failed to upload avatar:", err);
-    } finally {
-      setUploading(false);
-    }
-  };
+    try { const url = await uploadImage(file); setAvatarUrl(url); }
+    catch { /* ignore */ } finally { setUploading(false); }
+  }
 
-  const handleSave = async (e: React.FormEvent) => {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await updateProfileDetails({
-      name: name.trim() || "Adventurer",
-      bio: bio.trim(),
-      classTitle,
-      avatarUrl,
-    });
+    await updateProfileDetails({ name: name.trim() || "Adventurer", bio: bio.trim(), classTitle, avatarUrl });
     setSaving(false);
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 2000);
-  };
+  }
 
-  const handleFollowToggle = async () => {
-    if (isFollowing) {
-      await unfollowUser(displayedProfile.id);
-    } else {
-      await followUser(displayedProfile.id);
-    }
-  };
+  async function handleFollowToggle() {
+    if (isFollowing) await unfollowUser(displayedProfile.id);
+    else await followUser(displayedProfile.id);
+  }
+
+  // --- Gradient based on level ---
+  const levelGrad =
+    displayedProfile.level >= 5
+      ? "from-amber-600 via-orange-700 to-rose-900"
+      : displayedProfile.level >= 3
+      ? "from-fuchsia-700 via-indigo-800 to-slate-900"
+      : "from-cyan-700 via-indigo-800 to-slate-900";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-fadeIn">
-      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2.5rem] border border-cyan-500/30 bg-slate-900 shadow-[0_0_50px_rgba(6,182,212,0.2)] text-white">
-        
-        {/* Header Banner */}
-        <div className="relative h-32 bg-gradient-to-r from-cyan-900 via-indigo-950 to-fuchsia-950 p-6 flex items-end justify-between border-b border-white/10">
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="rounded-full bg-black/40 p-2 text-slate-300 hover:bg-black/60 hover:text-white transition border border-white/10"
-            >
-              <X className="h-5 w-5" />
-            </button>
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-md p-0 sm:p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="flex max-h-[96vh] sm:max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-white/10 bg-slate-950 shadow-[0_0_80px_rgba(6,182,212,0.15)] text-white"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* ─── Hero Banner ─── */}
+        <div className={`relative shrink-0 bg-gradient-to-br ${levelGrad} overflow-hidden`} style={{ minHeight: 140 }}>
+          {/* Decorative blobs */}
+          <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-white/5 blur-2xl" />
+          <div className="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-black/20 blur-xl" />
+
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 rounded-full bg-black/40 border border-white/15 p-2 text-white/80 hover:bg-black/60 hover:text-white transition z-10"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+
+          {/* Level badge */}
+          <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/50 border border-white/20 px-3 py-1.5 backdrop-blur-sm">
+            <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+            <span className="text-xs font-black text-white">Level {displayedProfile.level}</span>
+          </div>
+
+          {/* Avatar + Name overlay at bottom of banner */}
+          <div className="absolute bottom-0 left-0 right-0 px-5 sm:px-8 pb-0 flex items-end gap-5">
+            <div className="relative shrink-0 translate-y-8 sm:translate-y-10">
+              <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl border-4 border-slate-950 bg-slate-800 overflow-hidden flex items-center justify-center text-3xl font-black bg-gradient-to-br from-cyan-600 to-indigo-800 shadow-2xl">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayedProfile.name} className="h-full w-full object-cover" />
+                ) : (
+                  <span>{displayedProfile.name?.charAt(0).toUpperCase()}</span>
+                )}
+              </div>
+              {isOwnProfile && (
+                <label className="absolute -bottom-1 -right-1 cursor-pointer rounded-full bg-cyan-500 border-2 border-slate-950 p-1.5 hover:bg-cyan-400 transition shadow-lg">
+                  <Camera className="h-3 w-3 text-white" />
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                </label>
+              )}
+            </div>
+            <div className="pb-3 sm:pb-4 translate-y-0 min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/50 mb-0.5">
+                {titleForLevel(displayedProfile.level)}
+              </p>
+              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight truncate">
+                {displayedProfile.name}
+              </h2>
+              <span className="inline-block mt-1 rounded-full bg-black/40 border border-white/20 px-3 py-0.5 text-[11px] font-bold text-cyan-300 backdrop-blur-sm">
+                {displayedProfile.classTitle || CLASS_PRESETS[0]}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Avatar & Title Row */}
-        <div className="px-4 sm:px-8 -mt-10 sm:-mt-12 flex flex-wrap items-end justify-between gap-4 pb-4 border-b border-white/10">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 sm:gap-5">
-            <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-3xl border-2 border-cyan-400/80 bg-slate-800 shadow-xl overflow-hidden flex items-center justify-center text-2xl sm:text-3xl font-bold bg-gradient-to-br from-cyan-600 to-indigo-800 shrink-0">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={displayedProfile.name} className="h-full w-full object-cover" />
-              ) : (
-                <span>{displayedProfile.name.charAt(0).toUpperCase()}</span>
-              )}
-              <span className="absolute bottom-1 right-1 rounded-lg bg-black/80 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-black text-cyan-300 border border-cyan-500/40">
-                Lvl {displayedProfile.level}
-              </span>
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">{displayedProfile.name}</h2>
-                <span className="rounded-full bg-cyan-950/80 border border-cyan-500/30 px-2.5 sm:px-3 py-0.5 text-xs font-semibold text-cyan-300">
-                  {displayedProfile.classTitle || "Fullstack Paladin"}
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">{titleForLevel(displayedProfile.level)}</p>
-            </div>
-          </div>
-
+        {/* ─── Action row (below banner) ─── */}
+        <div className="shrink-0 flex items-center justify-end gap-3 px-5 sm:px-8 pt-12 sm:pt-14 pb-4 border-b border-white/10">
           {!isOwnProfile && (
             <button
               onClick={handleFollowToggle}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold transition shadow-md shrink-0 ${
+              className={`inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all duration-200 ${
                 isFollowing
                   ? "border border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"
-                  : "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:from-cyan-400 hover:to-indigo-500 shadow-cyan-500/25"
+                  : "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-[1.02]"
               }`}
             >
-              {isFollowing ? (
-                <>
-                  <UserCheck className="h-4 w-4 text-emerald-400" />
-                  <span>Following</span>
-                </>
-              ) : (
-                <>
-                  <UserPlus className="h-4 w-4" />
-                  <span>Follow</span>
-                </>
-              )}
+              {isFollowing ? <UserCheck className="h-4 w-4 text-emerald-400" /> : <UserPlus className="h-4 w-4" />}
+              <span>{isFollowing ? "Following" : "Follow"}</span>
             </button>
           )}
+
+          {/* Stats pills */}
+          <div className="flex items-center gap-2 ml-auto">
+            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
+              <p className="text-base font-black text-cyan-400">{followersCount}</p>
+              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Followers</p>
+            </div>
+            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
+              <p className="text-base font-black text-fuchsia-400">{followingCount}</p>
+              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Following</p>
+            </div>
+            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
+              <p className="text-base font-black text-emerald-400">{completedCount}</p>
+              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Quests</p>
+            </div>
+          </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto scrollbar-none border-b border-white/10 px-3 sm:px-8 bg-slate-950/40">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition ${
-              activeTab === "overview" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
-            }`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab("feed")}
-            className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition ${
-              activeTab === "feed" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
-            }`}
-          >
-            Personal Feed ({feed.length})
-          </button>
-          {isOwnProfile && (
+        {/* ─── Tabs ─── */}
+        <div className="shrink-0 flex items-center gap-1 border-b border-white/10 px-5 sm:px-8 bg-black/20 overflow-x-auto">
+          {([
+            { id: "overview", label: "Overview", icon: Sparkles },
+            { id: "quests", label: `Posts (${feed.length})`, icon: Trophy },
+            ...(isOwnProfile ? [{ id: "edit", label: "Edit Profile", icon: Edit3 }] : []),
+          ] as { id: typeof activeTab; label: string; icon: React.ElementType }[]).map(({ id, label, icon: Icon }) => (
             <button
-              onClick={() => setActiveTab("edit")}
-              className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold whitespace-nowrap border-b-2 transition flex items-center gap-1.5 sm:gap-2 ${
-                activeTab === "edit" ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-white"
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`inline-flex items-center gap-1.5 py-3 px-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors shrink-0 ${
+                activeTab === id
+                  ? "border-cyan-400 text-cyan-300"
+                  : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              <Edit3 className="h-3.5 w-3.5" />
-              <span>Edit Profile</span>
+              <Icon className="h-3.5 w-3.5" />
+              <span>{label}</span>
             </button>
-          )}
+          ))}
         </div>
 
-        {/* Tab Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8">
+        {/* ─── Tab Body ─── */}
+        <div className="flex-1 overflow-y-auto">
+
+          {/* ═══ OVERVIEW TAB ═══ */}
           {activeTab === "overview" && (
-            <div className="space-y-6">
-              {/* Bio Card */}
-              <div className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur-sm">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80 mb-2">About Hero</p>
-                <p className="text-sm leading-relaxed text-slate-300 italic">
-                  &ldquo;{displayedProfile.bio || "Exploring the digital realm and mastering new quests."}&rdquo;
+            <div className="p-5 sm:p-8 space-y-5">
+              {/* Bio card */}
+              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950 p-5">
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400 mb-2.5 flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5" /> About
+                </p>
+                <p className="text-sm leading-relaxed text-slate-300">
+                  {displayedProfile.bio || "This adventurer prefers to let their quest completions speak for themselves."}
                 </p>
               </div>
 
-              {/* Social Stats Row */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-2xl border border-white/5 bg-black/30 p-4 text-center">
-                  <p className="text-2xl font-black text-cyan-400">{followersCount}</p>
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mt-1">Followers</p>
-                </div>
-                <div className="rounded-2xl border border-white/5 bg-black/30 p-4 text-center">
-                  <p className="text-2xl font-black text-fuchsia-400">{followingCount}</p>
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mt-1">Following</p>
-                </div>
-                <div className="rounded-2xl border border-white/5 bg-black/30 p-4 text-center">
-                  <p className="text-2xl font-black text-emerald-400">{displayedProfile.completedQuests.length}</p>
-                  <p className="text-xs uppercase tracking-wider text-slate-400 mt-1">Quests Won</p>
-                </div>
-              </div>
-
-              {/* XP Progress Card */}
-              <div className="rounded-2xl border border-white/10 bg-gradient-to-r from-slate-900 to-indigo-950/40 p-6">
-                <div className="flex items-center justify-between text-sm font-semibold mb-3">
-                  <span className="text-slate-300 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-cyan-400" />
-                    <span>Level {displayedProfile.level} Progression</span>
-                  </span>
-                  <span className="text-cyan-300">
-                    {displayedProfile.xp.toLocaleString()} / {xpNeeded.toLocaleString()} XP
+              {/* XP bar */}
+              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-indigo-950/40 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-fuchsia-400 flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5" /> XP Progression
+                  </p>
+                  <span className="text-xs font-bold text-slate-300">
+                    {totalXP.toLocaleString()} / {xpNeeded.toLocaleString()} XP
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-slate-800 border border-white/5">
+                <div className="h-2.5 overflow-hidden rounded-full bg-slate-800 border border-white/5">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 transition-all duration-700"
                     style={{ width: `${xpPct}%` }}
                   />
                 </div>
+                <p className="mt-2 text-right text-[11px] text-slate-500 font-medium">{xpPct}% to Level {displayedProfile.level + 1}</p>
               </div>
+
+              {/* Achievement stats grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-950/50 to-slate-950 p-5 flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-900/50 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <Award className="h-6 w-6 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black text-white">{completedCount}</p>
+                    <p className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Quests Won</p>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-amber-950/50 to-slate-950 p-5 flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-2xl bg-amber-900/50 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-6 w-6 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black text-white">{totalXP.toLocaleString()}</p>
+                    <p className="text-[11px] text-amber-400 font-bold uppercase tracking-wider">Total XP</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent posts preview */}
+              {feed.length > 0 && (
+                <div className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400 flex items-center gap-1.5">
+                      <Trophy className="h-3.5 w-3.5" /> Recent Achievements
+                    </p>
+                    <button onClick={() => setActiveTab("quests")} className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-white font-semibold transition">
+                      See all <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <div className="divide-y divide-white/5">
+                    {feed.slice(0, 3).map((item) => (
+                      <div key={item.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-white/5 transition">
+                        <div className="h-10 w-10 rounded-xl overflow-hidden bg-slate-800 border border-white/10 shrink-0">
+                          {item.imageUrl ? (
+                            <img src={item.imageUrl} alt={item.questTitle} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center">
+                              <Trophy className="h-4 w-4 text-slate-500" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white truncate">{item.questTitle}</p>
+                          <p className="text-[11px] text-slate-500">{timeAgo(item.createdAt)}</p>
+                        </div>
+                        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold shrink-0 ${badgeColors[item.badge] ?? "bg-slate-800 border-slate-600 text-slate-300"}`}>
+                          {item.badge}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {activeTab === "feed" && (
-            <div className="space-y-4">
+          {/* ═══ POSTS TAB ═══ */}
+          {activeTab === "quests" && (
+            <div className="p-5 sm:p-8 space-y-4">
               {feed.length === 0 ? (
-                <div className="py-12 text-center text-slate-400 border border-dashed border-white/10 rounded-3xl">
-                  <Trophy className="mx-auto h-8 w-8 text-slate-600 mb-3" />
-                  <p className="font-semibold text-white">No quests broadcasted yet.</p>
-                  <p className="text-xs text-slate-500 mt-1">Completed quests with proof pictures will appear right here!</p>
+                <div className="py-16 text-center border border-dashed border-white/10 rounded-3xl space-y-3">
+                  <Trophy className="mx-auto h-10 w-10 text-slate-700" />
+                  <p className="font-bold text-white">No achievements posted yet.</p>
+                  <p className="text-sm text-slate-500 max-w-xs mx-auto">
+                    Completed quests with proof photos will appear here for the guild to celebrate!
+                  </p>
                 </div>
               ) : (
                 feed.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-4">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.questTitle} className="h-16 w-16 rounded-xl object-cover border border-white/10 shrink-0" />
-                    ) : (
-                      <div className="h-16 w-16 rounded-xl bg-cyan-950/50 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-                        <Trophy className="h-6 w-6" />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
+                  <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden">
+                    {/* Card header */}
+                    <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-white/5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-black shrink-0 ${badgeColors[item.badge] ?? "bg-slate-800 border-slate-600 text-slate-300"}`}>
+                          {item.badge}
+                        </span>
                         <p className="font-bold text-white text-sm truncate">{item.questTitle}</p>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="rounded-full bg-cyan-950 border border-cyan-500/30 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
-                            +{item.badge}
+                        {item.isCustom && (
+                          <span className="rounded-full bg-fuchsia-900/60 border border-fuchsia-500/40 px-2 py-0.5 text-[10px] font-black text-fuchsia-300 shrink-0">
+                            ✨ Custom
                           </span>
-                          {isOwnProfile && (
-                            confirmDeleteId === item.id ? (
-                              <div className="flex items-center gap-1 animate-fadeIn">
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(item)}
-                                  disabled={deletingId === item.id}
-                                  className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2 py-0.5 text-[10px] font-bold text-white hover:bg-rose-500 transition shadow-[0_0_10px_rgba(244,63,94,0.4)]"
-                                >
-                                  {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
-                                  <span>Confirm</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setConfirmDeleteId(null)}
-                                  className="rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-[10px] font-medium text-slate-300 hover:bg-white/20 transition"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            ) : (
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[11px] text-slate-500">{timeAgo(item.createdAt)}</span>
+                        {isOwnProfile && (
+                          confirmDeleteId === item.id ? (
+                            <div className="flex items-center gap-1">
                               <button
                                 type="button"
-                                onClick={() => setConfirmDeleteId(item.id)}
-                                title="Delete post"
-                                className="rounded-full bg-white/5 border border-white/10 p-1 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                                onClick={() => handleDelete(item)}
+                                disabled={deletingId === item.id}
+                                className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2 py-0.5 text-[10px] font-bold text-white hover:bg-rose-500 transition"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
+                                Confirm
                               </button>
-                            )
-                          )}
-                        </div>
+                              <button
+                                type="button"
+                                onClick={() => setConfirmDeleteId(null)}
+                                className="rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-[10px] font-medium text-slate-300 hover:bg-white/20 transition"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setConfirmDeleteId(item.id)}
+                              className="rounded-full bg-white/5 border border-white/10 p-1.5 text-slate-500 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          )
+                        )}
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">Completed by {item.userName}</p>
-                      <div className="mt-2 flex items-center gap-3 text-xs text-fuchsia-400 font-semibold">
-                        <span>👏 {item.applause || 0} Applause</span>
+                    </div>
+
+                    {/* Image */}
+                    {item.imageUrl && (
+                      <div className="border-b border-white/5">
+                        <img src={item.imageUrl} alt={item.questTitle} className="w-full h-44 object-cover" />
                       </div>
+                    )}
+
+                    {/* Caption/reflection */}
+                    {item.caption && (
+                      <div className="px-4 py-3 border-b border-white/5 bg-black/20">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-fuchsia-400 mb-1">💬 Reflection</p>
+                        <p className="text-sm text-slate-300 leading-relaxed italic">&ldquo;{item.caption}&rdquo;</p>
+                      </div>
+                    )}
+
+                    {/* Applause row */}
+                    <div className="px-4 py-2.5 flex items-center gap-3 text-xs text-slate-400 border-b border-white/5">
+                      <span className="font-semibold text-fuchsia-400">👏 {item.applause} Applause</span>
+                      <span>·</span>
+                      <span>{(item.comments ?? []).length} Comments</span>
                     </div>
                   </div>
                 ))
@@ -343,13 +457,12 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
             </div>
           )}
 
+          {/* ═══ EDIT TAB ═══ */}
           {activeTab === "edit" && isOwnProfile && (
-            <form onSubmit={handleSave} className="space-y-6">
-              {/* Avatar Upload Field */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Profile Picture
-                </label>
+            <form onSubmit={handleSave} className="p-5 sm:p-8 space-y-6">
+              {/* Avatar */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Profile Picture</label>
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 rounded-2xl border border-cyan-500/40 bg-slate-800 overflow-hidden flex items-center justify-center shrink-0">
                     {avatarUrl ? (
@@ -358,43 +471,39 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                       <Camera className="h-6 w-6 text-slate-500" />
                     )}
                   </div>
-                  <label className="cursor-pointer rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-white/10 transition flex items-center gap-2">
+                  <label className="cursor-pointer inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 transition">
                     {uploading ? <Loader2 className="h-4 w-4 animate-spin text-cyan-400" /> : <ImageIcon className="h-4 w-4 text-cyan-400" />}
-                    <span>{uploading ? "Uploading to Cloudinary…" : "Upload New Picture"}</span>
+                    <span>{uploading ? "Uploading…" : "Upload New Photo"}</span>
                     <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="hidden" />
                   </label>
                 </div>
               </div>
 
               {/* Hero Name */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Hero Name
-                </label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Hero Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none"
+                  className="w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition"
                   required
                 />
               </div>
 
-              {/* Class Title */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Class Specialty
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
+              {/* Class preset chips */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Class Specialty</label>
+                <div className="flex flex-wrap gap-2 mb-2">
                   {CLASS_PRESETS.map((preset) => (
                     <button
                       key={preset}
                       type="button"
                       onClick={() => setClassTitle(preset)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition border ${
+                      className={`rounded-xl px-3 py-1.5 text-xs font-bold transition border ${
                         classTitle === preset
                           ? "bg-cyan-600/40 border-cyan-400 text-white"
-                          : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
+                          : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
                       }`}
                     >
                       {preset}
@@ -405,42 +514,44 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                   type="text"
                   value={classTitle}
                   onChange={(e) => setClassTitle(e.target.value)}
-                  placeholder="Custom title…"
-                  className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-2 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none"
+                  placeholder="Or type a custom class…"
+                  className="w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition"
                 />
               </div>
 
               {/* Bio */}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Adventurer Bio
-                </label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Adventurer Bio</label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell the guild about your questing philosophy…"
-                  className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none resize-none"
+                  maxLength={300}
+                  placeholder="Tell the guild about your questing philosophy, passions, or goals…"
+                  className="w-full resize-none rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition leading-relaxed"
                 />
+                <p className="text-right text-[11px] text-slate-500">{bio.length}/300</p>
               </div>
 
-              {/* Save Controls */}
+              {/* Save button */}
               <div className="flex items-center justify-end gap-3 pt-2">
                 {saveSuccess && (
-                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                     <Check className="h-4 w-4" /> Saved!
                   </span>
                 )}
                 <button
                   type="submit"
                   disabled={saving || uploading}
-                  className="rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-6 py-2.5 text-sm font-bold text-white hover:from-cyan-400 hover:to-indigo-500 transition shadow-lg shadow-cyan-500/25 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-7 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:shadow-[0_0_30px_rgba(6,182,212,0.55)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {saving ? "Saving…" : "Save Changes"}
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                  <span>{saving ? "Saving…" : "Save Changes"}</span>
                 </button>
               </div>
             </form>
           )}
+
         </div>
       </div>
     </div>
