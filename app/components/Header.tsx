@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import ProfileModal from "./ProfileModal";
-import { Mail, LogIn, LogOut, User as UserIcon, Shield, PenLine } from "lucide-react";
+import { Mail, LogIn, LogOut, User as UserIcon, Shield, PenLine, BookOpen } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export default function Header() {
@@ -35,7 +36,7 @@ export default function Header() {
       <header className="sticky top-0 z-40 w-full border-b-2 border-[#d4af37]/40 bg-[#162a1e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 md:px-8 lg:px-12">
           <div className="flex w-full items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 shrink-0 min-w-0">
+            <Link href="/" className="flex items-center gap-3 shrink-0 min-w-0 hover:opacity-95 transition">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#f5d77f] via-[#d4af37] to-[#8c6239] border border-[#fff1aa] text-[#122017] font-guild font-black text-sm shadow-[0_2px_4px_rgba(0,0,0,0.6)] shrink-0">
                 <Shield className="h-5 w-5 fill-[#122017] text-[#122017]" />
               </div>
@@ -43,9 +44,18 @@ export default function Header() {
                 <p className="text-base sm:text-lg font-bold tracking-wide text-gold-etched leading-tight truncate">SkillQuest</p>
                 <p className="text-[11px] font-medium text-[#c2b59b] hidden xs:block truncate">Adventurer&apos;s Guild Registry</p>
               </div>
-            </div>
+            </Link>
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <Link
+                href="/guide"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold text-[#f5d77f] hover:bg-[#234935] hover:scale-[1.02] transition shrink-0 shadow-sm"
+                title="Newcomer's Walkthrough & Guild Handbook"
+              >
+                <BookOpen className="h-4 w-4 text-[#f5d77f]" />
+                <span>Guild Handbook</span>
+              </Link>
+
               <div className="hidden md:block">
                 <button
                   type="button"
@@ -119,6 +129,14 @@ export default function Header() {
 
           {/* Mobile bottom action bar */}
           <div className="flex md:hidden w-full items-center justify-between gap-2 mt-2.5 pt-2.5 border-t border-[#d4af37]/20">
+            <Link
+              href="/guide"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-3 py-2 text-xs font-guild font-bold text-[#f5d77f] hover:bg-[#234935] shrink-0 shadow-sm"
+              title="Guild Handbook"
+            >
+              <BookOpen className="h-4 w-4 text-[#f5d77f]" />
+              <span>Handbook</span>
+            </Link>
             <button
               type="button"
               onClick={triggerCustomQuestModal}

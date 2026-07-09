@@ -6,6 +6,11 @@ import { AuthProvider } from "@/lib/auth-context";
 export const metadata: Metadata = {
   title: "SkillQuest - Adventurer's Guild",
   description: "SkillQuest - The RPG quest board and bounty board for self-learners.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {
