@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import ProfileModal from "./ProfileModal";
-import { Mail, LogIn, LogOut, User as UserIcon, Shield, PenLine, BookOpen } from "lucide-react";
+import ShareModal from "./ShareModal";
+import { Mail, LogIn, LogOut, User as UserIcon, Shield, PenLine, BookOpen, Share2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const { user, profile, login, logout } = useAuth();
 
   function submitContact(e: React.FormEvent<HTMLFormElement>) {
@@ -33,6 +35,7 @@ export default function Header() {
   return (
     <>
       <ProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
+      <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} />
       <header className="sticky top-0 z-40 w-full border-b-2 border-[#d4af37]/40 bg-[#162a1e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 md:px-8 lg:px-12">
           <div className="flex w-full items-center justify-between gap-3 sm:gap-4">
@@ -53,8 +56,18 @@ export default function Header() {
                 title="Newcomer's Walkthrough & Guild Handbook"
               >
                 <BookOpen className="h-4 w-4 text-[#f5d77f]" />
-                <span>Guild Handbook</span>
+                <span>Handbook</span>
               </Link>
+
+              <button
+                type="button"
+                onClick={() => setShareModalOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1b3626] px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold text-[#eafee8] hover:bg-[#234935] hover:scale-[1.02] transition shrink-0 shadow-sm"
+                title="Share Guild Registry & Invite Comrades"
+              >
+                <Share2 className="h-4 w-4 text-[#f5d77f]" />
+                <span>Share</span>
+              </button>
 
               <div className="hidden md:block">
                 <button
@@ -128,15 +141,24 @@ export default function Header() {
           </div>
 
           {/* Mobile bottom action bar */}
-          <div className="flex md:hidden w-full items-center justify-between gap-2 mt-2.5 pt-2.5 border-t border-[#d4af37]/20">
+          <div className="flex md:hidden w-full items-center justify-between gap-1.5 mt-2.5 pt-2.5 border-t border-[#d4af37]/20">
             <Link
               href="/guide"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-3 py-2 text-xs font-guild font-bold text-[#f5d77f] hover:bg-[#234935] shrink-0 shadow-sm"
+              className="inline-flex items-center justify-center gap-1 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-2.5 py-2 text-xs font-guild font-bold text-[#f5d77f] hover:bg-[#234935] shrink-0 shadow-sm"
               title="Guild Handbook"
             >
-              <BookOpen className="h-4 w-4 text-[#f5d77f]" />
-              <span>Handbook</span>
+              <BookOpen className="h-3.5 w-3.5 text-[#f5d77f]" />
+              <span className="hidden xs:inline">Guide</span>
             </Link>
+            <button
+              type="button"
+              onClick={() => setShareModalOpen(true)}
+              className="inline-flex items-center justify-center gap-1 rounded-lg border border-[#d4af37]/60 bg-[#1b3626] px-2.5 py-2 text-xs font-guild font-bold text-[#eafee8] hover:bg-[#234935] shrink-0 shadow-sm"
+              title="Share Registry"
+            >
+              <Share2 className="h-3.5 w-3.5 text-[#f5d77f]" />
+              <span>Share</span>
+            </button>
             <button
               type="button"
               onClick={triggerCustomQuestModal}
