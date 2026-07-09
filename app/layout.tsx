@@ -21,10 +21,17 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "SkillQuest - Adventurer's Guild & RPG Quest Board Banner",
+      },
+      {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "SkillQuest - Adventurer's Guild & RPG Quest Board Banner",
+        alt: "SkillQuest - Vector Guild Banner",
       },
       {
         url: "/icon.svg",
@@ -38,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SkillQuest - Adventurer's Guild & RPG Quest Registry",
     description: "Level up your real-world skills with an RPG-style quest board. Track Novice to Legendary bounties, seal visual proof of deeds, and earn guild prestige.",
-    images: ["/og-image.svg"],
+    images: ["/opengraph-image", "/og-image.svg"],
   },
 };
 
