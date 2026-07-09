@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Award } from "lucide-react";
 import { getProfile } from "@/lib/user";
 import { getUnlockedAchievements, getNextAchievement } from "@/lib/achievements";
 import type { Achievement } from "@/lib/achievements";
@@ -17,39 +17,50 @@ export default function Achievements() {
   }, []);
 
   return (
-    <div className="rounded-[2rem] border border-theme bg-theme-surface p-8 shadow-xl shadow-slate-200/50 dark:border-theme dark:shadow-slate-950/30">
-      <div className="flex items-center gap-3">
-        <Sparkles className="h-5 w-5 text-amber-500" />
+    <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-6 shadow-[0_8px_20px_rgba(0,0,0,0.6)] text-[#2b2118]">
+      <div className="flex items-center gap-3 border-b border-[#c1b087] pb-4">
+        <div className="h-10 w-10 rounded-lg bg-[#ebdcc0] border border-[#8c6239] flex items-center justify-center shrink-0 shadow-inner">
+          <Award className="h-6 w-6 text-[#8c6239]" />
+        </div>
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Achievements</p>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Milestones earned</h3>
+          <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Guild Honors</p>
+          <h3 className="text-xl font-bold font-guild text-[#4a2e18]">Unlocked Milestones</h3>
         </div>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-3">
         {unlocked.length > 0 ? (
-          unlocked.map((achievement) => (
-            <div key={achievement.id} className="rounded-3xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
-              <p className="font-semibold text-slate-900 dark:text-white">{achievement.title}</p>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{achievement.description}</p>
-            </div>
-          ))
+          unlocked.map((achievement, idx) => {
+            const badgeIcon = idx % 4 === 0 ? "badge-legendary.svg" : idx % 3 === 0 ? "badge-platinum.svg" : idx % 2 === 0 ? "badge-gold.svg" : "badge-silver.svg";
+            return (
+              <div key={achievement.id} className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-4 flex items-center gap-3.5 shadow-sm">
+                <img src={`/assets/${badgeIcon}`} alt="Honor Medal" className="h-10 w-10 shrink-0 object-contain drop-shadow" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold font-guild text-[#4a2e18] text-sm">{achievement.title}</p>
+                  <p className="mt-0.5 text-xs text-[#6e5338] leading-relaxed">{achievement.description}</p>
+                </div>
+              </div>
+            );
+          })
         ) : (
-          <div className="rounded-3xl bg-slate-50 p-4 text-slate-600 dark:bg-slate-900/50 dark:text-slate-300">
-            Unlock your first achievement by completing a quest.
+          <div className="rounded-xl bg-[#fff8ea] border-2 border-[#c1b087] p-6 text-center text-sm font-guild font-semibold text-[#6e5338] shadow-inner">
+            Complete your first quest scroll to claim your maiden guild medal.
           </div>
         )}
       </div>
 
       {nextAchievement ? (
-        <div className="mt-6 rounded-3xl bg-slate-100 p-4 dark:bg-slate-900/70">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Next achievement</p>
-          <p className="mt-2 font-semibold text-slate-900 dark:text-white">{nextAchievement.title}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{nextAchievement.description}</p>
+        <div className="mt-6 rounded-xl bg-[#23170e] border-2 border-[#8c6239] p-4 text-[#f4ecd8] shadow-md">
+          <p className="text-[10px] font-guild font-bold uppercase tracking-wider text-gold-etched">Upcoming Milestone Target</p>
+          <p className="mt-1 font-bold font-guild text-[#fff8ea] text-sm flex items-center gap-2">
+            <img src="/assets/badge-bronze.svg" alt="Target" className="h-5 w-5 object-contain" />
+            <span>{nextAchievement.title}</span>
+          </p>
+          <p className="text-xs text-[#c2b59b] mt-1 leading-relaxed pl-7">{nextAchievement.description}</p>
         </div>
       ) : (
-        <div className="mt-6 rounded-3xl bg-emerald-50 p-4 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
-          You have unlocked all current achievements — keep going!
+        <div className="mt-6 rounded-xl bg-[#23170e] border-2 border-[#8c6239] p-4 text-center text-sm font-guild font-bold text-gold-etched shadow-md">
+          All Guild Milestones Unlocked — Supreme Grandmaster!
         </div>
       )}
     </div>

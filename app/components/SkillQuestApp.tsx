@@ -1,21 +1,21 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   PenLine,
   Gift,
   Search,
-  Sparkles,
   Compass,
   Map,
   User,
-  Flame,
   Trophy,
   ArrowUpDown,
   RotateCcw,
   CheckCircle2,
   Play,
   X,
+  Shield,
+  BookOpen
 } from "lucide-react";
 import { QUESTS } from "@/lib/quests";
 import { useAuth } from "@/lib/auth-context";
@@ -29,6 +29,14 @@ import Achievements from "./Achievements";
 import Toast from "./Toast";
 import UserNameModal from "./UserNameModal";
 import type { Quest } from "@/lib/types";
+
+const levelWeights: Record<string, number> = {
+  Novice: 1,
+  Journeyman: 2,
+  Adventurer: 3,
+  Epic: 4,
+  Legendary: 5,
+};
 
 export default function SkillQuestApp() {
   const [activeTab, setActiveTab] = useState<"feed" | "quests" | "profile">("feed");
@@ -45,28 +53,14 @@ export default function SkillQuestApp() {
   const userName = profile.name || "Adventurer";
   const completedQuests = profile.completedQuests || [];
 
+  useEffect(() => {
+    const handler = () => setCustomQuestOpen(true);
+    window.addEventListener("open-custom-quest-modal", handler);
+    return () => window.removeEventListener("open-custom-quest-modal", handler);
+  }, []);
+
   const categories = useMemo(() => ["All", ...new Set(QUESTS.map((q) => q.category))], []);
   const levels = ["All Levels", "Novice", "Journeyman", "Adventurer", "Epic", "Legendary"];
-
-  const categoryEmojis: Record<string, string> = {
-    All: "✨",
-    "Coding & Tech": "💻",
-    "Culinary & Baking": "🍳",
-    "Arts & Crafts": "🎨",
-    "Music & Audio": "🎵",
-    "Fitness & Outdoors": "🏃",
-    "Mindfulness & Reading": "🧘",
-    "Community & Gaming": "🤝",
-    "Design & Career": "💼",
-  };
-
-  const levelWeights: Record<string, number> = {
-    Novice: 1,
-    Journeyman: 2,
-    Adventurer: 3,
-    Epic: 4,
-    Legendary: 5,
-  };
 
   const filteredQuests = useMemo(() => {
     const list = QUESTS.filter((q) => {
@@ -103,7 +97,6 @@ export default function SkillQuestApp() {
         };
         return getProg(b) - getProg(a);
       }
-      // default: recommended puts active/in-progress first, then high XP
       const aDone = completedQuests.includes(a.id);
       const bDone = completedQuests.includes(b.id);
       if (aDone !== bDone) return aDone ? 1 : -1;
@@ -139,23 +132,19 @@ export default function SkillQuestApp() {
   }
 
   const tabs = [
-    { id: "feed", label: "Guild Feed", icon: Compass },
-    { id: "quests", label: "Quests Board", icon: Map },
-    { id: "profile", label: "Hero Dossier", icon: User },
+    { id: "feed", label: "Chronicle Feed", icon: Compass },
+    { id: "quests", label: "Bounty Board", icon: Map },
+    { id: "profile", label: "Guild Dossier", icon: User },
   ] as const;
 
   return (
     <>
       <UserNameModal onSave={updateHeroName} />
 
-      {/* Fixed Glassmorphic Desktop Sidebar (Visible lg and up) */}
-      <aside className="hidden lg:flex fixed left-0 top-[65px] bottom-0 w-64 flex-col justify-between border-r border-white/10 bg-slate-950/90 backdrop-blur-2xl p-6 z-30 shadow-2xl">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-[55px] bottom-0 w-64 flex-col justify-between border-r-2 border-[#d4af37]/40 bg-[#162a1e] p-6 z-30 shadow-lg">
         <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full bg-cyan-900/40 border border-cyan-500/30 px-3.5 py-1.5 text-xs font-bold text-cyan-300 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5 animate-pulse text-cyan-400 shrink-0" />
-            <span>Navigation Hub</span>
-          </div>
-
+          <p className="text-xs font-guild font-bold text-gold-etched uppercase tracking-wider">Guild Registry Navigation</p>
           <nav className="space-y-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -165,33 +154,36 @@ export default function SkillQuestApp() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex w-full items-center gap-3.5 rounded-2xl px-4 py-3.5 font-bold transition-all duration-200 text-left ${
+                  className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 font-guild font-bold transition text-left text-sm shadow-sm ${
                     isActive
-                      ? "bg-gradient-to-r from-cyan-600/90 to-indigo-600/90 text-white border border-cyan-400/50 shadow-[0_0_20px_rgba(6,182,212,0.35)] translate-x-1"
-                      : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                      ? "btn-enamel text-[#eafee8]"
+                      : "border border-[#d4af37]/20 bg-[#1b3626]/80 text-[#c2b59b] hover:bg-[#234935] hover:text-[#f4ecd8] hover:border-[#d4af37]/60"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
-                  <span className="text-sm tracking-wide">{tab.label}</span>
+                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#f5d77f]" : "text-[#d4af37]"}`} />
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* Sidebar Mini Profile Status */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">
-          <p className="font-semibold text-white truncate">{profile.name}</p>
-          <p className="text-cyan-400 font-medium mt-0.5">Level {profile.level} Adventurer</p>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 border-t border-white/10 pt-2">
-            <span>Completed</span>
-            <span className="font-bold text-emerald-400">{completedQuests.length} of {QUESTS.length} Quests</span>
+        {/* Sidebar Mini Profile Scroll */}
+        <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-4 text-xs text-[#2b2118] shadow-md">
+          <div className="flex items-center gap-2 pb-2 border-b border-[#c1b087]">
+            <Shield className="h-4 w-4 text-[#8c6239] shrink-0" />
+            <p className="font-guild font-bold text-[#4a2e18] truncate text-sm">{profile.name}</p>
+          </div>
+          <p className="text-[#6e5338] font-semibold mt-2">Guild Rank Level {profile.level}</p>
+          <div className="mt-2 flex items-center justify-between text-[11px] pt-1">
+            <span className="font-medium text-[#6e5338]">Quests Mastered</span>
+            <span className="font-guild font-bold text-[#4a2e18]">{completedQuests.length} of {QUESTS.length}</span>
           </div>
         </div>
       </aside>
 
-      {/* Fixed Glassmorphic Mobile Bottom Nav (Visible below lg) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t border-white/10 bg-slate-950/90 backdrop-blur-2xl px-2 py-2.5 shadow-[0_-8px_32px_rgba(0,0,0,0.7)]">
+      {/* Mobile Bottom Nav */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t-2 border-[#d4af37]/60 bg-[#162a1e] px-2 py-2 shadow-[0_-4px_12px_rgba(0,0,0,0.6)]">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -200,49 +192,46 @@ export default function SkillQuestApp() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center gap-1 rounded-2xl px-5 py-2 font-semibold transition-all duration-200 ${
-                isActive
-                  ? "text-cyan-300 scale-105"
-                  : "text-slate-400 hover:text-slate-200"
+              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-4 py-2 font-guild font-bold transition text-xs ${
+                isActive ? "text-[#f5d77f] bg-[#1c3829] border border-[#d4af37]" : "text-[#c2b59b] hover:text-[#f4ecd8]"
               }`}
             >
-              <div className={`p-1.5 rounded-xl ${isActive ? "bg-cyan-900/50 border border-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.4)]" : ""}`}>
-                <Icon className={`h-5 w-5 ${isActive ? "text-cyan-300" : "text-slate-400"}`} />
-              </div>
-              <span className="text-[11px] tracking-tight">{tab.label}</span>
+              <Icon className={`h-5 w-5 ${isActive ? "text-[#f5d77f]" : "text-[#c2b59b]"}`} />
+              <span>{tab.label}</span>
             </button>
           );
         })}
       </nav>
 
-      {/* Main Content Wrapper */}
-      <main className="min-h-screen w-full overflow-x-hidden px-3.5 py-6 pb-28 sm:px-6 md:px-10 lg:pl-72 lg:pr-12 lg:pb-12 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black text-slate-200">
-        <section className="mx-auto w-full max-w-6xl min-w-0">
-          
-          {/* Top Hero Banner */}
-          <div className="mb-8 space-y-4 w-full min-w-0">
-            <div className="inline-flex max-w-full items-center gap-2 sm:gap-3 rounded-full bg-cyan-900/30 border border-cyan-500/20 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-cyan-300 shadow-lg shadow-cyan-900/20 backdrop-blur-md">
-              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-pulse shrink-0" />
-              <span className="truncate">SkillQuest — Neural Uplink Protocol Active</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 break-words">
-              {activeTab === "feed" && "Live Guild Telemetry"}
-              {activeTab === "quests" && "Turn every skill into an epic quest."}
-              {activeTab === "profile" && "Hero Dossier & Achievements"}
+      {/* Main Content */}
+      <main className="min-h-screen w-full overflow-x-hidden px-4 py-8 pb-28 sm:px-6 md:px-10 lg:pl-72 lg:pr-12 lg:pb-12 bg-[#122017] text-[#f4ecd8]">
+        <section className="mx-auto w-full max-w-5xl min-w-0">
+
+          {/* Page heading */}
+          <div className="mb-8 w-full min-w-0 border-b-2 border-[#d4af37]/30 pb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-guild text-gold-etched">
+              {activeTab === "feed" && "Activity Chronicle"}
+              {activeTab === "quests" && "Guild Quest Board"}
+              {activeTab === "profile" && "Adventurer Dossier"}
             </h1>
+            <p className="mt-1.5 text-xs sm:text-sm text-[#eddcc4]">
+              {activeTab === "feed" && "Witness the triumphs and proof of deed shared by fellow guild adventurers."}
+              {activeTab === "quests" && "Inspect open bounties, track your requirements, and submit proof of completion."}
+              {activeTab === "profile" && "Your character statistics, prestige titles, and lifetime deeds."}
+            </p>
           </div>
 
-          {/* TAB 1: 'feed' Tab -> Shows GuildFeed and LiveChallenge */}
+          {/* TAB 1: Feed */}
           {activeTab === "feed" && (
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start w-full min-w-0 animate-in fade-in duration-300">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start w-full min-w-0">
               <div className="space-y-6 w-full min-w-0">
-                <div className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl p-4 sm:p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0 overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <Flame className="h-5 w-5 text-cyan-400 animate-pulse" />
-                      <h2 className="text-base sm:text-lg font-bold uppercase tracking-wider text-white">Guild Feed</h2>
-                    </div>
-                    <span className="text-xs bg-cyan-900/50 border border-cyan-500/30 text-cyan-300 px-2.5 py-1 rounded-full font-semibold">Live Stream</span>
+                <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-5 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-[#2b2118] w-full min-w-0 overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-[#c1b087] pb-4 mb-5">
+                    <h2 className="text-lg font-guild font-bold text-[#4a2e18] flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-[#8c6239]" />
+                      <span>Guild Activity Chronicle</span>
+                    </h2>
+                    <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2.5 py-0.5 text-xs font-guild font-bold text-[#5c3a1a]">Live Missives</span>
                   </div>
                   <div className="w-full min-w-0">
                     <GuildFeed />
@@ -251,94 +240,85 @@ export default function SkillQuestApp() {
               </div>
 
               <div className="space-y-6 w-full min-w-0">
-                <div className="w-full min-w-0">
-                  <LiveChallenge />
-                </div>
+                <LiveChallenge />
               </div>
             </div>
           )}
 
-          {/* TAB 2: 'quests' Tab -> Shows Journey Map, Active Journeys (Quest Board), and ProofUpload */}
+          {/* TAB 2: Quests */}
           {activeTab === "quests" && (
-            <div className="space-y-10 w-full min-w-0 animate-in fade-in duration-300">
-              {/* Journey Map & Overview Box */}
-              <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/50 to-slate-950/80 backdrop-blur-2xl p-6 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] w-full min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+            <div className="space-y-8 w-full min-w-0">
+              {/* Journey Overview Parchment */}
+              <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-[#2b2118] w-full min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#c1b087] pb-6">
                   <div>
-                    <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400 font-extrabold flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-amber-400" />
-                      <span>Quest Board Dossier</span>
-                    </p>
-                    <h2 className="mt-1 sm:mt-2 text-2xl sm:text-4xl font-black text-white">Journey Map & Mastery</h2>
+                    <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Mastery Progress</p>
+                    <h2 className="mt-1 text-2xl font-bold font-guild text-[#4a2e18]">Journey Map & Bounties</h2>
                   </div>
-                  
-                  {/* Overall Completion Pill + Share Achievement Button */}
+
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <button
                       type="button"
                       onClick={() => setCustomQuestOpen(true)}
-                      className="inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 border border-fuchsia-300/30 px-5 py-3 text-sm font-black text-white shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:shadow-[0_0_35px_rgba(217,70,239,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                      className="inline-flex items-center gap-2 rounded-lg btn-bronze px-5 py-2.5 text-sm font-guild font-bold"
                     >
                       <PenLine className="h-4 w-4" />
-                      <span>✨ Share Your Own Achievement</span>
+                      <span>Inscribe Custom Deed</span>
                     </button>
-                    <div className="flex items-center gap-4 bg-black/50 border border-white/10 rounded-2xl p-3.5 px-5 shadow-inner">
+                    <div className="flex items-center gap-3 border border-[#8c6239] bg-[#fff8ea] rounded-lg px-4 py-2.5 shadow-inner">
                       <div className="text-right">
-                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Overall Mastery</p>
-                        <p className="text-lg font-black text-emerald-400">{completedQuests.length} / {QUESTS.length} Quests</p>
+                        <p className="text-xs text-[#8c6239] font-guild font-bold">Total Mastery</p>
+                        <p className="text-sm font-bold text-[#4a2e18]">{completedQuests.length} / {QUESTS.length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                      <div className="h-10 w-10 rounded-full border-2 border-[#8c6239] bg-[#ebdcc0] flex items-center justify-center text-[#4a2e18] font-guild font-bold text-xs shadow-sm">
                         {totalProgressPercent}%
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Overall Progress Bar */}
+                {/* Progress Bar */}
                 <div className="mt-6 space-y-2">
-                  <div className="flex justify-between text-xs font-semibold text-slate-400">
-                    <span>Neural Skill Uplink Progress</span>
-                    <span className="text-cyan-300 font-bold">{QUESTS.length - completedQuests.length} Quests Remaining</span>
+                  <div className="flex justify-between text-xs font-guild font-bold text-[#6e5338]">
+                    <span>Guild Ranking Progression</span>
+                    <span className="text-[#4a2e18]">{QUESTS.length - completedQuests.length} deeds remaining</span>
                   </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full bg-black/60 border border-white/10 p-0.5">
+                  <div className="h-3 w-full overflow-hidden rounded-full border border-[#8c6239] bg-[#ebdcc0] p-0.5 shadow-inner">
                     <div
-                      className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 shadow-[0_0_15px_rgba(6,182,212,0.5)]"
+                      className="h-full rounded-full bg-gradient-to-r from-[#235338] via-[#1b432d] to-[#10b981] transition-all duration-1000"
                       style={{ width: `${totalProgressPercent}%` }}
                     />
                   </div>
                 </div>
 
-                {/* Recommended Next Quests */}
+                {/* Recommended Next */}
                 <div className="mt-8 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-cyan-300 flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-fuchsia-400 animate-pulse" />
-                      <span>Recommended Next Quests For Your Level</span>
-                    </h3>
-                  </div>
+                  <h3 className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">
+                    Recommended Bounties
+                  </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 w-full min-w-0">
                     {recommendedNext.map((q) => (
                       <button
                         key={q.id}
                         type="button"
                         onClick={() => setSelectedQuest(q)}
-                        className="group relative rounded-3xl bg-slate-900/60 border border-white/10 p-5 text-left transition duration-300 hover:bg-slate-800/90 hover:border-cyan-400/60 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(6,182,212,0.25)] w-full min-w-0 flex flex-col justify-between"
+                        className="group rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 text-left transition hover:bg-[#fdfaf3] hover:border-[#4a2e18] hover:shadow-md w-full min-w-0 flex flex-col justify-between shadow-sm"
                       >
                         <div>
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <span className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400 truncate">
+                            <span className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239] truncate">
                               {q.category}
                             </span>
-                            <span className="text-[10px] font-bold bg-amber-950/60 border border-amber-500/40 text-amber-300 px-2 py-0.5 rounded-full shrink-0">
+                            <span className="text-[10px] font-guild font-bold text-[#4a2e18] px-2 py-0.5 bg-[#ebdcc0] border border-[#c1b087] rounded shrink-0">
                               +{q.xpReward} XP
                             </span>
                           </div>
-                          <p className="font-bold text-white text-base group-hover:text-cyan-300 transition line-clamp-1">{q.title}</p>
-                          <p className="mt-1 text-xs text-slate-400 line-clamp-2 leading-relaxed">{q.description}</p>
+                          <p className="font-bold font-guild text-[#4a2e18] text-base group-hover:text-[#8c6239] transition line-clamp-1">{q.title}</p>
+                          <p className="mt-1 text-xs text-[#5c3a1a] line-clamp-2 leading-relaxed">{q.description}</p>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:text-cyan-300">
-                          <span>{q.level} Quest</span>
-                          <span className="flex items-center gap-1">Launch <Play className="h-3 w-3 fill-current" /></span>
+                        <div className="mt-4 pt-3 border-t border-[#d8caa8] flex items-center justify-between text-xs font-guild font-bold text-[#8c6239]">
+                          <span>{q.level}</span>
+                          <span className="flex items-center gap-1 group-hover:translate-x-1 transition">Inspect <Play className="h-3 w-3 fill-[#8c6239]" /></span>
                         </div>
                       </button>
                     ))}
@@ -346,62 +326,59 @@ export default function SkillQuestApp() {
                 </div>
               </div>
 
-              {/* Active Journeys (Quest Board) Box */}
-              <div className="rounded-[2rem] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-5 sm:p-8 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] w-full min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <Gift className="h-7 w-7 sm:h-8 sm:w-8 text-fuchsia-400 shrink-0" />
-                    <div>
-                      <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-cyan-400 font-bold">Skill Questlines</p>
-                      <h2 className="text-2xl sm:text-3xl font-black text-white">Explore All Quests</h2>
-                    </div>
+              {/* Quest Board Wood Container */}
+              <div className="rounded-xl border-4 border-[#4a2e18] bg-wood p-5 sm:p-8 shadow-[0_12px_32px_rgba(0,0,0,0.8)] text-[#f4ecd8] w-full min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#8c6239]/60 pb-6">
+                  <div>
+                    <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-etched">Open Contracts</p>
+                    <h2 className="text-xl sm:text-2xl font-bold font-guild text-[#fff8ea]">Available Quests</h2>
                   </div>
 
-                  {/* Sort By Controls */}
-                  <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3.5 py-2 rounded-2xl text-xs font-semibold">
-                    <ArrowUpDown className="h-4 w-4 text-cyan-400 shrink-0" />
-                    <span className="text-slate-400 shrink-0">Sort By:</span>
+                  {/* Sort */}
+                  <div className="flex items-center gap-2 border border-[#d4af37]/60 bg-[#1c3829] px-3.5 py-2 rounded-lg text-xs font-guild font-semibold shadow-inner">
+                    <ArrowUpDown className="h-3.5 w-3.5 text-[#f5d77f] shrink-0" />
+                    <span className="text-[#c2b59b] shrink-0">Sort Bounties:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="bg-transparent text-white font-bold focus:outline-none cursor-pointer"
+                      className="bg-transparent text-[#f5d77f] font-bold focus:outline-none cursor-pointer"
                     >
-                      <option value="recommended" className="bg-slate-900 text-white">✨ Recommended</option>
-                      <option value="xp-desc" className="bg-slate-900 text-white">🔥 Highest XP Reward</option>
-                      <option value="level-asc" className="bg-slate-900 text-white">🌱 Novice to Legendary</option>
-                      <option value="progress-desc" className="bg-slate-900 text-white">⚡ Closest to Complete</option>
+                      <option value="recommended" className="bg-[#162a1e] text-[#f4ecd8]">Recommended</option>
+                      <option value="xp-desc" className="bg-[#162a1e] text-[#f4ecd8]">Highest XP Reward</option>
+                      <option value="level-asc" className="bg-[#162a1e] text-[#f4ecd8]">Novice to Legendary</option>
+                      <option value="progress-desc" className="bg-[#162a1e] text-[#f4ecd8]">Most Progress</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-4 w-full mt-6">
-                  {/* Status & Level Filter Row */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-black/30 p-2.5 rounded-[1.5rem] border border-white/5 shadow-inner w-full">
+                  {/* Status & Level Filters */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#160d07]/80 p-2.5 rounded-xl border border-[#8c6239]/60 w-full shadow-inner">
                     <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full max-w-full">
                       {["All", "Active", "Completed"].map((status) => (
                         <button
                           key={status}
                           type="button"
                           onClick={() => setStatusFilter(status as any)}
-                          className={`shrink-0 rounded-full px-4 py-2 text-xs sm:text-sm font-bold transition-all duration-200 ${
+                          className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold transition ${
                             statusFilter === status
-                              ? "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/25 scale-105"
-                              : "text-slate-300 hover:bg-white/10"
+                              ? "btn-bronze"
+                              : "text-[#c2b59b] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
                           }`}
                         >
-                          {status === "Active" ? "🚀 To Do" : status === "Completed" ? "✨ Verified Done" : "All Status"}
+                          {status === "Active" ? "Open Bounties" : status === "Completed" ? "Mastered" : "All Scrolls"}
                         </button>
                       ))}
-                      <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block"></div>
+                      <div className="w-px h-5 bg-[#8c6239]/60 mx-1 hidden sm:block"></div>
                       {levels.map((lvl) => (
                         <button
                           key={lvl}
                           type="button"
                           onClick={() => setLevelFilter(lvl)}
-                          className={`shrink-0 rounded-full px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-200 ${
+                          className={`shrink-0 rounded-lg px-3 py-1.5 text-[11px] sm:text-xs font-guild font-semibold transition ${
                             levelFilter === lvl
-                              ? "bg-slate-700 text-white border border-cyan-400/50 shadow-sm scale-105"
-                              : "text-slate-400 border border-transparent hover:bg-white/10"
+                              ? "btn-enamel text-[#eafee8]"
+                              : "text-[#bba78c] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
                           }`}
                         >
                           {lvl}
@@ -409,45 +386,42 @@ export default function SkillQuestApp() {
                       ))}
                     </div>
                   </div>
-                  
-                  {/* Search & Category Filter Row */}
+
+                  {/* Search & Category */}
                   <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-3 w-full">
                     <div className="relative w-full xl:w-72 shrink-0">
-                      <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#d4af37]" />
                       <input
                         type="search"
-                        placeholder="Search title, category, keywords..."
+                        placeholder="Search quest scrolls..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-full border border-white/10 bg-black/50 py-2.5 pl-10 pr-10 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 shadow-inner transition"
+                        className="w-full rounded-lg border border-[#8c6239] bg-[#160d07] py-2.5 pl-10 pr-10 text-sm text-[#f4ecd8] placeholder:text-[#8c6239] focus:outline-none focus:ring-2 focus:ring-[#d4af37] transition shadow-inner"
                       />
                       {search && (
-                        <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 bg-white/10 rounded-full transition">
+                        <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#c2b59b] hover:text-[#f5d77f] p-1 rounded transition">
                           <X className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
 
-                    {/* Category Pills with Emojis & Counts */}
                     <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 xl:pb-0 scrollbar-none w-full max-w-full">
                       {categories.map((cat) => {
                         const count = cat === "All" ? QUESTS.length : QUESTS.filter((q) => q.category === cat).length;
-                        const emoji = categoryEmojis[cat] || "🧭";
                         const isActive = category === cat;
                         return (
                           <button
                             key={cat}
                             type="button"
                             onClick={() => setCategory(cat)}
-                            className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                            className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-guild font-semibold transition flex items-center gap-1.5 ${
                               isActive
-                                ? "bg-cyan-600 text-white border border-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.4)] scale-105"
-                                : "bg-slate-900/80 border border-white/10 text-slate-300 hover:bg-slate-800 hover:border-white/20"
+                                ? "btn-enamel text-[#eafee8]"
+                                : "bg-[#160d07] border border-[#8c6239]/60 text-[#c2b59b] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
                             }`}
                           >
-                            <span>{emoji}</span>
                             <span>{cat}</span>
-                            <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? "bg-black/30 text-white" : "bg-white/10 text-slate-400"}`}>
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] ${isActive ? "bg-[#10301d] text-[#f5d77f]" : "bg-[#2d1b10] text-[#bba78c]"}`}>
                               {count}
                             </span>
                           </button>
@@ -457,14 +431,14 @@ export default function SkillQuestApp() {
                   </div>
                 </div>
 
-                {/* Filter Counter Banner */}
-                <div className="mt-6 flex items-center justify-between text-xs text-slate-400 border-b border-white/10 pb-3">
-                  <span>Showing <strong className="text-white font-bold">{filteredQuests.length}</strong> of {QUESTS.length} Quests</span>
+                {/* Filter Counter */}
+                <div className="mt-6 flex items-center justify-between text-xs text-[#c2b59b] border-b border-[#8c6239]/60 pb-3 font-guild">
+                  <span>Displaying <strong className="text-[#f5d77f]">{filteredQuests.length}</strong> of {QUESTS.length} guild scrolls</span>
                   {(search || category !== "All" || statusFilter !== "All" || levelFilter !== "All Levels") && (
                     <button
                       type="button"
                       onClick={resetFilters}
-                      className="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-bold transition"
+                      className="inline-flex items-center gap-1.5 text-[#f5d77f] hover:text-white font-bold transition"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                       <span>Reset Filters</span>
@@ -472,21 +446,19 @@ export default function SkillQuestApp() {
                   )}
                 </div>
 
-                {/* Quests Grid or Empty State */}
-                <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 w-full min-w-0">
+                {/* Quests Grid */}
+                <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 w-full min-w-0">
                   {filteredQuests.length === 0 ? (
-                    <div className="col-span-full rounded-3xl border border-dashed border-white/15 bg-black/30 p-12 text-center space-y-4">
-                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-slate-400">
-                        <Search className="h-8 w-8 text-cyan-400 animate-pulse" />
-                      </div>
-                      <h3 className="text-lg font-bold text-white">No Quests Found</h3>
-                      <p className="text-sm text-slate-400 max-w-md mx-auto">
-                        We couldn&apos;t find any quests matching your current filters or search keywords. Try adjusting your category or level criteria.
+                    <div className="col-span-full rounded-xl border-2 border-[#8c6239] bg-parchment p-12 text-center space-y-3 text-[#2b2118]">
+                      <Search className="mx-auto h-8 w-8 text-[#8c6239]" />
+                      <h3 className="text-base font-guild font-bold text-[#4a2e18]">No scrolls match your inquiry</h3>
+                      <p className="text-sm text-[#6e5338] max-w-md mx-auto">
+                        Adjust your filter criteria or search phrase to reveal hidden deeds.
                       </p>
                       <button
                         type="button"
                         onClick={resetFilters}
-                        className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-bold text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:bg-cyan-500 transition"
+                        className="inline-flex items-center gap-2 rounded-lg btn-bronze px-5 py-2.5 text-sm font-guild font-bold"
                       >
                         <RotateCcw className="h-4 w-4" />
                         <span>Reset All Filters</span>
@@ -507,19 +479,14 @@ export default function SkillQuestApp() {
             </div>
           )}
 
-          {/* TAB 3: 'profile' Tab -> Shows CharacterSheet and Achievements */}
+          {/* TAB 3: Profile */}
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start w-full min-w-0 animate-in fade-in duration-300">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start w-full min-w-0">
               <div className="space-y-6 w-full min-w-0">
-                <div className="w-full min-w-0">
-                  <CharacterSheet />
-                </div>
+                <CharacterSheet />
               </div>
-
               <div className="space-y-6 w-full min-w-0">
-                <div className="w-full min-w-0">
-                  <Achievements />
-                </div>
+                <Achievements />
               </div>
             </div>
           )}

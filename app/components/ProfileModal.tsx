@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  X, Sparkles, Trophy, Users, UserCheck, UserPlus, Edit3,
+  X, Trophy, UserCheck, UserPlus, Edit3,
   Image as ImageIcon, Check, Loader2, Trash2, AlertTriangle,
-  Camera, MessageSquare, Send, Star, Zap, Award, BookOpen, ChevronRight
+  Camera, BookOpen, ChevronRight, User, Award, Heart, MessageSquare, Shield
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { uploadImage } from "@/lib/upload";
@@ -12,6 +12,7 @@ import { subscribeToFeed, isFirebaseConfigured, deleteCompletion } from "@/lib/f
 import { subscribeLocalFeed, deleteLocalCompletion } from "@/lib/feed-storage";
 import type { UserProfile, GuildCompletion } from "@/lib/types";
 import { titleForLevel, xpForLevel } from "@/lib/user";
+import { CommentsSection } from "./GuildFeed";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -20,16 +21,16 @@ interface ProfileModalProps {
 }
 
 const CLASS_PRESETS = [
-  "Fullstack Paladin",
-  "AI Sorcerer",
-  "Cyber Samurai",
-  "Frontend Illusionist",
-  "Cloud Architect",
-  "UI Wizard",
-  "Code Alchemist",
+  "Fullstack Developer",
+  "AI Engineer",
+  "Systems Architect",
+  "Frontend Developer",
+  "Cloud Engineer",
+  "UI/UX Designer",
+  "Software Engineer",
   "Creative Explorer",
-  "Fitness Warrior",
-  "Culinary Artist",
+  "Fitness Enthusiast",
+  "Self Learner",
 ];
 
 function timeAgo(ts: number): string {
@@ -42,16 +43,8 @@ function timeAgo(ts: number): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-const badgeColors: Record<string, string> = {
-  Bronze: "bg-amber-900/60 border-amber-500/40 text-amber-300",
-  Silver: "bg-slate-700/60 border-slate-400/40 text-slate-300",
-  Gold: "bg-yellow-900/60 border-yellow-500/40 text-yellow-300",
-  Platinum: "bg-cyan-900/60 border-cyan-500/40 text-cyan-300",
-  Legendary: "bg-fuchsia-900/60 border-fuchsia-500/40 text-fuchsia-300",
-};
-
 export default function ProfileModal({ isOpen, onClose, targetProfile }: ProfileModalProps) {
-  const { profile: myProfile, updateProfileDetails, followUser, unfollowUser } = useAuth();
+  const { user, profile: myProfile, updateProfileDetails, followUser, unfollowUser, login } = useAuth();
   const isOwnProfile = !targetProfile || targetProfile.id === myProfile.id || targetProfile.id === "guest";
   const displayedProfile = isOwnProfile ? myProfile : targetProfile!;
 
@@ -125,6 +118,31 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
     }
   }
 
+  async function handleApplaud(item: GuildCompletion) {
+    if (isFirebaseConfigured() && !user) {
+      alert("Please sign in with Google to applaud achievements!");
+      await login();
+      return;
+    }
+    const userId = user?.uid ?? myProfile.id;
+    setFeed((cur) =>
+      cur.map((f) =>
+        f.id === item.id
+          ? { ...f, applause: f.applause + 1, applaudedBy: [...(f.applaudedBy || []), userId] }
+          : f
+      )
+    );
+    try {
+      if (isFirebaseConfigured()) {
+        const { applaudCompletion } = await import("@/lib/firebase");
+        await applaudCompletion(item.id, userId);
+      } else {
+        const { applaudLocal } = await import("@/lib/feed-storage");
+        await applaudLocal(item.id, userId);
+      }
+    } catch { /* ignore */ }
+  }
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -147,124 +165,115 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
     else await followUser(displayedProfile.id);
   }
 
-  // --- Gradient based on level ---
-  const levelGrad =
-    displayedProfile.level >= 5
-      ? "from-amber-600 via-orange-700 to-rose-900"
-      : displayedProfile.level >= 3
-      ? "from-fuchsia-700 via-indigo-800 to-slate-900"
-      : "from-cyan-700 via-indigo-800 to-slate-900";
+  type TabId = "overview" | "quests" | "edit";
+  const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
+    { id: "overview", label: "Overview Dossier", icon: User },
+    { id: "quests", label: `Inscribed Chronicles (${feed.length})`, icon: Trophy },
+    ...(isOwnProfile ? [{ id: "edit" as TabId, label: "Modify Dossier", icon: Edit3 }] : []),
+  ];
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-md p-0 sm:p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 transition"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="flex max-h-[96vh] sm:max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-white/10 bg-slate-950 shadow-[0_0_80px_rgba(6,182,212,0.15)] text-white"
+        className="flex max-h-[95vh] sm:max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl border-4 border-[#4a2e18] bg-parchment shadow-[0_16px_40px_rgba(0,0,0,0.85)] text-[#2b2118]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ─── Hero Banner ─── */}
-        <div className={`relative shrink-0 bg-gradient-to-br ${levelGrad} overflow-hidden`} style={{ minHeight: 140 }}>
-          {/* Decorative blobs */}
-          <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-white/5 blur-2xl" />
-          <div className="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-black/20 blur-xl" />
-
-          {/* Close button */}
+        {/* Header Banner */}
+        <div className="relative shrink-0 border-b-2 border-[#8c6239] bg-[#fcf8ed] px-6 pt-6 pb-5 shadow-md">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 rounded-full bg-black/40 border border-white/15 p-2 text-white/80 hover:bg-black/60 hover:text-white transition z-10"
-            aria-label="Close"
+            className="absolute top-4 right-4 rounded-lg border border-[#8c6239] p-2 text-[#6e5338] hover:bg-[#ebdcc0] hover:text-[#2b2118] transition"
+            aria-label="Close dossier"
           >
             <X className="h-4 w-4" />
           </button>
 
-          {/* Level badge */}
-          <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/50 border border-white/20 px-3 py-1.5 backdrop-blur-sm">
-            <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-            <span className="text-xs font-black text-white">Level {displayedProfile.level}</span>
-          </div>
-
-          {/* Avatar + Name overlay at bottom of banner */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 sm:px-8 pb-0 flex items-end gap-5">
-            <div className="relative shrink-0 translate-y-8 sm:translate-y-10">
-              <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-3xl border-4 border-slate-950 bg-slate-800 overflow-hidden flex items-center justify-center text-3xl font-black bg-gradient-to-br from-cyan-600 to-indigo-800 shadow-2xl">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayedProfile.name} className="h-full w-full object-cover" />
-                ) : (
-                  <span>{displayedProfile.name?.charAt(0).toUpperCase()}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="relative shrink-0">
+                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border-2 border-[#8c6239] bg-[#ebdcc0] overflow-hidden flex items-center justify-center font-guild font-bold text-xl sm:text-2xl text-[#4a2e18] shadow-inner">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={displayedProfile.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <span>{displayedProfile.name?.charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
+                {isOwnProfile && (
+                  <label className="absolute -bottom-1 -right-1 cursor-pointer rounded-full btn-enamel border-2 border-[#8c6239] p-1.5 shadow-sm">
+                    <Camera className="h-3.5 w-3.5 text-[#eafee8]" />
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
                 )}
               </div>
-              {isOwnProfile && (
-                <label className="absolute -bottom-1 -right-1 cursor-pointer rounded-full bg-cyan-500 border-2 border-slate-950 p-1.5 hover:bg-cyan-400 transition shadow-lg">
-                  <Camera className="h-3 w-3 text-white" />
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                </label>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2 py-0.5 text-[10px] font-guild font-bold text-[#5c3a1a] uppercase tracking-wider">
+                    Guild Rank {displayedProfile.level}
+                  </span>
+                  <span className="text-xs text-[#8c6239] font-guild font-bold truncate">
+                    {titleForLevel(displayedProfile.level)}
+                  </span>
+                </div>
+                <h2 className="mt-1 text-xl sm:text-2xl font-bold font-guild text-[#2b2118] truncate flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-[#8c6239] shrink-0" />
+                  <span>{displayedProfile.name}</span>
+                </h2>
+                <p className="text-xs font-semibold text-[#6e5338] mt-0.5">
+                  {displayedProfile.classTitle || CLASS_PRESETS[0]}
+                </p>
+              </div>
+            </div>
+
+            {/* Action buttons & Stats */}
+            <div className="flex flex-col sm:items-end gap-3 shrink-0">
+              {!isOwnProfile && (
+                <button
+                  onClick={handleFollowToggle}
+                  className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-xs font-guild font-bold transition shadow-sm ${
+                    isFollowing
+                      ? "border border-[#8c6239] bg-[#ebdcc0] text-[#5c3a1a] hover:bg-[#decda8]"
+                      : "btn-enamel"
+                  }`}
+                >
+                  {isFollowing ? <UserCheck className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
+                  <span>{isFollowing ? "Comrade Followed" : "Form Alliance"}</span>
+                </button>
               )}
-            </div>
-            <div className="pb-3 sm:pb-4 translate-y-0 min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/50 mb-0.5">
-                {titleForLevel(displayedProfile.level)}
-              </p>
-              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight truncate">
-                {displayedProfile.name}
-              </h2>
-              <span className="inline-block mt-1 rounded-full bg-black/40 border border-white/20 px-3 py-0.5 text-[11px] font-bold text-cyan-300 backdrop-blur-sm">
-                {displayedProfile.classTitle || CLASS_PRESETS[0]}
-              </span>
+
+              <div className="flex items-center gap-2">
+                <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-1.5 text-center min-w-[75px] shadow-inner">
+                  <p className="text-sm font-bold font-guild text-[#4a2e18]">{followersCount}</p>
+                  <p className="text-[10px] text-[#8c6239] font-guild font-bold uppercase">Comrades</p>
+                </div>
+                <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-1.5 text-center min-w-[75px] shadow-inner">
+                  <p className="text-sm font-bold font-guild text-[#4a2e18]">{followingCount}</p>
+                  <p className="text-[10px] text-[#8c6239] font-guild font-bold uppercase">Following</p>
+                </div>
+                <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-1.5 text-center min-w-[75px] shadow-inner">
+                  <p className="text-sm font-bold font-guild text-[#4a2e18]">{completedCount}</p>
+                  <p className="text-[10px] text-[#8c6239] font-guild font-bold uppercase">Deeds</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ─── Action row (below banner) ─── */}
-        <div className="shrink-0 flex items-center justify-end gap-3 px-5 sm:px-8 pt-12 sm:pt-14 pb-4 border-b border-white/10">
-          {!isOwnProfile && (
-            <button
-              onClick={handleFollowToggle}
-              className={`inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all duration-200 ${
-                isFollowing
-                  ? "border border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"
-                  : "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:scale-[1.02]"
-              }`}
-            >
-              {isFollowing ? <UserCheck className="h-4 w-4 text-emerald-400" /> : <UserPlus className="h-4 w-4" />}
-              <span>{isFollowing ? "Following" : "Follow"}</span>
-            </button>
-          )}
-
-          {/* Stats pills */}
-          <div className="flex items-center gap-2 ml-auto">
-            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
-              <p className="text-base font-black text-cyan-400">{followersCount}</p>
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Followers</p>
-            </div>
-            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
-              <p className="text-base font-black text-fuchsia-400">{followingCount}</p>
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Following</p>
-            </div>
-            <div className="rounded-2xl bg-black/40 border border-white/10 px-4 py-2 text-center">
-              <p className="text-base font-black text-emerald-400">{completedCount}</p>
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Quests</p>
-            </div>
-          </div>
-        </div>
-
-        {/* ─── Tabs ─── */}
-        <div className="shrink-0 flex items-center gap-1 border-b border-white/10 px-5 sm:px-8 bg-black/20 overflow-x-auto">
-          {([
-            { id: "overview", label: "Overview", icon: Sparkles },
-            { id: "quests", label: `Posts (${feed.length})`, icon: Trophy },
-            ...(isOwnProfile ? [{ id: "edit", label: "Edit Profile", icon: Edit3 }] : []),
-          ] as { id: typeof activeTab; label: string; icon: React.ElementType }[]).map(({ id, label, icon: Icon }) => (
+        {/* Tabs */}
+        <div className="shrink-0 flex items-center gap-1 border-b-2 border-[#8c6239] px-6 bg-[#fff8ea] overflow-x-auto">
+          {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`inline-flex items-center gap-1.5 py-3 px-3 text-xs sm:text-sm font-bold whitespace-nowrap border-b-2 transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1.5 py-3 px-3 text-xs sm:text-sm font-guild font-bold border-b-2 transition whitespace-nowrap ${
                 activeTab === id
-                  ? "border-cyan-400 text-cyan-300"
-                  : "border-transparent text-slate-500 hover:text-slate-300"
+                  ? "border-[#4a2e18] text-[#4a2e18]"
+                  : "border-transparent text-[#9e886d] hover:text-[#5c3a1a]"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -273,91 +282,93 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
           ))}
         </div>
 
-        {/* ─── Tab Body ─── */}
-        <div className="flex-1 overflow-y-auto">
-
-          {/* ═══ OVERVIEW TAB ═══ */}
+        {/* Tab Body */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {/* OVERVIEW TAB */}
           {activeTab === "overview" && (
-            <div className="p-5 sm:p-8 space-y-5">
-              {/* Bio card */}
-              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-slate-950 p-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400 mb-2.5 flex items-center gap-1.5">
-                  <BookOpen className="h-3.5 w-3.5" /> About
-                </p>
-                <p className="text-sm leading-relaxed text-slate-300">
-                  {displayedProfile.bio || "This adventurer prefers to let their quest completions speak for themselves."}
+            <div className="space-y-6">
+              {/* Bio */}
+              <div className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 shadow-inner">
+                <div className="flex items-center gap-1.5 text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped mb-2">
+                  <BookOpen className="h-4 w-4 text-[#8c6239]" />
+                  <span>Adventurer Biography</span>
+                </div>
+                <p className="text-sm text-[#2b2118] leading-relaxed font-serif italic">
+                  {displayedProfile.bio || "No biography inscribed yet."}
                 </p>
               </div>
 
-              {/* XP bar */}
-              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-indigo-950/40 p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-fuchsia-400 flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5" /> XP Progression
-                  </p>
-                  <span className="text-xs font-bold text-slate-300">
+              {/* XP Bar */}
+              <div className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 shadow-inner">
+                <div className="flex items-center justify-between mb-3 text-xs font-guild font-bold">
+                  <span className="uppercase tracking-wider text-gold-stamped">Rank Progression</span>
+                  <span className="text-[#4a2e18]">
                     {totalXP.toLocaleString()} / {xpNeeded.toLocaleString()} XP
                   </span>
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-slate-800 border border-white/5">
+                <div className="h-3 w-full overflow-hidden rounded-full border border-[#8c6239] bg-[#ebdcc0] p-0.5 shadow-inner">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 transition-all duration-700"
+                    className="h-full rounded-full bg-gradient-to-r from-[#235338] via-[#1b432d] to-[#10b981] transition-all duration-700"
                     style={{ width: `${xpPct}%` }}
                   />
                 </div>
-                <p className="mt-2 text-right text-[11px] text-slate-500 font-medium">{xpPct}% to Level {displayedProfile.level + 1}</p>
+                <p className="mt-2 text-right text-xs text-[#6e5338] font-guild font-semibold">{xpPct}% advancement toward Level {displayedProfile.level + 1}</p>
               </div>
 
-              {/* Achievement stats grid */}
+              {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-950/50 to-slate-950 p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-900/50 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                    <Award className="h-6 w-6 text-emerald-400" />
+                <div className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 flex items-center gap-4 shadow-sm">
+                  <div className="h-12 w-12 rounded-lg bg-[#ebdcc0] border border-[#8c6239] flex items-center justify-center shrink-0 shadow-inner">
+                    <Award className="h-6 w-6 text-[#8c6239]" />
                   </div>
                   <div>
-                    <p className="text-2xl font-black text-white">{completedCount}</p>
-                    <p className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Quests Won</p>
+                    <p className="text-xl font-bold font-guild text-[#4a2e18]">{completedCount}</p>
+                    <p className="text-xs text-[#6e5338] font-guild font-bold uppercase">Sealed Quests</p>
                   </div>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-amber-950/50 to-slate-950 p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-2xl bg-amber-900/50 border border-amber-500/30 flex items-center justify-center shrink-0">
-                    <Sparkles className="h-6 w-6 text-amber-400" />
+                <div className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 flex items-center gap-4 shadow-sm">
+                  <div className="h-12 w-12 rounded-lg bg-[#ebdcc0] border border-[#8c6239] flex items-center justify-center shrink-0 shadow-inner">
+                    <Trophy className="h-6 w-6 text-[#8c6239]" />
                   </div>
                   <div>
-                    <p className="text-2xl font-black text-white">{totalXP.toLocaleString()}</p>
-                    <p className="text-[11px] text-amber-400 font-bold uppercase tracking-wider">Total XP</p>
+                    <p className="text-xl font-bold font-guild text-[#4a2e18]">{totalXP.toLocaleString()}</p>
+                    <p className="text-xs text-[#6e5338] font-guild font-bold uppercase">Lifetime XP</p>
                   </div>
                 </div>
               </div>
 
               {/* Recent posts preview */}
               {feed.length > 0 && (
-                <div className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden">
-                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400 flex items-center gap-1.5">
-                      <Trophy className="h-3.5 w-3.5" /> Recent Achievements
-                    </p>
-                    <button onClick={() => setActiveTab("quests")} className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-white font-semibold transition">
-                      See all <ChevronRight className="h-3.5 w-3.5" />
+                <div className="rounded-xl border-2 border-[#8c6239] overflow-hidden bg-[#fff8ea] shadow-sm">
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#c1b087] bg-[#fdfaf3]">
+                    <span className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped flex items-center gap-1.5">
+                      <Trophy className="h-4 w-4 text-[#8c6239]" /> Recent Chronicles
+                    </span>
+                    <button
+                      onClick={() => setActiveTab("quests")}
+                      className="inline-flex items-center gap-1 text-xs text-[#8c6239] hover:text-[#4a2e18] font-guild font-bold transition"
+                    >
+                      <span>Inspect all ({feed.length})</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y divide-[#d8caa8]">
                     {feed.slice(0, 3).map((item) => (
-                      <div key={item.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-white/5 transition">
-                        <div className="h-10 w-10 rounded-xl overflow-hidden bg-slate-800 border border-white/10 shrink-0">
+                      <div key={item.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#fdfaf3] transition">
+                        <div className="h-12 w-12 rounded-lg overflow-hidden bg-[#ebdcc0] border border-[#8c6239] shrink-0">
                           {item.imageUrl ? (
                             <img src={item.imageUrl} alt={item.questTitle} className="h-full w-full object-cover" />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center">
-                              <Trophy className="h-4 w-4 text-slate-500" />
+                              <Trophy className="h-5 w-5 text-[#8c6239]" />
                             </div>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-white truncate">{item.questTitle}</p>
-                          <p className="text-[11px] text-slate-500">{timeAgo(item.createdAt)}</p>
+                          <p className="text-sm font-bold font-guild text-[#4a2e18] truncate">{item.questTitle}</p>
+                          <p className="text-xs text-[#8c6239]">{timeAgo(item.createdAt)}</p>
                         </div>
-                        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold shrink-0 ${badgeColors[item.badge] ?? "bg-slate-800 border-slate-600 text-slate-300"}`}>
+                        <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2 py-0.5 text-xs font-guild font-bold text-[#5c3a1a] shrink-0">
                           {item.badge}
                         </span>
                       </div>
@@ -368,35 +379,35 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
             </div>
           )}
 
-          {/* ═══ POSTS TAB ═══ */}
+          {/* POSTS TAB */}
           {activeTab === "quests" && (
-            <div className="p-5 sm:p-8 space-y-4">
+            <div className="space-y-4">
               {feed.length === 0 ? (
-                <div className="py-16 text-center border border-dashed border-white/10 rounded-3xl space-y-3">
-                  <Trophy className="mx-auto h-10 w-10 text-slate-700" />
-                  <p className="font-bold text-white">No achievements posted yet.</p>
-                  <p className="text-sm text-slate-500 max-w-xs mx-auto">
-                    Completed quests with proof photos will appear here for the guild to celebrate!
+                <div className="py-16 text-center border-2 border-dashed border-[#8c6239] rounded-xl space-y-2 bg-[#fff8ea]/60">
+                  <Trophy className="mx-auto h-8 w-8 text-[#8c6239]" />
+                  <p className="font-bold font-guild text-[#4a2e18] text-base">No achievements inscribed yet</p>
+                  <p className="text-xs text-[#6e5338] max-w-xs mx-auto">
+                    Sealed quest proof illustrations will appear here upon completion.
                   </p>
                 </div>
               ) : (
                 feed.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden">
+                  <div key={item.id} className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] overflow-hidden shadow-md">
                     {/* Card header */}
-                    <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-white/5">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-black shrink-0 ${badgeColors[item.badge] ?? "bg-slate-800 border-slate-600 text-slate-300"}`}>
+                    <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[#c1b087] bg-[#fdfaf3]">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2 py-0.5 text-xs font-guild font-bold text-[#5c3a1a] shrink-0">
                           {item.badge}
                         </span>
-                        <p className="font-bold text-white text-sm truncate">{item.questTitle}</p>
+                        <p className="font-bold font-guild text-[#4a2e18] text-sm truncate">{item.questTitle}</p>
                         {item.isCustom && (
-                          <span className="rounded-full bg-fuchsia-900/60 border border-fuchsia-500/40 px-2 py-0.5 text-[10px] font-black text-fuchsia-300 shrink-0">
-                            ✨ Custom
+                          <span className="rounded border border-[#c1b087] bg-[#ebdcc0] px-2 py-0.5 text-[10px] font-guild font-semibold text-[#6e5338] shrink-0">
+                            Custom Deed
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[11px] text-slate-500">{timeAgo(item.createdAt)}</span>
+                        <span className="text-xs text-[#8c6239]">{timeAgo(item.createdAt)}</span>
                         {isOwnProfile && (
                           confirmDeleteId === item.id ? (
                             <div className="flex items-center gap-1">
@@ -404,7 +415,7 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                                 type="button"
                                 onClick={() => handleDelete(item)}
                                 disabled={deletingId === item.id}
-                                className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2 py-0.5 text-[10px] font-bold text-white hover:bg-rose-500 transition"
+                                className="inline-flex items-center gap-1 rounded bg-red-800 border border-red-600 px-2 py-0.5 text-[11px] font-semibold text-white hover:bg-red-700 transition"
                               >
                                 {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
                                 Confirm
@@ -412,7 +423,7 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                               <button
                                 type="button"
                                 onClick={() => setConfirmDeleteId(null)}
-                                className="rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-[10px] font-medium text-slate-300 hover:bg-white/20 transition"
+                                className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2 py-0.5 text-[11px] text-[#5c3a1a] hover:bg-[#dcd0b3] transition"
                               >
                                 Cancel
                               </button>
@@ -421,9 +432,9 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                             <button
                               type="button"
                               onClick={() => setConfirmDeleteId(item.id)}
-                              className="rounded-full bg-white/5 border border-white/10 p-1.5 text-slate-500 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                              className="rounded p-1 text-[#8c6239] hover:text-red-700 hover:bg-[#ebdcc0] transition"
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
+                              <Trash2 className="h-4 w-4" />
                             </button>
                           )
                         )}
@@ -432,78 +443,89 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
 
                     {/* Image */}
                     {item.imageUrl && (
-                      <div className="border-b border-white/5">
-                        <img src={item.imageUrl} alt={item.questTitle} className="w-full h-44 object-cover" />
+                      <div className="border-b border-[#c1b087] bg-[#24160d]">
+                        <img src={item.imageUrl} alt={item.questTitle} className="w-full h-56 object-cover" />
                       </div>
                     )}
 
                     {/* Caption/reflection */}
                     {item.caption && (
-                      <div className="px-4 py-3 border-b border-white/5 bg-black/20">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-fuchsia-400 mb-1">💬 Reflection</p>
-                        <p className="text-sm text-slate-300 leading-relaxed italic">&ldquo;{item.caption}&rdquo;</p>
+                      <div className="px-4 py-3 border-b border-[#c1b087] bg-[#fdfaf3]">
+                        <p className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239] mb-1">Adventurer&apos;s Reflection</p>
+                        <p className="text-sm text-[#2b2118] leading-relaxed font-serif italic">&ldquo;{item.caption}&rdquo;</p>
                       </div>
                     )}
 
-                    {/* Applause row */}
-                    <div className="px-4 py-2.5 flex items-center gap-3 text-xs text-slate-400 border-b border-white/5">
-                      <span className="font-semibold text-fuchsia-400">👏 {item.applause} Applause</span>
-                      <span>·</span>
-                      <span>{(item.comments ?? []).length} Comments</span>
+                    {/* Applause & Missives row */}
+                    <div className="px-4 py-3 flex items-center justify-between border-t border-[#c1b087] bg-[#fdfaf3]">
+                      <button
+                        type="button"
+                        onClick={() => handleApplaud(item)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-1.5 text-xs font-guild font-bold text-[#4a2e18] hover:bg-[#ebdcc0] hover:scale-105 transition shadow-sm"
+                      >
+                        <Heart className="h-4 w-4 fill-[#8c6239] text-[#8c6239]" />
+                        <span>{item.applause} Prestige Applause</span>
+                      </button>
+                      <span className="text-xs font-guild font-bold text-[#6e5338]">
+                        {(item.comments ?? []).length} Missives Inscribed
+                      </span>
                     </div>
+
+                    {/* Interactive Comments Section */}
+                    <CommentsSection item={item} myProfile={myProfile} user={user} />
                   </div>
                 ))
               )}
             </div>
           )}
 
-          {/* ═══ EDIT TAB ═══ */}
+          {/* EDIT TAB */}
           {activeTab === "edit" && isOwnProfile && (
-            <form onSubmit={handleSave} className="p-5 sm:p-8 space-y-6">
+            <form onSubmit={handleSave} className="space-y-6">
               {/* Avatar */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Profile Picture</label>
+                <label className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Dossier Portrait</label>
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-2xl border border-cyan-500/40 bg-slate-800 overflow-hidden flex items-center justify-center shrink-0">
+                  <div className="h-16 w-16 rounded-xl border-2 border-[#8c6239] bg-[#ebdcc0] overflow-hidden flex items-center justify-center shrink-0 shadow-inner">
                     {avatarUrl ? (
                       <img src={avatarUrl} alt="Preview" className="h-full w-full object-cover" />
                     ) : (
-                      <Camera className="h-6 w-6 text-slate-500" />
+                      <Camera className="h-6 w-6 text-[#8c6239]" />
                     )}
                   </div>
-                  <label className="cursor-pointer inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 transition">
-                    {uploading ? <Loader2 className="h-4 w-4 animate-spin text-cyan-400" /> : <ImageIcon className="h-4 w-4 text-cyan-400" />}
-                    <span>{uploading ? "Uploading…" : "Upload New Photo"}</span>
+                  <label className="cursor-pointer inline-flex items-center gap-2 rounded-lg btn-bronze px-4 py-2.5 text-sm font-guild font-bold">
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+                    <span>{uploading ? "Inscribing Portrait..." : "Upload Portrait"}</span>
                     <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="hidden" />
                   </label>
                 </div>
               </div>
 
               {/* Hero Name */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Hero Name</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Adventurer Title / Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition"
+                  className="w-full rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-2.5 text-sm text-[#2b2118] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition shadow-inner font-guild font-bold"
                   required
                 />
               </div>
 
               {/* Class preset chips */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Class Specialty</label>
-                <div className="flex flex-wrap gap-2 mb-2">
+                <label className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Guild Class Specialty</label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
                   {CLASS_PRESETS.map((preset) => (
                     <button
                       key={preset}
                       type="button"
                       onClick={() => setClassTitle(preset)}
-                      className={`rounded-xl px-3 py-1.5 text-xs font-bold transition border ${
+                      className={`rounded-md px-3 py-1.5 text-xs font-guild font-bold transition border ${
                         classTitle === preset
-                          ? "bg-cyan-600/40 border-cyan-400 text-white"
-                          : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                          ? "btn-enamel text-[#eafee8]"
+                          : "bg-[#fff8ea] border-[#8c6239] text-[#5c3a1a] hover:bg-[#ebdcc0]"
                       }`}
                     >
                       {preset}
@@ -514,44 +536,43 @@ export default function ProfileModal({ isOpen, onClose, targetProfile }: Profile
                   type="text"
                   value={classTitle}
                   onChange={(e) => setClassTitle(e.target.value)}
-                  placeholder="Or type a custom class…"
-                  className="w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition"
+                  placeholder="Or enter a custom guild class title..."
+                  className="w-full rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-2.5 text-sm text-[#2b2118] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition shadow-inner font-semibold"
                 />
               </div>
 
               {/* Bio */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-400">Adventurer Bio</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Adventurer Philosophy / Biography</label>
                 <textarea
                   rows={4}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   maxLength={300}
-                  placeholder="Tell the guild about your questing philosophy, passions, or goals…"
-                  className="w-full resize-none rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition leading-relaxed"
+                  placeholder="Inscribe your personal creed or lifetime ambition..."
+                  className="w-full resize-none rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition leading-relaxed shadow-inner"
                 />
-                <p className="text-right text-[11px] text-slate-500">{bio.length}/300</p>
+                <p className="text-right text-[11px] text-[#8c6239] font-guild">{bio.length}/300</p>
               </div>
 
               {/* Save button */}
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#c1b087]">
                 {saveSuccess && (
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                    <Check className="h-4 w-4" /> Saved!
+                  <span className="text-xs font-guild font-bold text-[#235338] flex items-center gap-1.5">
+                    <Check className="h-4 w-4 text-[#235338]" /> Dossier updated
                   </span>
                 )}
                 <button
                   type="submit"
                   disabled={saving || uploading}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-7 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:shadow-[0_0_30px_rgba(6,182,212,0.55)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-lg btn-bronze px-6 py-2.5 text-sm font-guild font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                  <span>{saving ? "Saving…" : "Save Changes"}</span>
+                  <span>{saving ? "Inscribing..." : "Save Dossier Changes"}</span>
                 </button>
               </div>
             </form>
           )}
-
         </div>
       </div>
     </div>

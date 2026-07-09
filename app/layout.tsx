@@ -4,8 +4,8 @@ import Header from "./components/Header";
 import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
-  title: "SkillQuest",
-  description: "SkillQuest - The RPG quest board for self-learners.",
+  title: "SkillQuest - Adventurer's Guild",
+  description: "SkillQuest - The RPG quest board and bounty board for self-learners.",
 };
 
 export const viewport: Viewport = {
@@ -16,8 +16,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="calm" className="overflow-x-hidden">
-      <body className="min-h-screen w-full overflow-x-hidden antialiased text-slate-900 dark:text-slate-100">
+    <html lang="en" className="overflow-x-hidden">
+      <body className="min-h-screen w-full overflow-x-hidden antialiased text-[#f4ecd8] bg-[#122017]">
         <AuthProvider>
           <div className="flex min-h-screen w-full flex-col overflow-x-hidden">
             <Header />

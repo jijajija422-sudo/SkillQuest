@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, BadgeCheck, Circle, Trophy, Camera, Sparkles, CheckCircle2, MessageSquare } from "lucide-react";
+import { X, CheckCircle2, Circle, Trophy, Camera, MessageSquare } from "lucide-react";
 import type { Quest } from "@/lib/types";
 import { QuestIcon } from "./QuestIcon";
 import ProofUpload from "./ProofUpload";
@@ -54,62 +54,41 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
   const doneCount = quest.requirements.filter((r) => checked[r.id]).length;
   const progressPercent = Math.round((doneCount / quest.requirements.length) * 100);
 
-  const levelStyles: Record<string, { badge: string; iconBg: string; border: string }> = {
-    Novice: {
-      badge: "bg-emerald-950/80 border-emerald-500/40 text-emerald-300",
-      iconBg: "bg-emerald-900/40 border-emerald-500/40 text-emerald-300",
-      border: "border-emerald-500/30",
-    },
-    Journeyman: {
-      badge: "bg-sky-950/80 border-sky-500/40 text-sky-300",
-      iconBg: "bg-sky-900/40 border-sky-500/40 text-sky-300",
-      border: "border-sky-500/30",
-    },
-    Adventurer: {
-      badge: "bg-cyan-950/80 border-cyan-500/40 text-cyan-300",
-      iconBg: "bg-cyan-900/40 border-cyan-500/40 text-cyan-300",
-      border: "border-cyan-500/30",
-    },
-    Epic: {
-      badge: "bg-purple-950/80 border-purple-500/40 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)]",
-      iconBg: "bg-purple-900/40 border-purple-500/40 text-purple-300",
-      border: "border-purple-500/30",
-    },
-    Legendary: {
-      badge: "bg-amber-950/80 border-amber-500/50 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]",
-      iconBg: "bg-amber-900/40 border-amber-500/50 text-amber-300",
-      border: "border-amber-500/40",
-    },
-  };
-
-  const style = levelStyles[quest.level] || levelStyles.Adventurer;
+  const badgeAsset = quest.level === "Legendary" ? "badge-legendary.svg" :
+                     quest.level === "Epic" ? "badge-platinum.svg" :
+                     quest.level === "Adventurer" ? "badge-gold.svg" :
+                     quest.level === "Journeyman" ? "badge-silver.svg" :
+                     "badge-bronze.svg";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 sm:items-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-2 sm:p-4 sm:items-center transition"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="quest-modal-title"
     >
       <div
-        className={`max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] border ${style.border} bg-slate-950 shadow-[0_0_60px_rgba(0,0,0,0.9)] text-white`}
+        className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-2xl sm:rounded-2xl border-4 border-[#4a2e18] bg-parchment shadow-[0_16px_40px_rgba(0,0,0,0.85)] text-[#2b2118]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Sticky Header Banner */}
-        <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-white/10 bg-slate-900/95 p-5 sm:p-6 backdrop-blur-xl">
+        {/* Header */}
+        <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b-2 border-[#8c6239] bg-[#fcf8ed] p-5 sm:p-6 shadow-md">
           <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-            <div className={`flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border ${
-              completed ? "bg-emerald-950/60 border-emerald-500/50 text-emerald-300" : style.iconBg
+            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border-2 ${
+              completed ? "bg-[#d8caa8] border-[#8c6239] text-[#5c3a1a]" : "bg-[#fff8ea] border-[#8c6239] text-[#4a2e18] shadow-inner"
             }`}>
-              <QuestIcon name={quest.icon} className="h-6 w-6 sm:h-7 sm:w-7" />
+              <QuestIcon name={quest.icon} className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] text-cyan-400 truncate">{quest.category}</span>
-                <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide ${style.badge}`}>{quest.level}</span>
+                <span className="text-xs font-guild font-bold uppercase tracking-wider text-[#8c6239] truncate">{quest.category}</span>
+                <span className="inline-flex items-center gap-1 rounded border border-[#8c6239] bg-[#ebdcc0] px-2 py-0.5 text-[10px] font-guild font-bold text-[#5c3a1a]">
+                  <img src={`/assets/${badgeAsset}`} alt={quest.level} className="h-3.5 w-3.5 object-contain" />
+                  {quest.level}
+                </span>
               </div>
-              <h2 id="quest-modal-title" className="mt-1 text-lg sm:text-2xl font-black text-white leading-tight break-words">
+              <h2 id="quest-modal-title" className="mt-1 text-lg sm:text-xl font-bold font-guild text-[#2b2118] leading-tight break-words">
                 {quest.title}
               </h2>
             </div>
@@ -117,60 +96,54 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white/5 border border-white/10 p-2.5 text-slate-400 hover:bg-white/15 hover:text-white transition shrink-0"
-            aria-label="Close"
+            className="rounded-lg border border-[#8c6239] p-2 text-[#6e5338] hover:bg-[#ebdcc0] hover:text-[#2b2118] transition shrink-0"
+            aria-label="Close scroll"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Modal Content Body */}
+        {/* Body */}
         <div className="space-y-6 p-5 sm:p-6">
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">{quest.description}</p>
+          <p className="text-sm text-[#4a2e18] leading-relaxed font-serif">{quest.description}</p>
 
-          {/* XP & Progress Summary Card */}
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4 sm:p-5 shadow-inner space-y-3">
+          {/* Reward & Progress Box */}
+          <div className="rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-4 sm:p-5 space-y-3 shadow-inner">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shrink-0">
-                  <Trophy className="h-6 w-6" />
+                <div className="p-2 rounded-lg bg-[#ebdcc0] border border-[#8c6239] shrink-0">
+                  <Trophy className="h-5 w-5 text-[#8c6239]" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Reward Bounty</p>
-                  <p className="text-base sm:text-lg font-black text-amber-300 flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4 fill-amber-300" />
-                    <span>+{quest.xpReward} XP & {quest.level} Badge</span>
-                  </p>
+                  <p className="text-xs font-guild font-bold uppercase text-[#8c6239]">Bounty Reward</p>
+                  <p className="text-sm font-bold font-guild text-[#4a2e18]">+{quest.xpReward} Prestige XP &middot; {quest.level} Medal</p>
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-xl sm:text-2xl font-black text-white">{doneCount}/{quest.requirements.length}</span>
-                <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-semibold">Steps Done</p>
+                <span className="text-xl font-bold font-guild text-[#4a2e18]">{doneCount}/{quest.requirements.length}</span>
+                <p className="text-[10px] text-[#6e5338] font-guild font-bold uppercase">Seals</p>
               </div>
             </div>
 
-            {/* Live Progress Bar inside Modal */}
-            <div className="space-y-1.5 pt-1">
-              <div className="flex justify-between text-xs font-semibold text-slate-400">
-                <span>Checklist Progress</span>
-                <span className={allChecked ? "text-emerald-400 font-bold" : "text-cyan-300"}>{progressPercent}%</span>
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs font-guild font-bold text-[#8c6239]">
+                <span>Deed Progress</span>
+                <span className={allChecked ? "text-[#235338]" : ""}>{progressPercent}% Mastered</span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-black/60 border border-white/10 p-0.5">
+              <div className="h-2 w-full overflow-hidden rounded-full border border-[#8c6239] bg-[#d8caa8]/60 shadow-inner">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${
-                    completed || allChecked ? "from-emerald-400 to-teal-300" : "from-cyan-400 via-indigo-500 to-purple-500"
-                  }`}
+                  className={`h-full rounded-full transition-all duration-500 ${completed || allChecked ? "bg-[#5c3a1a]" : "bg-gradient-to-r from-[#235338] via-[#1b432d] to-[#10b981]"}`}
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Interactive Checklist */}
+          {/* Checklist */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-cyan-400">Action Steps Checklist</h3>
-              <span className="text-xs text-slate-400 font-medium">Tap each item when finished</span>
+            <div className="flex items-center justify-between mb-3 border-b border-[#c1b087] pb-2">
+              <h3 className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Quest Requirements</h3>
+              <span className="text-xs font-semibold text-[#6e5338]">Stamp each step upon completion</span>
             </div>
             <ul className="space-y-2.5">
               {quest.requirements.map((req) => {
@@ -180,23 +153,23 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
                     <button
                       type="button"
                       onClick={() => toggleRequirement(req.id)}
-                      className={`flex w-full items-start gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 transform active:scale-[0.98] ${
+                      className={`flex w-full items-start gap-3 rounded-xl border-2 p-4 text-left transition shadow-sm ${
                         isDone
-                          ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-                          : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-500/40 text-slate-200"
+                          ? "border-[#8c6239]/60 bg-[#ebdcc0] text-[#6e5338]"
+                          : "border-[#8c6239] bg-[#fff8ea] hover:bg-[#fdfaf3] text-[#2b2118]"
                       }`}
                     >
                       {isDone ? (
-                        <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)] transition-transform scale-110" />
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#235338] fill-[#eafee8]" />
                       ) : (
-                        <Circle className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" />
+                        <Circle className="mt-0.5 h-5 w-5 shrink-0 text-[#a87440]" />
                       )}
                       <div>
-                        <p className={`font-bold text-sm sm:text-base ${isDone ? "text-emerald-300 line-through opacity-90" : "text-white"}`}>
+                        <p className={`font-bold font-guild text-sm ${isDone ? "line-through text-[#6e5338]" : "text-[#4a2e18]"}`}>
                           {req.label}
                         </p>
                         {req.description && (
-                          <p className="mt-1 text-xs sm:text-sm text-slate-400 leading-relaxed font-normal">{req.description}</p>
+                          <p className="mt-1 text-xs text-[#5c3a1a] leading-relaxed">{req.description}</p>
                         )}
                       </div>
                     </button>
@@ -206,40 +179,37 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
             </ul>
           </div>
 
-          {/* Completion Status or Proof Upload */}
+          {/* Proof Upload / Reflection Section */}
           {!completed && (
-            <div className={`rounded-3xl border p-5 sm:p-6 shadow-inner transition duration-300 ${
-              allChecked
-                ? "border-emerald-500/60 bg-emerald-950/30 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
-                : "border-dashed border-cyan-500/40 bg-cyan-950/20"
+            <div className={`rounded-xl border-2 p-5 sm:p-6 transition shadow-inner ${
+              allChecked ? "border-[#235338] bg-[#eafee8]/40" : "border-dashed border-[#8c6239] bg-[#fff8ea]/60"
             }`}>
-              <div className="mb-3 flex items-center gap-2.5">
-                <Camera className={`h-5 w-5 ${allChecked ? "text-emerald-400 animate-bounce" : "text-cyan-400"}`} />
-                <h3 className="font-bold text-white text-base">
-                  {allChecked ? "✨ All Steps Complete! Share Your Story Below:" : "Submit Proof of Completion"}
+              <div className="mb-3 flex items-center gap-2">
+                <Camera className="h-4 w-4 text-[#8c6239]" />
+                <h3 className="font-bold font-guild text-[#4a2e18] text-sm">
+                  {allChecked ? "All seals stamped — submit proof to claim bounty" : "Submit visual proof of completion"}
                 </h3>
               </div>
-              <p className="mb-4 text-xs sm:text-sm text-slate-300/90 leading-relaxed font-normal">
+              <p className="mb-4 text-xs text-[#6e5338] leading-relaxed">
                 {allChecked
-                  ? "Amazing work! Write how you felt about completing this quest, then upload your proof image to claim your XP and inspire the guild."
-                  : "Complete all action steps above, then write a short reflection and upload your proof image to claim your XP reward!"}
+                  ? "Pen your reflections on the task and present visual proof of your deed."
+                  : "Seal all step requirements above, then present your proof to claim XP."}
               </p>
 
-              {/* Reflection textarea — always visible so user can draft while completing steps */}
               <div className="mb-5 space-y-1.5">
-                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-400">
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  <span>Your reflection <span className="text-slate-500 normal-case font-normal tracking-normal">(optional — share how it felt!)</span></span>
+                <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                  <MessageSquare className="h-3.5 w-3.5 text-[#8c6239]" />
+                  <span>Adventurer Reflection <span className="text-[#8c6239] font-normal">(optional chronicle entry)</span></span>
                 </label>
                 <textarea
                   rows={3}
                   value={reflection}
                   onChange={(e) => setReflection(e.target.value)}
                   maxLength={400}
-                  placeholder="How did completing this quest make you feel? What was the hardest part? What did you learn? The guild wants to hear your story!"
-                  className="w-full resize-none rounded-2xl border border-white/15 bg-black/40 p-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition leading-relaxed"
+                  placeholder="Inscribe how mastering this skill elevated your abilities..."
+                  className="w-full resize-none rounded-lg border border-[#8c6239] bg-[#fff8ea] p-3 text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition leading-relaxed"
                 />
-                <p className="text-right text-[11px] text-slate-500">{reflection.length}/400</p>
+                <p className="text-right text-[11px] text-[#8c6239]">{reflection.length}/400</p>
               </div>
 
               <ProofUpload
@@ -247,7 +217,7 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
                 questTitle={quest.title}
                 userName={userName}
                 disabled={!allChecked}
-                disabledReason="Complete all action steps in the checklist above first"
+                disabledReason="Seal all step requirements above first"
                 externalCaption={reflection}
                 onSuccess={(url) => onComplete(quest.id, url)}
               />
@@ -255,11 +225,11 @@ export default function QuestModal({ quest, completed, onClose, onComplete, user
           )}
 
           {completed && (
-            <div className="rounded-3xl border border-emerald-500/50 bg-emerald-950/50 p-6 text-center shadow-[0_0_35px_rgba(16,185,129,0.25)]">
-              <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400 animate-bounce" />
-              <p className="mt-2 text-xl font-black text-white">Quest Completed! 🎉</p>
-              <p className="text-xs sm:text-sm text-emerald-300 mt-1 font-semibold">
-                Your proof is permanently recorded in guild telemetry.
+            <div className="rounded-xl border-2 border-[#8c6239] bg-[#ebdcc0] p-6 text-center shadow-inner">
+              <CheckCircle2 className="mx-auto h-10 w-10 text-[#235338] fill-[#eafee8]" />
+              <p className="mt-2 text-lg font-bold font-guild text-[#4a2e18]">Deed Officially Sealed</p>
+              <p className="text-sm text-[#6e5338] mt-1">
+                Your proof is inscribed forever in the Guild Chronicle.
               </p>
             </div>
           )}

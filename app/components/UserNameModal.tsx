@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Shield } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 interface UserNameModalProps {
@@ -31,29 +31,34 @@ export default function UserNameModal({ onSave }: UserNameModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-        <div className="flex items-center gap-2 text-sky-600 dark:text-sky-400">
-          <Sparkles className="h-5 w-5" />
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Welcome, adventurer!</h2>
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 transition">
+      <div className="w-full max-w-sm rounded-2xl border-4 border-[#4a2e18] bg-parchment p-6 shadow-[0_16px_40px_rgba(0,0,0,0.85)] text-[#2b2118]">
+        <div className="flex items-center gap-3 border-b-2 border-[#8c6239] pb-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[#8c6239] bg-[#fff8ea] text-[#4a2e18] shadow-inner">
+            <Shield className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold font-guild text-[#2b2118] leading-tight">Inscribe Your Hero Title</h2>
+            <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Guild Registry Entry</p>
+          </div>
         </div>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-          Choose a guild name to appear on the feed when you complete quests.
+        <p className="mt-4 text-xs sm:text-sm text-[#5c3a1a] leading-relaxed font-serif">
+          Inscribe your chosen name or title into the Guild Registry. This moniker will be etched into the Chronicle when you seal quest deeds.
         </p>
-        <form onSubmit={submit} className="mt-4 space-y-4">
+        <form onSubmit={submit} className="mt-5 space-y-4">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your hero name"
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+            placeholder="Your hero title or moniker"
+            className="w-full rounded-lg border-2 border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition font-guild font-bold shadow-inner"
             autoFocus
             maxLength={24}
           />
           <button
             type="submit"
-            className="w-full rounded-xl bg-slate-900 py-3 font-semibold text-white hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-700"
+            className="w-full rounded-lg btn-bronze py-3 text-sm font-guild font-bold shadow-md transition"
           >
-            Begin quest
+            Begin Adventurer Journey
           </button>
         </form>
       </div>

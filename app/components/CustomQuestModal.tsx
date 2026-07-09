@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import {
-  X, Upload, Camera, Loader2, Check, Sparkles,
+  X, Upload, Camera, Loader2, Check,
   MessageSquare, Tag, Trophy, PenLine
 } from "lucide-react";
 import { isCloudinaryConfigured, uploadToCloudinary } from "@/lib/upload";
@@ -28,11 +28,11 @@ const CUSTOM_CATEGORIES = [
 ];
 
 const BADGE_OPTIONS = [
-  { label: "Bronze — Getting Started", value: "Bronze" },
-  { label: "Silver — Building Momentum", value: "Silver" },
-  { label: "Gold — Impressive Work!", value: "Gold" },
-  { label: "Platinum — Elite Level", value: "Platinum" },
-  { label: "Legendary — Extraordinary!", value: "Legendary" },
+  { label: "Bronze Medal — Getting Started", value: "Bronze" },
+  { label: "Silver Medal — Building Momentum", value: "Silver" },
+  { label: "Gold Medal — Impressive Work", value: "Gold" },
+  { label: "Platinum Medal — Elite Level", value: "Platinum" },
+  { label: "Legendary Medal — Extraordinary", value: "Legendary" },
 ];
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -122,16 +122,16 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
 
   async function handleSubmit() {
     if (!title.trim()) {
-      setError("Please enter a title for your achievement.");
+      setError("Please enter a title for your custom deed.");
       return;
     }
     if (!selectedFile) {
-      setError("Please attach a proof image.");
+      setError("Please attach a proof illustration.");
       return;
     }
 
     if (isFirebaseConfigured() && !user) {
-      alert("Please sign in with Google to post your achievement!");
+      alert("Please sign in with Google to post your deed!");
       await login();
       return;
     }
@@ -178,7 +178,7 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
         onClose();
       }, 2500);
     } catch {
-      setError("Something went wrong. Please try a smaller image or check your connection.");
+      setError("Something went wrong. Please try a smaller image or check your guild connection.");
     } finally {
       setUploading(false);
     }
@@ -188,34 +188,34 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 sm:items-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-2 sm:p-4 sm:items-center transition"
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="custom-quest-modal-title"
     >
       <div
-        className="max-h-[95vh] w-full max-w-xl overflow-y-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-fuchsia-500/30 bg-slate-950 shadow-[0_0_60px_rgba(217,70,239,0.2)] text-white"
+        className="max-h-[95vh] w-full max-w-xl overflow-y-auto rounded-t-2xl sm:rounded-2xl border-4 border-[#4a2e18] bg-parchment shadow-[0_16px_40px_rgba(0,0,0,0.85)] text-[#2b2118]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-slate-900/95 p-5 sm:p-6 backdrop-blur-xl">
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b-2 border-[#8c6239] bg-[#fcf8ed] p-5 sm:p-6 shadow-md">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-fuchsia-500/40 bg-fuchsia-900/40 text-fuchsia-300 shrink-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg border-2 border-[#8c6239] bg-[#fff8ea] text-[#4a2e18] shrink-0 shadow-inner">
               <PenLine className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-fuchsia-400">Your Story</p>
-              <h2 id="custom-quest-modal-title" className="text-lg sm:text-xl font-black text-white leading-tight">
-                Share Your Own Achievement
+              <p className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239]">Inscribe New Bounty Deed</p>
+              <h2 id="custom-quest-modal-title" className="text-base sm:text-xl font-bold font-guild text-[#2b2118] leading-tight">
+                Share Custom Deed & Proof
               </h2>
             </div>
           </div>
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-full bg-white/5 border border-white/10 p-2.5 text-slate-400 hover:bg-white/15 hover:text-white transition shrink-0"
-            aria-label="Close"
+            className="rounded-lg border border-[#8c6239] p-2 text-[#6e5338] hover:bg-[#ebdcc0] hover:text-[#2b2118] transition shrink-0"
+            aria-label="Close scroll"
           >
             <X className="h-5 w-5" />
           </button>
@@ -224,97 +224,97 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
         {/* Body */}
         <div className="space-y-5 p-5 sm:p-6">
           {success ? (
-            <div className="rounded-2xl border border-emerald-500/50 bg-emerald-950/40 p-8 text-center space-y-3 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-              <Check className="mx-auto h-12 w-12 text-emerald-400 animate-bounce" />
-              <p className="text-xl font-black text-white">Achievement Posted! 🎉</p>
-              <p className="text-sm text-emerald-300">+50 XP bonus awarded for sharing your personal win with the guild!</p>
+            <div className="rounded-xl border-2 border-[#8c6239] bg-[#ebdcc0] p-8 text-center space-y-3 shadow-inner">
+              <Check className="mx-auto h-12 w-12 text-[#235338]" />
+              <p className="text-xl font-bold font-guild text-[#4a2e18]">Deed Inscribed into the Chronicle</p>
+              <p className="text-sm text-[#6e5338] font-guild font-semibold">+50 Prestige XP awarded for sharing your independent deed.</p>
             </div>
           ) : (
             <>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Completed something amazing that&apos;s not in the quest board? Post it here and inspire the guild! Every personal win counts. 🌟
+              <p className="text-sm text-[#5c3a1a] leading-relaxed font-serif">
+                Mastered an independent trial not listed on the Guild Bounty Board? Inscribe your deed here and inspire fellow adventurers.
               </p>
 
-              {/* XP Bonus Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full bg-amber-950/60 border border-amber-500/30 px-4 py-2 text-xs font-bold text-amber-300">
-                <Sparkles className="h-3.5 w-3.5 fill-amber-300 text-amber-300 animate-pulse" />
-                <span>+50 XP bonus for posting a personal achievement</span>
+              {/* XP note */}
+              <div className="inline-flex items-center gap-2 rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3.5 py-2 text-xs font-guild font-bold text-[#5c3a1a] shadow-sm">
+                <Trophy className="h-4 w-4 text-[#8c6239]" />
+                <span>+50 Prestige XP awarded upon inscription</span>
               </div>
 
-              {/* Achievement Title */}
+              {/* Title */}
               <div className="space-y-1.5">
-                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-fuchsia-400">
-                  <Trophy className="h-3.5 w-3.5" />
-                  <span>What did you accomplish? <span className="text-rose-400">*</span></span>
+                <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                  <Trophy className="h-3.5 w-3.5 text-[#8c6239]" />
+                  <span>Title of Your Accomplishment <span className="text-red-700">*</span></span>
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   maxLength={80}
-                  placeholder="e.g. Ran my first 10K, Built a guitar from scratch, Learned to surf…"
-                  className="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50 transition"
+                  placeholder="e.g. Crafted a walnut shield, Ran a 10K marathon, Mastered Python..."
+                  className="w-full rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition shadow-inner"
                 />
-                <p className="text-right text-[11px] text-slate-500">{title.length}/80</p>
+                <p className="text-right text-[11px] text-[#8c6239] font-guild">{title.length}/80</p>
               </div>
 
-              {/* Category & Badge Row */}
+              {/* Category & Badge */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-fuchsia-400">
-                    <Tag className="h-3.5 w-3.5" />
-                    <span>Category</span>
+                  <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                    <Tag className="h-3.5 w-3.5 text-[#8c6239]" />
+                    <span>Deed Category</span>
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-2xl border border-white/15 bg-black/50 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50 transition cursor-pointer"
+                    className="w-full rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] font-semibold focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition cursor-pointer shadow-inner"
                   >
                     {CUSTOM_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+                      <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-fuchsia-400">
-                    <Trophy className="h-3.5 w-3.5" />
-                    <span>Difficulty</span>
+                  <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                    <Trophy className="h-3.5 w-3.5 text-[#8c6239]" />
+                    <span>Medal Rank</span>
                   </label>
                   <select
                     value={badge}
                     onChange={(e) => setBadge(e.target.value)}
-                    className="w-full rounded-2xl border border-white/15 bg-black/50 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50 transition cursor-pointer"
+                    className="w-full rounded-lg border border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] font-semibold focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition cursor-pointer shadow-inner"
                   >
                     {BADGE_OPTIONS.map((b) => (
-                      <option key={b.value} value={b.value} className="bg-slate-900 text-white">{b.label}</option>
+                      <option key={b.value} value={b.value}>{b.label}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Reflection/Caption */}
+              {/* Caption */}
               <div className="space-y-1.5">
-                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-fuchsia-400">
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  <span>Tell your story <span className="text-slate-500 normal-case font-normal tracking-normal">(optional but encouraged!)</span></span>
+                <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                  <MessageSquare className="h-3.5 w-3.5 text-[#8c6239]" />
+                  <span>Chronicle Story <span className="text-[#8c6239] font-normal">(optional)</span></span>
                 </label>
                 <textarea
                   rows={4}
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
                   maxLength={500}
-                  placeholder="How did it feel? What was the hardest part? What would you tell someone just starting? Share your experience with the guild…"
-                  className="w-full resize-none rounded-2xl border border-white/15 bg-black/40 p-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50 transition leading-relaxed"
+                  placeholder="Pen your tale: What obstacles arose? How did you overcome them?"
+                  className="w-full resize-none rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition leading-relaxed shadow-inner"
                 />
-                <p className="text-right text-[11px] text-slate-500">{caption.length}/500</p>
+                <p className="text-right text-[11px] text-[#8c6239] font-guild">{caption.length}/500</p>
               </div>
 
-              {/* Image Upload Zone */}
+              {/* Image upload */}
               <div className="space-y-1.5">
-                <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-fuchsia-400">
-                  <Camera className="h-3.5 w-3.5" />
-                  <span>Proof image <span className="text-rose-400">*</span></span>
+                <label className="flex items-center gap-2 text-xs font-guild font-bold text-[#5c3a1a]">
+                  <Camera className="h-3.5 w-3.5 text-[#8c6239]" />
+                  <span>Visual Proof Illustration <span className="text-red-700">*</span></span>
                 </label>
                 <input ref={inputRef} type="file" accept="image/*" onChange={onChange} className="hidden" />
 
@@ -324,33 +324,31 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
                     onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                     onDragLeave={() => setDragOver(false)}
                     onClick={() => inputRef.current?.click()}
-                    className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-200 ${
-                      dragOver
-                        ? "border-fuchsia-400 bg-fuchsia-950/40 scale-[1.01] shadow-[0_0_25px_rgba(217,70,239,0.25)]"
-                        : "border-white/20 bg-white/5 hover:border-fuchsia-500/60 hover:bg-fuchsia-950/20"
+                    className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition ${
+                      dragOver ? "border-[#4a2e18] bg-[#ebdcc0]" : "border-[#8c6239] bg-[#fff8ea] hover:border-[#4a2e18] hover:bg-[#fdfaf3]"
                     }`}
                   >
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border transition ${dragOver ? "border-fuchsia-400 bg-fuchsia-900/50 text-fuchsia-300" : "border-white/15 bg-white/5 text-slate-400"}`}>
-                      <Upload className="h-5 w-5" />
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-lg border-2 transition ${dragOver ? "border-[#4a2e18] bg-[#d8caa8] text-[#4a2e18]" : "border-[#8c6239] bg-[#ebdcc0] text-[#5c3a1a]"}`}>
+                      <Upload className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className="font-bold text-white text-sm">{dragOver ? "Drop it here!" : "Drag & drop your proof image"}</p>
-                      <p className="text-xs text-slate-400 mt-1">or <span className="text-fuchsia-400 font-semibold underline underline-offset-2">click to browse</span></p>
-                      <p className="text-[11px] text-slate-500 mt-1.5">PNG, JPG, GIF, WebP — max ~5MB</p>
+                      <p className="font-bold font-guild text-[#4a2e18] text-sm">{dragOver ? "Unfurl illustration here" : "Drag & drop visual proof"}</p>
+                      <p className="text-xs text-[#6e5338] mt-1">or <span className="text-[#4a2e18] font-bold underline underline-offset-2">inspect parchment scrolls</span></p>
+                      <p className="text-[11px] text-[#8c6239] mt-1.5">PNG, JPG, GIF, WebP</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-black/50 shadow-inner">
-                    <img src={preview} alt="Upload preview" className="h-44 w-full object-cover opacity-95" />
+                  <div className="relative overflow-hidden rounded-xl border-2 border-[#8c6239] shadow-md">
+                    <img src={preview} alt="Upload preview" className="h-48 w-full object-cover" />
                     <button
                       type="button"
                       onClick={() => { setPreview(null); setSelectedFile(null); }}
-                      className="absolute top-3 right-3 rounded-full bg-black/80 border border-white/20 p-1.5 text-white hover:bg-black/95 transition"
+                      className="absolute top-3 right-3 rounded-lg bg-[#fff8ea]/90 border border-[#8c6239] p-1.5 text-[#5c3a1a] hover:bg-[#fff8ea] transition shadow-sm"
                     >
                       <X className="h-4 w-4" />
                     </button>
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-                      <p className="text-xs text-white/80 font-medium">✅ Image ready to submit!</p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#24160d]/80 to-transparent p-3">
+                      <p className="text-xs text-[#f4ecd8] font-guild font-bold">Proof ready for inscription</p>
                     </div>
                   </div>
                 )}
@@ -358,8 +356,8 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
 
               {/* Error */}
               {error && (
-                <div className="rounded-xl border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-sm text-rose-300 font-medium">
-                  ⚠️ {error}
+                <div className="rounded-lg border border-red-700 bg-red-100 px-4 py-3 text-sm font-semibold text-red-900 shadow-sm">
+                  {error}
                 </div>
               )}
 
@@ -368,23 +366,23 @@ export default function CustomQuestModal({ isOpen, onClose }: CustomQuestModalPr
                 type="button"
                 onClick={handleSubmit}
                 disabled={uploading || !title.trim() || !selectedFile}
-                className={`w-full inline-flex items-center justify-center gap-2.5 rounded-2xl py-3.5 text-sm font-black transition-all duration-200 ${
+                className={`w-full inline-flex items-center justify-center gap-2 rounded-lg py-3.5 text-sm font-guild font-bold transition shadow-md ${
                   !title.trim() || !selectedFile
-                    ? "bg-white/5 border border-white/10 text-slate-500 cursor-not-allowed"
+                    ? "bg-[#ebdcc0] border border-[#c1b087] text-[#9e886d] cursor-not-allowed"
                     : uploading
-                    ? "bg-fuchsia-700/80 border border-fuchsia-500/50 text-white cursor-wait"
-                    : "bg-gradient-to-r from-fuchsia-500 to-purple-600 border border-fuchsia-300/30 text-white shadow-[0_0_25px_rgba(217,70,239,0.4)] hover:shadow-[0_0_40px_rgba(217,70,239,0.6)] hover:scale-[1.01] active:scale-[0.99]"
+                    ? "btn-bronze cursor-wait"
+                    : "btn-bronze"
                 }`}
               >
                 {uploading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Posting to Guild…</span>
+                    <span>Inscribing into Chronicle...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4" />
-                    <span>Share with the Guild (+50 XP)</span>
+                    <PenLine className="h-4 w-4" />
+                    <span>Seal & Share Deed (+50 XP)</span>
                   </>
                 )}
               </button>

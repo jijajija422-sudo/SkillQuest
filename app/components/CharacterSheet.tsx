@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { titleForLevel, xpForLevel, saveProfile } from "@/lib/user";
 import type { UserProfile } from "@/lib/types";
 import ProfileModal from "./ProfileModal";
-import { Edit3 } from "lucide-react";
+import { Edit3, Shield } from "lucide-react";
 
 export default function CharacterSheet() {
   const { profile } = useAuth();
@@ -19,52 +19,55 @@ export default function CharacterSheet() {
   return (
     <>
       <ProfileModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
-      <div className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl p-6 text-white shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-        <div className="flex items-center justify-between">
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-400/80">Character Sheet</p>
+      <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-6 shadow-[0_8px_20px_rgba(0,0,0,0.6)] text-[#2b2118]">
+        <div className="flex items-center justify-between border-b border-[#c1b087] pb-3">
+          <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Guild Adventurer Sheet</p>
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-900/60 transition"
+            className="inline-flex items-center gap-1.5 rounded-lg btn-bronze px-3 py-1.5 text-xs font-guild font-bold transition"
           >
-            <Edit3 className="h-3 w-3" />
-            <span>Edit</span>
+            <Edit3 className="h-3.5 w-3.5" />
+            <span>Modify Dossier</span>
           </button>
         </div>
-        <div className="mt-4 flex items-center gap-4">
-          <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-800 border border-cyan-500/40 overflow-hidden shrink-0">
+
+        <div className="mt-5 flex items-center gap-4">
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-lg bg-[#ebdcc0] border-2 border-[#8c6239] overflow-hidden shrink-0 shadow-inner">
             {profile.avatarUrl ? (
               <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full object-cover" />
             ) : (
-              <span className="text-xl font-bold text-white">{profile.level}</span>
+              <span className="text-xl font-bold font-guild text-[#4a2e18]">{profile.level}</span>
             )}
-            <span className="absolute bottom-0 right-0 bg-cyan-600 px-1.5 py-0.5 text-[10px] font-black text-white rounded-tl-lg">
-              {profile.level}
+            <span className="absolute bottom-0 right-0 bg-[#4a2e18] border-t border-l border-[#8c6239] px-1.5 py-0.5 text-[10px] font-guild font-bold text-[#f5d77f] rounded-tl">
+              Lvl {profile.level}
             </span>
           </div>
-          <div className="min-w-0">
-            <p className="font-bold text-white truncate text-lg">{profile.name}</p>
-            <p className="text-xs text-cyan-300 font-medium">{profile.classTitle || "Fullstack Paladin"}</p>
-            <p className="text-xs text-slate-400 mt-0.5">{titleForLevel(profile.level)}</p>
+          <div className="min-w-0 flex-1">
+            <p className="font-bold font-guild text-[#4a2e18] truncate text-lg">{profile.name}</p>
+            <p className="text-xs font-semibold text-[#6e5338]">{profile.classTitle || "Guild Explorer"}</p>
+            <p className="text-xs text-[#8c6239] font-guild font-bold mt-0.5">{titleForLevel(profile.level)}</p>
           </div>
         </div>
+
         <div className="mt-6 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-300">
-            <span>XP Progress</span>
-            <span className="font-semibold text-cyan-300">
-              {profile.xp.toLocaleString()} / {xpNeeded.toLocaleString()}
+          <div className="flex items-center justify-between text-xs font-guild font-bold text-[#6e5338]">
+            <span>Rank Progression</span>
+            <span className="font-bold text-[#4a2e18]">
+              {profile.xp.toLocaleString()} / {xpNeeded.toLocaleString()} XP
             </span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-black/40 border border-white/5">
+          <div className="h-2 overflow-hidden rounded-full border border-[#8c6239] bg-[#ebdcc0] p-0.5 shadow-inner">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 transition-all duration-700"
+              className="h-full rounded-full bg-gradient-to-r from-[#235338] via-[#1b432d] to-[#10b981] transition-all duration-700"
               style={{ width: `${pct}%` }}
             />
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-xs text-slate-400 border-t border-white/10 pt-4">
-          <span>Followers: <strong className="text-white">{(profile.followers || []).length}</strong></span>
-          <span>Following: <strong className="text-white">{(profile.following || []).length}</strong></span>
-          <span>Quests: <strong className="text-emerald-400">{profile.completedQuests.length}</strong></span>
+
+        <div className="mt-5 flex items-center justify-between text-xs font-guild font-semibold text-[#5c3a1a] border-t border-[#c1b087] pt-4">
+          <span>Comrades: <strong className="text-[#4a2e18] font-bold">{(profile.followers || []).length}</strong></span>
+          <span>Following: <strong className="text-[#4a2e18] font-bold">{(profile.following || []).length}</strong></span>
+          <span>Sealed Quests: <strong className="text-[#4a2e18] font-bold">{profile.completedQuests.length}</strong></span>
         </div>
       </div>
     </>

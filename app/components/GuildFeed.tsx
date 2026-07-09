@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  HandHeart, Clock, Loader2, Users, Trash2, AlertTriangle,
-  MessageSquare, Send, ChevronDown, ChevronUp, X
+  Heart, Clock, Loader2, Users, Trash2,
+  MessageSquare, Send, ChevronDown, ChevronUp, X, ShieldAlert
 } from "lucide-react";
 import type { GuildCompletion, GuildComment } from "@/lib/types";
 import {
@@ -30,8 +30,7 @@ function timeAgo(ts: number): string {
 
 interface GuildFeedProps { compact?: boolean; }
 
-// ─── Comments section for a single post ───────────────────────────────────────
-function CommentsSection({
+export function CommentsSection({
   item,
   myProfile,
   user,
@@ -47,7 +46,6 @@ function CommentsSection({
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Keep in sync if parent re-renders with updated item
   useEffect(() => { setComments(item.comments ?? []); }, [item.comments]);
 
   async function handleSubmit() {
@@ -90,71 +88,65 @@ function CommentsSection({
     (item.userId && item.userId === (user?.uid ?? myProfile.id));
 
   return (
-    <div className="border-t border-white/10">
-      {/* Toggle bar */}
+    <div className="border-t border-[#d8caa8] bg-[#fdfaf3]/80 rounded-b-xl">
       <button
         type="button"
         onClick={() => { setOpen((o) => !o); setTimeout(() => inputRef.current?.focus(), 100); }}
-        className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-white transition group"
+        className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold text-[#6e5338] hover:text-[#3d2f21] transition"
       >
         <span className="flex items-center gap-1.5">
-          <MessageSquare className="h-3.5 w-3.5 text-cyan-400" />
-          {comments.length === 0 ? "Add a comment…" : `${comments.length} Comment${comments.length !== 1 ? "s" : ""}`}
+          <MessageSquare className="h-3.5 w-3.5 text-[#8c6239]" />
+          {comments.length === 0 ? "Add Missive / Comment..." : `${comments.length} missive${comments.length !== 1 ? "s" : ""}`}
         </span>
-        {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+        {open ? <ChevronUp className="h-3.5 w-3.5 text-[#8c6239]" /> : <ChevronDown className="h-3.5 w-3.5 text-[#8c6239]" />}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-3">
-          {/* Existing comments */}
           {comments.length > 0 && (
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {comments.map((c) => (
-                <div key={c.id} className="flex items-start gap-3 group">
-                  {/* Avatar */}
-                  <div className="h-7 w-7 rounded-xl shrink-0 bg-gradient-to-br from-cyan-600 to-indigo-700 border border-white/15 flex items-center justify-center text-xs font-black text-white overflow-hidden">
+                <div key={c.id} className="flex items-start gap-2.5 group">
+                  <div className="h-6 w-6 rounded-full shrink-0 bg-[#ebdcc0] border border-[#c1b087] flex items-center justify-center text-[10px] font-bold text-[#5c3a1a] overflow-hidden">
                     {c.avatarUrl ? (
                       <img src={c.avatarUrl} alt={c.userName} className="h-full w-full object-cover" />
                     ) : (
                       c.userName.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <div className="flex-1 min-w-0 rounded-2xl bg-white/5 border border-white/10 px-3.5 py-2.5">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <p className="text-xs font-black text-white">{c.userName}</p>
+                  <div className="flex-1 min-w-0 rounded-lg bg-[#f4ecd8] border border-[#c1b087] px-3 py-2 shadow-sm">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <p className="text-xs font-bold font-guild text-[#4a2e18]">{c.userName}</p>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] text-slate-500">{timeAgo(c.createdAt)}</span>
+                        <span className="text-[10px] text-[#8c6239]">{timeAgo(c.createdAt)}</span>
                         {canDeleteComment(c) && (
                           <button
                             type="button"
                             onClick={() => handleDeleteComment(c.id)}
                             disabled={deletingCommentId === c.id}
-                            className="opacity-0 group-hover:opacity-100 rounded-full p-0.5 text-slate-500 hover:text-rose-400 transition"
+                            className="opacity-0 group-hover:opacity-100 text-[#a87440] hover:text-red-700 transition"
                           >
-                            {deletingCommentId === c.id
-                              ? <Loader2 className="h-3 w-3 animate-spin" />
-                              : <X className="h-3 w-3" />}
+                            {deletingCommentId === c.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
                           </button>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-slate-300 leading-relaxed">{c.text}</p>
+                    <p className="text-sm text-[#2b2118] leading-relaxed">{c.text}</p>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* New comment input */}
-          <div className="flex items-end gap-2.5">
-            <div className="h-7 w-7 rounded-xl shrink-0 bg-gradient-to-br from-cyan-600 to-indigo-700 border border-white/15 flex items-center justify-center text-xs font-black text-white overflow-hidden">
+          <div className="flex items-end gap-2 pt-1">
+            <div className="h-6 w-6 rounded-full shrink-0 bg-[#ebdcc0] border border-[#c1b087] flex items-center justify-center text-[10px] font-bold text-[#5c3a1a] overflow-hidden">
               {myProfile.avatarUrl ? (
                 <img src={myProfile.avatarUrl} alt={myProfile.name} className="h-full w-full object-cover" />
               ) : (
                 (myProfile.name || "A").charAt(0).toUpperCase()
               )}
             </div>
-            <div className="flex-1 flex items-end gap-2 rounded-2xl border border-white/15 bg-black/40 px-3.5 py-2.5 focus-within:border-cyan-500/60 focus-within:bg-black/60 transition">
+            <div className="flex-1 flex items-end gap-2 rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-2 focus-within:border-[#4a2e18] focus-within:ring-1 focus-within:ring-[#4a2e18] transition shadow-inner">
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -164,15 +156,15 @@ function CommentsSection({
                   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
                 }}
                 maxLength={300}
-                placeholder="Write a comment… (Enter to send)"
-                className="flex-1 resize-none bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none leading-relaxed min-w-0"
+                placeholder="Pen your thoughts or congratulations..."
+                className="flex-1 resize-none bg-transparent text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none leading-relaxed min-w-0"
                 style={{ minHeight: 22 }}
               />
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!text.trim() || submitting}
-                className="shrink-0 rounded-full p-1.5 text-cyan-400 hover:text-cyan-300 disabled:text-slate-600 transition"
+                className="shrink-0 rounded p-1 text-[#8c6239] hover:text-[#4a2e18] disabled:text-[#d8caa8] transition"
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>
@@ -184,7 +176,6 @@ function CommentsSection({
   );
 }
 
-// ─── Main GuildFeed ────────────────────────────────────────────────────────────
 export default function GuildFeed({ compact = false }: GuildFeedProps) {
   const [items, setItems] = useState<GuildCompletion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,7 +186,7 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
   const [selectedProfile, setSelectedProfile] = useState<import("@/lib/types").UserProfile | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { user, profile: myProfile, login, followUser, unfollowUser } = useAuth();
+  const { user, profile: myProfile, login } = useAuth();
   const userId = user ? user.uid : "guest";
 
   useEffect(() => {
@@ -260,18 +251,19 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400 mb-3" />
-        <p className="text-sm">Syncing live network feed…</p>
+      <div className="flex flex-col items-center justify-center py-12 text-[#c2b59b]">
+        <Loader2 className="h-7 w-7 animate-spin mb-3 text-[#f5d77f]" />
+        <p className="text-sm font-guild tracking-wider">Unrolling parchment scrolls...</p>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="rounded-3xl border border-white/5 bg-white/5 p-6 text-center backdrop-blur-sm">
-        <Users className="mx-auto h-8 w-8 text-slate-500" />
-        <p className="mt-2 text-sm text-slate-400">No telemetry found. Be the first to verify a quest!</p>
+      <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-8 text-center shadow-lg text-[#2b2118]">
+        <Users className="mx-auto h-8 w-8 text-[#8c6239]" />
+        <p className="mt-3 text-base font-guild font-bold text-[#5c3a1a]">The Guild Chronicle is Quiet</p>
+        <p className="mt-1 text-xs text-[#6e5338]">Be the first adventurer to complete a quest and etch your name into history.</p>
       </div>
     );
   }
@@ -282,22 +274,18 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
     <>
       <ProfileModal isOpen={modalOpen} onClose={() => setModalOpen(false)} targetProfile={selectedProfile} />
       <div className="space-y-6">
-        {/* Community Heroes strip */}
+        {/* Community Heroes Scroll */}
         {!compact && communityHeroes.length > 0 && (
-          <div className="rounded-3xl border border-white/10 bg-slate-900/40 p-5 backdrop-blur-xl">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-                <Users className="h-4 w-4" /> Discover Community Heroes
-              </span>
-            </div>
-            <div className="flex items-center gap-3 overflow-x-auto pb-2">
+          <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-5 shadow-[0_6px_16px_rgba(0,0,0,0.5)] text-[#2b2118]">
+            <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped mb-3">Active Guild Heroes</p>
+            <div className="flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none">
               {communityHeroes.map((hero) => (
                 <div
                   key={hero.id}
                   onClick={() => { setSelectedProfile(hero); setModalOpen(true); }}
-                  className="cursor-pointer shrink-0 rounded-2xl border border-white/10 bg-black/40 p-3 flex items-center gap-3 hover:border-cyan-500/50 transition w-52"
+                  className="cursor-pointer shrink-0 rounded-lg border border-[#c1b087] bg-[#fdfaf3] p-3 flex items-center gap-3 hover:bg-[#fff8ea] hover:border-[#8c6239] transition shadow-sm w-52"
                 >
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-600 to-indigo-800 border border-cyan-400/50 overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-white">
+                  <div className="h-10 w-10 rounded-full border border-[#8c6239] bg-[#ebdcc0] overflow-hidden shrink-0 flex items-center justify-center font-guild font-bold text-sm text-[#4a2e18]">
                     {hero.avatarUrl ? (
                       <img src={hero.avatarUrl} alt={hero.name} className="h-full w-full object-cover" />
                     ) : (
@@ -305,8 +293,8 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold text-white text-xs truncate">{hero.name}</p>
-                    <p className="text-[10px] text-cyan-300 truncate">{hero.classTitle || "Paladin"}</p>
+                    <p className="font-bold font-guild text-[#4a2e18] text-xs truncate">{hero.name}</p>
+                    <p className="text-[10px] font-medium text-[#6e5338] truncate">{hero.classTitle || "Explorer"}</p>
                   </div>
                 </div>
               ))}
@@ -314,72 +302,76 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
           </div>
         )}
 
-        {/* Live badge */}
-        {!compact && (
-          <div className="flex items-center gap-2 text-xs text-cyan-400 font-medium tracking-wide uppercase">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
-            </span>
-            Live Network Feed
-          </div>
-        )}
-
-        {/* Feed items */}
+        {/* Feed parchment chronicles */}
         {displayItems.map((item) => {
           const hasApplauded = item.applaudedBy.includes(userId);
           const canDelete =
             (item.userId && (item.userId === myProfile.id || (user && item.userId === user.uid))) ||
             (!item.userId && item.userName === myProfile.name);
 
+          // Resolve badge asset path
+          const badgeFile = item.badge === "Platinum" ? "badge-platinum.svg" :
+                            item.badge === "Gold" ? "badge-gold.svg" :
+                            item.badge === "Silver" ? "badge-silver.svg" :
+                            item.badge === "Bronze" ? "badge-bronze.svg" :
+                            "badge-legendary.svg";
+
           return (
             <article
               key={item.id}
-              className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl transition hover:bg-slate-800/40 shadow-[0_4px_20px_0_rgba(0,0,0,0.2)]"
+              className="overflow-hidden rounded-xl border-2 border-[#8c6239] bg-parchment shadow-[0_8px_20px_rgba(0,0,0,0.6)] text-[#2b2118] transition"
             >
               {/* Post header */}
-              <div className="p-4 flex items-start justify-between gap-3">
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenUser(item.userName, item.userId)}
-                    className="font-bold text-white hover:text-cyan-400 transition underline decoration-cyan-500/40 underline-offset-4"
-                  >
-                    {item.userName}
-                  </button>
-                  <p className="text-sm text-slate-300 mt-0.5">
-                    completed <span className="font-semibold text-cyan-300">{item.questTitle}</span>
-                  </p>
-                  <p className="mt-1 flex items-center gap-1 text-xs text-slate-500 font-medium">
-                    <Clock className="h-3 w-3" />
-                    {timeAgo(item.createdAt)}
-                  </p>
+              <div className="p-4 sm:p-5 flex items-start justify-between gap-3 border-b border-[#d8caa8]/60 bg-[#fcf8ed]/50">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="shrink-0 mt-0.5">
+                    <img src={`/assets/${badgeFile}`} alt={item.badge} className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenUser(item.userName, item.userId)}
+                        className="font-guild font-bold text-base text-[#4a2e18] hover:text-[#8c6239] transition underline decoration-[#c1b087] underline-offset-4 truncate"
+                      >
+                        {item.userName}
+                      </button>
+                      <span className="text-xs text-[#6e5338]">completed quest</span>
+                    </div>
+                    <p className="text-sm sm:text-base font-bold font-guild text-[#1c3829] mt-0.5">
+                      {item.questTitle}
+                    </p>
+                    <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-[#8c6239]">
+                      <Clock className="h-3 w-3" />
+                      {timeAgo(item.createdAt)}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+
+                <div className="flex items-center gap-2 shrink-0">
                   {item.isCustom && (
-                    <span className="rounded-full bg-fuchsia-900/60 border border-fuchsia-500/40 px-2.5 py-1 text-[10px] font-black text-fuchsia-300 uppercase tracking-widest">
-                      ✨ Custom
+                    <span className="rounded border border-[#c1b087] bg-[#ebdcc0] px-2 py-0.5 text-[10px] font-guild font-semibold text-[#5c3a1a]">
+                      Custom Quest
                     </span>
                   )}
-                  <span className="rounded-full bg-cyan-900/50 border border-cyan-500/30 px-3 py-1 text-xs font-semibold text-cyan-300">
+                  <span className="rounded border border-[#8c6239] bg-[#fff8ea] px-2.5 py-1 text-xs font-guild font-bold text-[#6d4620] shadow-sm">
                     {item.badge}
                   </span>
                   {canDelete && (
                     confirmDeleteId === item.id ? (
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1">
                         <button
                           type="button"
                           onClick={() => handleDelete(item)}
                           disabled={deletingId === item.id}
-                          className="inline-flex items-center gap-1 rounded-full bg-rose-600/90 border border-rose-400 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-rose-500 transition shadow-[0_0_12px_rgba(244,63,94,0.4)]"
+                          className="rounded bg-red-800 border border-red-600 px-2 py-0.5 text-[11px] font-semibold text-white hover:bg-red-700 transition shadow-sm"
                         >
-                          {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
-                          <span>Confirm</span>
+                          {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
                         </button>
                         <button
                           type="button"
                           onClick={() => setConfirmDeleteId(null)}
-                          className="rounded-full bg-white/10 border border-white/15 px-2 py-1 text-[11px] font-medium text-slate-300 hover:bg-white/20 transition"
+                          className="rounded border border-[#c1b087] bg-[#ebdcc0] px-2 py-0.5 text-[11px] font-semibold text-[#5c3a1a] hover:bg-[#dcd0b3] transition"
                         >
                           Cancel
                         </button>
@@ -388,62 +380,61 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                       <button
                         type="button"
                         onClick={() => setConfirmDeleteId(item.id)}
-                        className="rounded-full bg-white/5 border border-white/10 p-1.5 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 hover:border-rose-500/40 transition"
+                        className="rounded p-1 text-[#a87440] hover:text-red-700 hover:bg-[#ebdcc0] transition"
+                        title="Delete record"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     )
                   )}
                 </div>
               </div>
 
-              {/* Caption / reflection */}
+              {/* Reflection */}
               {item.caption && (
-                <div className="mx-4 mb-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-fuchsia-400 mb-1">💬 Reflection</p>
-                  <p className="text-sm text-slate-300 leading-relaxed italic">&ldquo;{item.caption}&rdquo;</p>
+                <div className="mx-4 sm:mx-5 my-4 rounded-lg bg-[#fdfaf3] border border-[#c1b087] px-4 py-3 shadow-inner">
+                  <p className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239] mb-1">Adventurer&apos;s Reflection</p>
+                  <p className="text-sm text-[#2b2118] leading-relaxed font-serif italic">&ldquo;{item.caption}&rdquo;</p>
                 </div>
               )}
 
               {/* Proof image */}
-              <div className="mx-4 mb-4 relative overflow-hidden rounded-2xl border border-white/5 bg-slate-950">
+              <div className="mx-4 sm:mx-5 mb-4 overflow-hidden rounded-lg border-2 border-[#8c6239] bg-[#24160d] shadow-md">
                 <img
                   src={item.imageUrl}
                   alt={`${item.userName}'s proof`}
-                  className="h-48 w-full object-cover opacity-90 transition hover:opacity-100"
+                  className="h-56 sm:h-64 w-full object-cover"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'><rect width='400' height='240' fill='#020617'/><text x='200' y='120' font-family='monospace' font-size='18' fill='#22d3ee' text-anchor='middle' dominant-baseline='middle'>Proof unavailable</text></svg>`;
+                    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'><rect width='400' height='240' fill='#24160d'/><text x='200' y='120' font-family='Cinzel,serif' font-size='14' fill='#c1b087' text-anchor='middle' dominant-baseline='middle'>Illustration lost in transit</text></svg>`;
                     e.currentTarget.src = `data:image/svg+xml,${encodeURIComponent(svg)}`;
                   }}
                 />
               </div>
 
-              {/* Applaud button */}
-              <div className="px-4 pb-1">
+              {/* Like / Applause button */}
+              <div className="px-4 sm:px-5 pb-3">
                 <button
                   type="button"
                   onClick={() => handleApplaud(item)}
                   disabled={applauding === item.id}
-                  className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition active:scale-95 ${
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-guild font-bold transition shadow-sm ${
                     hasApplauded
-                      ? "bg-fuchsia-900/40 border border-fuchsia-500/50 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)]"
-                      : "bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                      ? "btn-enamel"
+                      : "border border-[#8c6239] bg-[#ebdcc0] text-[#4a2e18] hover:bg-[#decda8]"
                   }`}
                 >
                   {applauding === item.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin text-fuchsia-400" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <HandHeart className={`h-4 w-4 ${hasApplauded ? "fill-fuchsia-400" : ""}`} />
+                    <Heart className={`h-4 w-4 ${hasApplauded ? "fill-[#eafee8] text-[#eafee8]" : "text-[#8c6239]"}`} />
                   )}
-                  {hasApplauded ? "Applauded" : "Applaud"} · {item.applause}
+                  <span>{item.applause} Prestige Applause</span>
                 </button>
               </div>
 
-              {/* ─── Comments section ─── */}
-              <div className="mt-2">
-                <CommentsSection item={item} myProfile={myProfile} user={user} />
-              </div>
+              {/* Comments section */}
+              <CommentsSection item={item} myProfile={myProfile} user={user} />
             </article>
           );
         })}
