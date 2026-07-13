@@ -15,14 +15,14 @@ export default function UserNameModal({ onSave }: UserNameModalProps) {
 
   useEffect(() => {
     const stored = localStorage.getItem("skillquest-user-name");
-    if (!stored || stored === "Adventurer") {
+    if (!stored || stored === "Adventurer" || stored === "Member") {
       setOpen(true);
     }
   }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = name.trim() || "Adventurer";
+    const trimmed = name.trim() || "Member";
     await updateHeroName(trimmed);
     onSave(trimmed);
     setOpen(false);
@@ -31,37 +31,38 @@ export default function UserNameModal({ onSave }: UserNameModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 transition">
-      <div className="w-full max-w-sm rounded-2xl border-4 border-[#4a2e18] bg-parchment p-6 shadow-[0_16px_40px_rgba(0,0,0,0.85)] text-[#2b2118]">
-        <div className="flex items-center gap-3 border-b-2 border-[#8c6239] pb-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[#8c6239] bg-[#fff8ea] text-[#4a2e18] shadow-inner">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4 transition backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-6 shadow-neu-raised-lg text-slate-800">
+        <div className="flex items-center gap-3 border-b border-slate-200/80 pb-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/80 bg-[#e6ecf2] text-teal-600 shadow-neu-inset-sm">
             <Shield className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold font-guild text-[#2b2118] leading-tight">Inscribe Your Hero Title</h2>
-            <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Guild Registry Entry</p>
+            <h2 className="text-lg font-bold text-slate-800 leading-tight">Welcome to SkillHub</h2>
+            <p className="text-xs font-bold uppercase tracking-wider text-teal-600">Member Profile Setup</p>
           </div>
         </div>
-        <p className="mt-4 text-xs sm:text-sm text-[#5c3a1a] leading-relaxed font-serif">
-          Inscribe your chosen name or title into the Guild Registry. This moniker will be etched into the Chronicle when you seal quest deeds.
+        <p className="mt-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+          Enter your preferred display name. This title will appear on your profile and on project verifications shared to the activity feed.
         </p>
         <form onSubmit={submit} className="mt-5 space-y-4">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your hero title or moniker"
-            className="w-full rounded-lg border-2 border-[#8c6239] bg-[#fff8ea] px-4 py-3 text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#4a2e18] transition font-guild font-bold shadow-inner"
+            placeholder="Your display name or title"
+            className="w-full rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition font-semibold shadow-neu-inset-sm"
             autoFocus
             maxLength={24}
           />
           <button
             type="submit"
-            className="w-full rounded-lg btn-bronze py-3 text-sm font-guild font-bold shadow-md transition"
+            className="w-full rounded-xl btn-bronze py-3 text-sm font-semibold shadow-neu-raised transition hover:scale-[1.01]"
           >
-            Begin Adventurer Journey
+            Get Started
           </button>
         </form>
       </div>
     </div>
   );
 }
+

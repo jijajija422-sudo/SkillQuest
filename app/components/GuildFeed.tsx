@@ -54,7 +54,7 @@ export function CommentsSection({
     const comment: GuildComment = {
       id: `cmt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       userId: user?.uid ?? myProfile.id,
-      userName: myProfile.name || "Adventurer",
+      userName: myProfile.name || "Member",
       avatarUrl: myProfile.avatarUrl,
       text: text.trim(),
       createdAt: Date.now(),
@@ -88,17 +88,17 @@ export function CommentsSection({
     (item.userId && item.userId === (user?.uid ?? myProfile.id));
 
   return (
-    <div className="border-t border-[#d8caa8] bg-[#fdfaf3]/80 rounded-b-xl">
+    <div className="border-t border-slate-200/80 bg-[#f0f4f8]/80 rounded-b-2xl">
       <button
         type="button"
         onClick={() => { setOpen((o) => !o); setTimeout(() => inputRef.current?.focus(), 100); }}
-        className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold text-[#6e5338] hover:text-[#3d2f21] transition"
+        className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-teal-600 transition"
       >
         <span className="flex items-center gap-1.5">
-          <MessageSquare className="h-3.5 w-3.5 text-[#8c6239]" />
-          {comments.length === 0 ? "Add Missive / Comment..." : `${comments.length} missive${comments.length !== 1 ? "s" : ""}`}
+          <MessageSquare className="h-3.5 w-3.5 text-teal-600" />
+          {comments.length === 0 ? "Add Comment / Feedback..." : `${comments.length} comment${comments.length !== 1 ? "s" : ""}`}
         </span>
-        {open ? <ChevronUp className="h-3.5 w-3.5 text-[#8c6239]" /> : <ChevronDown className="h-3.5 w-3.5 text-[#8c6239]" />}
+        {open ? <ChevronUp className="h-3.5 w-3.5 text-teal-600" /> : <ChevronDown className="h-3.5 w-3.5 text-teal-600" />}
       </button>
 
       {open && (
@@ -107,31 +107,31 @@ export function CommentsSection({
             <div className="space-y-2">
               {comments.map((c) => (
                 <div key={c.id} className="flex items-start gap-2.5 group">
-                  <div className="h-6 w-6 rounded-full shrink-0 bg-[#ebdcc0] border border-[#c1b087] flex items-center justify-center text-[10px] font-bold text-[#5c3a1a] overflow-hidden">
+                  <div className="h-6 w-6 rounded-full shrink-0 bg-[#f0f4f8] border border-slate-200/80 flex items-center justify-center text-[10px] font-bold text-teal-600 overflow-hidden shadow-neu-raised-sm">
                     {c.avatarUrl ? (
                       <img src={c.avatarUrl} alt={c.userName} className="h-full w-full object-cover" />
                     ) : (
                       c.userName.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <div className="flex-1 min-w-0 rounded-lg bg-[#f4ecd8] border border-[#c1b087] px-3 py-2 shadow-sm">
+                  <div className="flex-1 min-w-0 rounded-xl bg-[#e6ecf2] border border-slate-200/80 px-3 py-2 shadow-neu-inset-sm">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <p className="text-xs font-bold font-guild text-[#4a2e18]">{c.userName}</p>
+                      <p className="text-xs font-bold text-slate-800">{c.userName}</p>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] text-[#8c6239]">{timeAgo(c.createdAt)}</span>
+                        <span className="text-[10px] text-slate-400">{timeAgo(c.createdAt)}</span>
                         {canDeleteComment(c) && (
                           <button
                             type="button"
                             onClick={() => handleDeleteComment(c.id)}
                             disabled={deletingCommentId === c.id}
-                            className="opacity-0 group-hover:opacity-100 text-[#a87440] hover:text-red-700 transition"
+                            className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 transition"
                           >
                             {deletingCommentId === c.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
                           </button>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-[#2b2118] leading-relaxed">{c.text}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed">{c.text}</p>
                   </div>
                 </div>
               ))}
@@ -139,14 +139,14 @@ export function CommentsSection({
           )}
 
           <div className="flex items-end gap-2 pt-1">
-            <div className="h-6 w-6 rounded-full shrink-0 bg-[#ebdcc0] border border-[#c1b087] flex items-center justify-center text-[10px] font-bold text-[#5c3a1a] overflow-hidden">
+            <div className="h-6 w-6 rounded-full shrink-0 bg-[#f0f4f8] border border-slate-200/80 flex items-center justify-center text-[10px] font-bold text-teal-600 overflow-hidden shadow-neu-raised-sm">
               {myProfile.avatarUrl ? (
                 <img src={myProfile.avatarUrl} alt={myProfile.name} className="h-full w-full object-cover" />
               ) : (
-                (myProfile.name || "A").charAt(0).toUpperCase()
+                (myProfile.name || "M").charAt(0).toUpperCase()
               )}
             </div>
-            <div className="flex-1 flex items-end gap-2 rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-2 focus-within:border-[#4a2e18] focus-within:ring-1 focus-within:ring-[#4a2e18] transition shadow-inner">
+            <div className="flex-1 flex items-end gap-2 rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-3 py-2 focus-within:ring-2 focus-within:ring-teal-500 transition shadow-neu-inset-sm">
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -156,15 +156,15 @@ export function CommentsSection({
                   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
                 }}
                 maxLength={300}
-                placeholder="Pen your thoughts or congratulations..."
-                className="flex-1 resize-none bg-transparent text-sm text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none leading-relaxed min-w-0"
+                placeholder="Share your thoughts or feedback..."
+                className="flex-1 resize-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none leading-relaxed min-w-0"
                 style={{ minHeight: 22 }}
               />
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!text.trim() || submitting}
-                className="shrink-0 rounded p-1 text-[#8c6239] hover:text-[#4a2e18] disabled:text-[#d8caa8] transition"
+                className="shrink-0 rounded p-1 text-teal-600 hover:text-teal-700 disabled:text-slate-300 transition"
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </button>
@@ -202,7 +202,7 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
   async function handleApplaud(item: GuildCompletion) {
     if (isFirebaseConfigured() && !user) {
-      alert("Please sign in with Google to applaud achievements!");
+      alert("Please sign in with Google to give kudos!");
       await login();
       return;
     }
@@ -241,8 +241,8 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
         xp: 120,
         level: 2,
         completedQuests: [],
-        bio: "Dedicated SkillQuest adventurer.",
-        classTitle: "Guild Hero",
+        bio: "Dedicated SkillHub member.",
+        classTitle: "SkillHub Pro",
       };
     }
     setSelectedProfile(target);
@@ -251,19 +251,19 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-[#c2b59b]">
-        <Loader2 className="h-7 w-7 animate-spin mb-3 text-[#f5d77f]" />
-        <p className="text-sm font-guild tracking-wider">Unrolling parchment scrolls...</p>
+      <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+        <Loader2 className="h-7 w-7 animate-spin mb-3 text-teal-600" />
+        <p className="text-sm font-semibold tracking-wider">Loading recent activity...</p>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-8 text-center shadow-lg text-[#2b2118]">
-        <Users className="mx-auto h-8 w-8 text-[#8c6239]" />
-        <p className="mt-3 text-base font-guild font-bold text-[#5c3a1a]">The Guild Chronicle is Quiet</p>
-        <p className="mt-1 text-xs text-[#6e5338]">Be the first adventurer to complete a quest and etch your name into history.</p>
+      <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-8 text-center shadow-neu-inset-sm text-slate-800">
+        <Users className="mx-auto h-8 w-8 text-teal-600" />
+        <p className="mt-3 text-base font-bold text-slate-800">No Recent Activity Yet</p>
+        <p className="mt-1 text-xs text-slate-500">Be the first to complete a skill exploration and share your verification.</p>
       </div>
     );
   }
@@ -276,16 +276,16 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
       <div className="space-y-6">
         {/* Community Heroes Scroll */}
         {!compact && communityHeroes.length > 0 && (
-          <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-5 shadow-[0_6px_16px_rgba(0,0,0,0.5)] text-[#2b2118]">
-            <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped mb-3">Active Guild Heroes</p>
+          <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-5 shadow-neu-raised-sm text-slate-800">
+            <p className="text-xs font-bold uppercase tracking-wider text-teal-600 mb-3">Active Community Members</p>
             <div className="flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none">
               {communityHeroes.map((hero) => (
                 <div
                   key={hero.id}
                   onClick={() => { setSelectedProfile(hero); setModalOpen(true); }}
-                  className="cursor-pointer shrink-0 rounded-lg border border-[#c1b087] bg-[#fdfaf3] p-3 flex items-center gap-3 hover:bg-[#fff8ea] hover:border-[#8c6239] transition shadow-sm w-52"
+                  className="cursor-pointer shrink-0 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-3 flex items-center gap-3 hover:bg-[#f0f4f8] transition shadow-neu-inset-sm w-52"
                 >
-                  <div className="h-10 w-10 rounded-full border border-[#8c6239] bg-[#ebdcc0] overflow-hidden shrink-0 flex items-center justify-center font-guild font-bold text-sm text-[#4a2e18]">
+                  <div className="h-10 w-10 rounded-full border border-slate-200/80 bg-[#f0f4f8] overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-teal-600 shadow-neu-raised-sm">
                     {hero.avatarUrl ? (
                       <img src={hero.avatarUrl} alt={hero.name} className="h-full w-full object-cover" />
                     ) : (
@@ -293,8 +293,8 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold font-guild text-[#4a2e18] text-xs truncate">{hero.name}</p>
-                    <p className="text-[10px] font-medium text-[#6e5338] truncate">{hero.classTitle || "Explorer"}</p>
+                    <p className="font-bold text-slate-800 text-xs truncate">{hero.name}</p>
+                    <p className="text-[10px] font-medium text-slate-500 truncate">{hero.classTitle || "Member"}</p>
                   </div>
                 </div>
               ))}
@@ -302,7 +302,7 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
           </div>
         )}
 
-        {/* Feed parchment chronicles */}
+        {/* Feed activity list */}
         {displayItems.map((item) => {
           const hasApplauded = item.applaudedBy.includes(userId);
           const canDelete =
@@ -310,19 +310,19 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
             (!item.userId && item.userName === myProfile.name);
 
           // Resolve badge asset path
-          const badgeFile = item.badge === "Platinum" ? "badge-platinum.svg" :
-                            item.badge === "Gold" ? "badge-gold.svg" :
-                            item.badge === "Silver" ? "badge-silver.svg" :
-                            item.badge === "Bronze" ? "badge-bronze.svg" :
-                            "badge-legendary.svg";
+          const badgeFile = (item.badge === "Masterclass" || item.badge === "Legendary") ? "badge-legendary.svg" :
+                            (item.badge === "Advanced" || item.badge === "Platinum" || item.badge === "Epic") ? "badge-platinum.svg" :
+                            (item.badge === "Adventurer" || item.badge === "Gold") ? "badge-gold.svg" :
+                            (item.badge === "Journeyman" || item.badge === "Silver") ? "badge-silver.svg" :
+                            "badge-bronze.svg";
 
           return (
             <article
               key={item.id}
-              className="overflow-hidden rounded-xl border-2 border-[#8c6239] bg-parchment shadow-[0_8px_20px_rgba(0,0,0,0.6)] text-[#2b2118] transition"
+              className="overflow-hidden rounded-2xl border border-slate-200/80 bg-[#f0f4f8] shadow-neu-raised text-slate-800 transition"
             >
               {/* Post header */}
-              <div className="p-4 sm:p-5 flex items-start justify-between gap-3 border-b border-[#d8caa8]/60 bg-[#fcf8ed]/50">
+              <div className="p-4 sm:p-5 flex items-start justify-between gap-3 border-b border-slate-200/80 bg-[#f0f4f8]/50">
                 <div className="flex items-start gap-3 min-w-0">
                   <div className="shrink-0 mt-0.5">
                     <img src={`/assets/${badgeFile}`} alt={item.badge} className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow" />
@@ -332,16 +332,16 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                       <button
                         type="button"
                         onClick={() => handleOpenUser(item.userName, item.userId)}
-                        className="font-guild font-bold text-base text-[#4a2e18] hover:text-[#8c6239] transition underline decoration-[#c1b087] underline-offset-4 truncate"
+                        className="font-bold text-base text-slate-800 hover:text-teal-600 transition underline decoration-slate-300 underline-offset-4 truncate"
                       >
                         {item.userName}
                       </button>
-                      <span className="text-xs text-[#6e5338]">completed quest</span>
+                      <span className="text-xs text-slate-500">completed exploration</span>
                     </div>
-                    <p className="text-sm sm:text-base font-bold font-guild text-[#1c3829] mt-0.5">
+                    <p className="text-sm sm:text-base font-bold text-slate-800 mt-0.5">
                       {item.questTitle}
                     </p>
-                    <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-[#8c6239]">
+                    <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
                       <Clock className="h-3 w-3" />
                       {timeAgo(item.createdAt)}
                     </p>
@@ -350,11 +350,11 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
                 <div className="flex items-center gap-2 shrink-0">
                   {item.isCustom && (
-                    <span className="rounded border border-[#c1b087] bg-[#ebdcc0] px-2 py-0.5 text-[10px] font-guild font-semibold text-[#5c3a1a]">
-                      Custom Quest
+                    <span className="rounded-lg border border-slate-200/80 bg-[#e6ecf2] px-2 py-0.5 text-[10px] font-bold text-slate-600 shadow-neu-inset-sm">
+                      Custom Skill
                     </span>
                   )}
-                  <span className="rounded border border-[#8c6239] bg-[#fff8ea] px-2.5 py-1 text-xs font-guild font-bold text-[#6d4620] shadow-sm">
+                  <span className="rounded-lg border border-slate-200/80 bg-[#e6ecf2] px-2.5 py-1 text-xs font-bold text-slate-700 shadow-neu-inset-sm">
                     {item.badge}
                   </span>
                   {canDelete && (
@@ -364,14 +364,14 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                           type="button"
                           onClick={() => handleDelete(item)}
                           disabled={deletingId === item.id}
-                          className="rounded bg-red-800 border border-red-600 px-2 py-0.5 text-[11px] font-semibold text-white hover:bg-red-700 transition shadow-sm"
+                          className="rounded-lg bg-red-600 border border-red-500 px-2 py-0.5 text-[11px] font-semibold text-white hover:bg-red-700 transition shadow-sm"
                         >
                           {deletingId === item.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
                         </button>
                         <button
                           type="button"
                           onClick={() => setConfirmDeleteId(null)}
-                          className="rounded border border-[#c1b087] bg-[#ebdcc0] px-2 py-0.5 text-[11px] font-semibold text-[#5c3a1a] hover:bg-[#dcd0b3] transition"
+                          className="rounded-lg border border-slate-200/80 bg-[#e6ecf2] px-2 py-0.5 text-[11px] font-semibold text-slate-600 hover:bg-slate-200/50 transition"
                         >
                           Cancel
                         </button>
@@ -380,7 +380,7 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                       <button
                         type="button"
                         onClick={() => setConfirmDeleteId(item.id)}
-                        className="rounded p-1 text-[#a87440] hover:text-red-700 hover:bg-[#ebdcc0] transition"
+                        className="rounded p-1 text-slate-400 hover:text-red-600 hover:bg-slate-200/50 transition"
                         title="Delete record"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -392,21 +392,21 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
 
               {/* Reflection */}
               {item.caption && (
-                <div className="mx-4 sm:mx-5 my-4 rounded-lg bg-[#fdfaf3] border border-[#c1b087] px-4 py-3 shadow-inner">
-                  <p className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239] mb-1">Adventurer&apos;s Reflection</p>
-                  <p className="text-sm text-[#2b2118] leading-relaxed font-serif italic">&ldquo;{item.caption}&rdquo;</p>
+                <div className="mx-4 sm:mx-5 my-4 rounded-xl bg-[#e6ecf2] border border-slate-200/80 px-4 py-3 shadow-neu-inset-sm">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-teal-600 mb-1">Member Notes</p>
+                  <p className="text-sm text-slate-700 leading-relaxed italic">&ldquo;{item.caption}&rdquo;</p>
                 </div>
               )}
 
               {/* Proof image */}
-              <div className="mx-4 sm:mx-5 mb-4 overflow-hidden rounded-lg border-2 border-[#8c6239] bg-[#24160d] shadow-md">
+              <div className="mx-4 sm:mx-5 mb-4 overflow-hidden rounded-xl border border-slate-200/80 bg-slate-900 shadow-neu-inset-sm">
                 <img
                   src={item.imageUrl}
-                  alt={`${item.userName}'s proof`}
+                  alt={`${item.userName}'s verification`}
                   className="h-56 sm:h-64 w-full object-cover"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'><rect width='400' height='240' fill='#24160d'/><text x='200' y='120' font-family='Cinzel,serif' font-size='14' fill='#c1b087' text-anchor='middle' dominant-baseline='middle'>Illustration lost in transit</text></svg>`;
+                    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'><rect width='400' height='240' fill='#1e293b'/><text x='200' y='120' font-family='sans-serif' font-size='14' fill='#94a3b8' text-anchor='middle' dominant-baseline='middle'>Image unavailable</text></svg>`;
                     e.currentTarget.src = `data:image/svg+xml,${encodeURIComponent(svg)}`;
                   }}
                 />
@@ -418,18 +418,18 @@ export default function GuildFeed({ compact = false }: GuildFeedProps) {
                   type="button"
                   onClick={() => handleApplaud(item)}
                   disabled={applauding === item.id}
-                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-guild font-bold transition shadow-sm ${
+                  className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition shadow-neu-raised-sm ${
                     hasApplauded
                       ? "btn-enamel"
-                      : "border border-[#8c6239] bg-[#ebdcc0] text-[#4a2e18] hover:bg-[#decda8]"
+                      : "border border-slate-200/80 bg-[#e6ecf2] text-slate-700 hover:bg-[#f0f4f8]"
                   }`}
                 >
                   {applauding === item.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Heart className={`h-4 w-4 ${hasApplauded ? "fill-[#eafee8] text-[#eafee8]" : "text-[#8c6239]"}`} />
+                    <Heart className={`h-4 w-4 ${hasApplauded ? "fill-white text-white" : "text-teal-600"}`} />
                   )}
-                  <span>{item.applause} Prestige Applause</span>
+                  <span>{item.applause} Kudos</span>
                 </button>
               </div>
 

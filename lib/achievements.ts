@@ -11,32 +11,32 @@ export interface Achievement {
 export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "first-quest",
-    title: "First Quest Complete",
-    description: "Complete your first quest and join the guild.",
+    title: "First Verification Complete",
+    description: "Complete your first exploration and verify your skill.",
     unlocked: (profile) => profile.completedQuests.length >= 1,
   },
   {
     id: "journey-builder",
-    title: "Journey Builder",
-    description: "Finish 3 quests to earn your journey badge.",
+    title: "Portfolio Builder",
+    description: "Finish 3 explorations to earn your portfolio badge.",
     unlocked: (profile) => profile.completedQuests.length >= 3,
   },
   {
     id: "guild-champion",
-    title: "Guild Champion",
-    description: "Earn 1,200 XP and prove your commitment.",
+    title: "SkillHub Pro",
+    description: "Earn 1,200 progress steps and prove your commitment.",
     unlocked: (profile) => getTotalXp(profile) >= 1200,
   },
   {
     id: "legendary-sage",
-    title: "Legendary Sage",
-    description: "Reach total XP of 2,200 to unlock the sage title.",
+    title: "Master Contributor",
+    description: "Reach total of 2,200 progress steps to unlock the Master Contributor title.",
     unlocked: (profile) => getTotalXp(profile) >= 2200,
   },
   {
     id: "quest-master",
-    title: "Quest Master",
-    description: "Complete 5 quests and earn a master badge.",
+    title: "Exploration Master",
+    description: "Complete 5 explorations and earn a master badge.",
     unlocked: (profile) => profile.completedQuests.length >= 5,
   },
 ];

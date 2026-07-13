@@ -17,11 +17,11 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
     if (typeof window !== "undefined") {
       return window.location.origin;
     }
-    return "https://skillquest.app";
+    return "https://skillhub.app";
   };
 
-  const shareTitle = "SkillQuest - Adventurer's Guild & RPG Quest Registry";
-  const shareText = "Join me inside the Adventurer's Guild! Track actionable self-learning quests from Novice to Legendary, seal visual proof of your deeds, and earn guild prestige.";
+  const shareTitle = "SkillHub - Universal Skill-Sharing & Project Verification Platform";
+  const shareText = "Join me on SkillHub! Track structured skill verifications from Beginner to Master, share visual proof of your projects, and build your professional portfolio.";
 
   const handleNativeShare = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -69,63 +69,63 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-xl rounded-2xl border-4 border-[#8c6239] bg-parchment p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.9)] text-[#2b2118] max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition animate-fadeIn">
+      <div className="relative w-full max-w-xl rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-6 sm:p-8 shadow-neu-raised-lg text-slate-800 max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 rounded-full border border-[#8c6239] bg-[#fff8ea] p-2 text-[#6e5338] hover:bg-[#ebdcc0] hover:text-[#4a2e18] transition shadow-sm"
+          className="absolute top-4 right-4 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-2 text-slate-500 hover:text-red-600 transition shadow-neu-raised-sm"
           title="Close Dialog"
         >
           <X className="h-5 w-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3.5 border-b-2 border-[#c1b087] pb-5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#f5d77f] via-[#d4af37] to-[#8c6239] border-2 border-[#fff1aa] shadow-md shrink-0">
-            <Share2 className="h-6 w-6 text-[#122017]" />
+        <div className="flex items-center gap-3.5 border-b border-slate-200/80 pb-5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6ecf2] border border-slate-200/80 shadow-neu-inset-sm text-blue-600 shrink-0">
+            <Share2 className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs font-guild font-bold uppercase tracking-widest text-gold-stamped">Inscribe Invitation</p>
-            <h3 className="text-xl sm:text-2xl font-bold font-guild text-[#4a2e18]">
-              Share Guild Registry
+            <p className="text-xs font-bold uppercase tracking-wider text-teal-600">Share Platform</p>
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-800 leading-tight">
+              Invite &amp; Share SkillHub
             </h3>
           </div>
         </div>
 
         {/* Open Graph / Social Embed Preview Card */}
         <div className="mt-6 space-y-2">
-          <label className="text-xs font-guild font-bold uppercase tracking-wider text-[#6e5338] flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#8c6239]" />
-            <span>Open Graph Link Preview Card</span>
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-teal-600" />
+            <span>Link Preview Card</span>
           </label>
           
-          <div className="overflow-hidden rounded-xl border-2 border-[#8c6239] bg-[#162a1e] shadow-lg">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-900 shadow-neu-inset-sm">
             {/* Graphic Banner Display */}
-            <div className="relative aspect-[1.91/1] w-full bg-[#122017] border-b border-[#d4af37]/40 overflow-hidden flex items-center justify-center">
+            <div className="relative aspect-[1.91/1] w-full bg-slate-900 border-b border-slate-800 overflow-hidden flex items-center justify-center">
               <img
                 src="/og-image.svg"
-                alt="SkillQuest Open Graph Banner"
+                alt="SkillHub Open Graph Banner"
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
-              <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full border border-[#fff1aa] bg-[#1b3626]/90 px-3 py-1 text-[11px] font-guild font-bold text-[#f5d77f] shadow">
-                <Shield className="h-3.5 w-3.5 fill-[#f5d77f]" />
-                <span>Verified Guild Link</span>
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full border border-teal-500/40 bg-slate-900/90 px-3 py-1 text-[11px] font-bold text-teal-400 shadow">
+                <Shield className="h-3.5 w-3.5 fill-teal-400 text-teal-400" />
+                <span>Verified SkillHub Link</span>
               </div>
             </div>
 
             {/* Embed Text Preview */}
-            <div className="p-4 text-[#f4ecd8] space-y-1 bg-gradient-to-b from-[#1b3626] to-[#122017]">
+            <div className="p-4 text-white space-y-1 bg-slate-900">
               <div className="flex items-center gap-2">
-                <img src="/icon.svg" alt="SkillQuest Logo" className="h-5 w-5 rounded object-cover border border-[#d4af37]" />
-                <span className="text-xs font-guild font-bold text-[#f5d77f] uppercase tracking-wide">skillquest.app</span>
+                <img src="/icon.svg" alt="SkillHub Logo" className="h-5 w-5 rounded object-cover border border-slate-700" />
+                <span className="text-xs font-bold text-teal-400 uppercase tracking-wide">skillhub.app</span>
               </div>
-              <h4 className="font-bold text-sm sm:text-base text-[#fff8ea] font-serif leading-snug">
-                SkillQuest - Adventurer&apos;s Guild &amp; RPG Quest Registry
+              <h4 className="font-bold text-sm sm:text-base text-white leading-snug">
+                SkillHub - Universal Skill-Sharing &amp; Project Verification Platform
               </h4>
-              <p className="text-xs text-[#c2b59b] line-clamp-2 leading-relaxed">
-                Level up your real-world skills with an RPG-style quest board. Track Novice to Legendary bounties, seal visual proof of deeds, and earn guild prestige.
+              <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                Expand your real-world skills with a universal verification platform. Track structured explorations from Foundational to Masterclass, verify your projects, and build your portfolio.
               </p>
             </div>
           </div>
@@ -136,46 +136,46 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
           <button
             type="button"
             onClick={handleNativeShare}
-            className="flex items-center justify-center gap-2 rounded-lg btn-bronze px-4 py-3 font-guild font-bold text-sm shadow-md hover:scale-[1.02] transition"
+            className="flex items-center justify-center gap-2 rounded-xl btn-bronze px-4 py-3 font-bold text-sm shadow-neu-raised-sm hover:scale-[1.01] transition"
           >
-            <Share2 className="h-4 w-4 text-[#f5d77f]" />
+            <Share2 className="h-4 w-4" />
             <span>Share via Device...</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopyLink}
-            className={`flex items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 font-guild font-bold text-sm transition shadow-sm ${
+            className={`flex items-center justify-center gap-2 rounded-xl border py-3 px-4 font-bold text-sm transition shadow-neu-raised-sm ${
               copied
-                ? "border-[#10b981] bg-[#dcfce7] text-[#166534]"
-                : "border-[#8c6239] bg-[#fff8ea] text-[#4a2e18] hover:bg-[#ebdcc0]"
+                ? "border-teal-500 bg-teal-50 text-teal-700 shadow-neu-inset-sm"
+                : "border-slate-200/80 bg-[#e6ecf2] text-slate-800 hover:bg-[#f0f4f8]"
             }`}
           >
             {copied ? (
               <>
-                <Check className="h-4 w-4 text-[#10b981]" />
-                <span>Link Inscribed! (Copied)</span>
+                <Check className="h-4 w-4 text-teal-600" />
+                <span>Link Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="h-4 w-4 text-[#8c6239]" />
-                <span>Copy Guild URL</span>
+                <Copy className="h-4 w-4 text-teal-600" />
+                <span>Copy Platform URL</span>
               </>
             )}
           </button>
         </div>
 
         {/* Social Dispatch Shortcuts */}
-        <div className="mt-6 pt-5 border-t border-[#c1b087] space-y-3">
-          <p className="text-xs font-guild font-bold uppercase tracking-wider text-[#6e5338] text-center">
-            Dispatch Directly via Courier Networks
+        <div className="mt-6 pt-5 border-t border-slate-200/80 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-600 text-center">
+            Share Directly to Social Networks
           </p>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               type="button"
               onClick={() => openSocialShare("twitter")}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-[#8c6239]/80 bg-[#fff8ea] p-2.5 text-xs font-semibold text-[#4a2e18] hover:bg-[#ebdcc0] hover:border-[#8c6239] transition shadow-sm"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-2.5 text-xs font-semibold text-slate-700 hover:bg-[#f0f4f8] transition shadow-neu-raised-sm hover:scale-[1.02]"
             >
               <Send className="h-3.5 w-3.5 text-[#1da1f2]" />
               <span>Twitter / X</span>
@@ -184,7 +184,7 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
             <button
               type="button"
               onClick={() => openSocialShare("whatsapp")}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-[#8c6239]/80 bg-[#fff8ea] p-2.5 text-xs font-semibold text-[#4a2e18] hover:bg-[#ebdcc0] hover:border-[#8c6239] transition shadow-sm"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-2.5 text-xs font-semibold text-slate-700 hover:bg-[#f0f4f8] transition shadow-neu-raised-sm hover:scale-[1.02]"
             >
               <Send className="h-3.5 w-3.5 text-[#25d366]" />
               <span>WhatsApp</span>
@@ -193,7 +193,7 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
             <button
               type="button"
               onClick={() => openSocialShare("linkedin")}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-[#8c6239]/80 bg-[#fff8ea] p-2.5 text-xs font-semibold text-[#4a2e18] hover:bg-[#ebdcc0] hover:border-[#8c6239] transition shadow-sm"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-2.5 text-xs font-semibold text-slate-700 hover:bg-[#f0f4f8] transition shadow-neu-raised-sm hover:scale-[1.02]"
             >
               <ExternalLink className="h-3.5 w-3.5 text-[#0a66c2]" />
               <span>LinkedIn</span>
@@ -202,7 +202,7 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
             <button
               type="button"
               onClick={() => openSocialShare("telegram")}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-[#8c6239]/80 bg-[#fff8ea] p-2.5 text-xs font-semibold text-[#4a2e18] hover:bg-[#ebdcc0] hover:border-[#8c6239] transition shadow-sm"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-2.5 text-xs font-semibold text-slate-700 hover:bg-[#f0f4f8] transition shadow-neu-raised-sm hover:scale-[1.02]"
             >
               <Send className="h-3.5 w-3.5 text-[#0088cc]" />
               <span>Telegram</span>
@@ -213,3 +213,4 @@ export default function ShareModal({ isOpen, onClose }: ShareModalProps) {
     </div>
   );
 }
+

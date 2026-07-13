@@ -5,18 +5,18 @@ import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "SkillQuest - Adventurer's Guild & RPG Quest Registry",
-  description: "Level up your real-world skills with an RPG-style quest board. Track Novice to Legendary bounties, seal visual proof of deeds, and earn guild prestige with fellow adventurers.",
+  title: "SkillHub - Universal Skill-Sharing & Exploration Platform",
+  description: "Level up your real-world skills with interactive learning explorations. Track your progress from Foundational to Masterclass, submit project verifications, and grow your professional skills.",
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "SkillQuest - Adventurer's Guild & RPG Quest Registry",
-    description: "Level up your real-world skills with an RPG-style quest board. Track Novice to Legendary bounties, seal visual proof of deeds, and earn guild prestige with fellow adventurers.",
+    title: "SkillHub - Universal Skill-Sharing & Exploration Platform",
+    description: "Level up your real-world skills with interactive learning explorations. Track your progress from Foundational to Masterclass, submit project verifications, and grow your professional skills.",
     url: "/",
-    siteName: "SkillQuest - Adventurer's Guild",
+    siteName: "SkillHub Platform",
     locale: "en_US",
     type: "website",
     images: [
@@ -25,26 +25,26 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/png",
-        alt: "SkillQuest - Adventurer's Guild & RPG Quest Board Banner",
+        alt: "SkillHub - Universal Skill-Sharing Platform Banner",
       },
       {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "SkillQuest - Vector Guild Banner",
+        alt: "SkillHub - Platform Banner",
       },
       {
         url: "/icon.svg",
         width: 512,
         height: 512,
-        alt: "SkillQuest - Guild Emblem Logo",
+        alt: "SkillHub - Emblem Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SkillQuest - Adventurer's Guild & RPG Quest Registry",
-    description: "Level up your real-world skills with an RPG-style quest board. Track Novice to Legendary bounties, seal visual proof of deeds, and earn guild prestige.",
+    title: "SkillHub - Universal Skill-Sharing & Exploration Platform",
+    description: "Level up your real-world skills with interactive learning explorations. Track your progress from Foundational to Masterclass, submit project verifications, and grow your professional skills.",
     images: ["/opengraph-image", "/og-image.svg"],
   },
 };
@@ -58,7 +58,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="overflow-x-hidden">
-      <body className="min-h-screen w-full overflow-x-hidden antialiased text-[#f4ecd8] bg-[#122017]">
+      <body className="min-h-screen w-full overflow-x-hidden antialiased text-slate-800 bg-[#e6ecf2]">
         <AuthProvider>
           <div className="flex min-h-screen w-full flex-col overflow-x-hidden">
             <Header />
@@ -71,3 +71,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
