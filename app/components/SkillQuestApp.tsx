@@ -31,10 +31,13 @@ import UserNameModal from "./UserNameModal";
 import type { Quest } from "@/lib/types";
 
 const levelWeights: Record<string, number> = {
+  Foundational: 1,
   Novice: 1,
   Journeyman: 2,
   Adventurer: 3,
+  Advanced: 4,
   Epic: 4,
+  Masterclass: 5,
   Legendary: 5,
 };
 
@@ -45,12 +48,12 @@ export default function SkillQuestApp() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("All");
   const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Completed">("All");
-  const [levelFilter, setLevelFilter] = useState<string>("All Levels");
+  const [levelFilter, setLevelFilter] = useState<string>("All Phases");
   const [sortBy, setSortBy] = useState<"recommended" | "xp-desc" | "level-asc" | "progress-desc">("recommended");
   const [toast, setToast] = useState<string | null>(null);
 
   const { profile, updateHeroName, awardXp } = useAuth();
-  const userName = profile.name || "Adventurer";
+  const userName = profile.name || "Member";
   const completedQuests = profile.completedQuests || [];
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function SkillQuestApp() {
   }, []);
 
   const categories = useMemo(() => ["All", ...new Set(QUESTS.map((q) => q.category))], []);
-  const levels = ["All Levels", "Novice", "Journeyman", "Adventurer", "Epic", "Legendary"];
+  const levels = ["All Phases", "Foundational", "Novice", "Journeyman", "Adventurer", "Advanced", "Masterclass"];
 
   const filteredQuests = useMemo(() => {
     const list = QUESTS.filter((q) => {
@@ -69,7 +72,7 @@ export default function SkillQuestApp() {
         statusFilter === "All" ? true :
         statusFilter === "Active" ? !isCompleted :
         isCompleted;
-      const matchLevel = levelFilter === "All Levels" || q.level === levelFilter;
+      const matchLevel = levelFilter === "All Phases" || q.level === levelFilter;
       const matchCat = category === "All" || q.category === category;
       const matchSearch =
         !search ||
@@ -117,7 +120,7 @@ export default function SkillQuestApp() {
       if (!quest || completedQuests.includes(questId)) return;
 
       await awardXp(quest.xpReward, questId);
-      setToast(`Quest complete! +${quest.xpReward} XP earned. Shared with the guild.`);
+      setToast(`Exploration complete! +${quest.xpReward} progress steps earned. Shared with the community.`);
       setSelectedQuest(null);
     },
     [completedQuests, awardXp]
@@ -127,14 +130,14 @@ export default function SkillQuestApp() {
     setSearch("");
     setCategory("All");
     setStatusFilter("All");
-    setLevelFilter("All Levels");
+    setLevelFilter("All Phases");
     setSortBy("recommended");
   }
 
   const tabs = [
-    { id: "feed", label: "Chronicle Feed", icon: Compass },
-    { id: "quests", label: "Bounty Board", icon: Map },
-    { id: "profile", label: "Guild Dossier", icon: User },
+    { id: "feed", label: "Recent Activity", icon: Compass },
+    { id: "quests", label: "Explore Hub", icon: Map },
+    { id: "profile", label: "Member Profile", icon: User },
   ] as const;
 
   return (
@@ -142,9 +145,9 @@ export default function SkillQuestApp() {
       <UserNameModal onSave={updateHeroName} />
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-[55px] bottom-0 w-64 flex-col justify-between border-r-2 border-[#d4af37]/40 bg-[#162a1e] p-6 z-30 shadow-lg">
+      <aside className="hidden lg:flex fixed left-0 top-[65px] bottom-0 w-64 flex-col justify-between border-r border-slate-200/80 bg-[#e6ecf2] p-6 z-30 shadow-neu-inset-sm">
         <div className="space-y-6">
-          <p className="text-xs font-guild font-bold text-gold-etched uppercase tracking-wider">Guild Registry Navigation</p>
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Explore Hub Navigation</p>
           <nav className="space-y-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -154,13 +157,13 @@ export default function SkillQuestApp() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 font-guild font-bold transition text-left text-sm shadow-sm ${
+                  className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 font-bold transition text-left text-sm ${
                     isActive
-                      ? "btn-enamel text-[#eafee8]"
-                      : "border border-[#d4af37]/20 bg-[#1b3626]/80 text-[#c2b59b] hover:bg-[#234935] hover:text-[#f4ecd8] hover:border-[#d4af37]/60"
+                      ? "btn-bronze shadow-neu-raised"
+                      : "border border-slate-200/80 bg-[#f0f4f8] text-slate-600 hover:bg-[#e6ecf2] hover:text-slate-900 shadow-neu-raised-sm"
                   }`}
                 >
-                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#f5d77f]" : "text-[#d4af37]"}`} />
+                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-teal-600" : "text-slate-500"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -169,21 +172,21 @@ export default function SkillQuestApp() {
         </div>
 
         {/* Sidebar Mini Profile Scroll */}
-        <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-4 text-xs text-[#2b2118] shadow-md">
-          <div className="flex items-center gap-2 pb-2 border-b border-[#c1b087]">
-            <Shield className="h-4 w-4 text-[#8c6239] shrink-0" />
-            <p className="font-guild font-bold text-[#4a2e18] truncate text-sm">{profile.name}</p>
+        <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-4 text-xs text-slate-800 shadow-neu-raised-sm">
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-200/80">
+            <Compass className="h-4 w-4 text-teal-600 shrink-0" />
+            <p className="font-bold text-slate-800 truncate text-sm">{profile.name}</p>
           </div>
-          <p className="text-[#6e5338] font-semibold mt-2">Guild Rank Level {profile.level}</p>
+          <p className="text-slate-600 font-semibold mt-2">Skill Phase {profile.level}</p>
           <div className="mt-2 flex items-center justify-between text-[11px] pt-1">
-            <span className="font-medium text-[#6e5338]">Quests Mastered</span>
-            <span className="font-guild font-bold text-[#4a2e18]">{completedQuests.length} of {QUESTS.length}</span>
+            <span className="font-medium text-slate-600">Completed Explorations</span>
+            <span className="font-bold text-slate-800">{completedQuests.length} of {QUESTS.length}</span>
           </div>
         </div>
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t-2 border-[#d4af37]/60 bg-[#162a1e] px-2 py-2 shadow-[0_-4px_12px_rgba(0,0,0,0.6)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t border-slate-200/80 bg-[#e6ecf2] px-2 py-2 shadow-neu-raised-lg">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -192,11 +195,11 @@ export default function SkillQuestApp() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center gap-1 rounded-lg px-4 py-2 font-guild font-bold transition text-xs ${
-                isActive ? "text-[#f5d77f] bg-[#1c3829] border border-[#d4af37]" : "text-[#c2b59b] hover:text-[#f4ecd8]"
+              className={`flex flex-col items-center justify-center gap-1 rounded-xl px-4 py-2 font-bold transition text-xs ${
+                isActive ? "text-teal-600 bg-[#f0f4f8] border border-slate-200/80 shadow-neu-inset-sm" : "text-slate-500 hover:text-slate-800"
               }`}
             >
-              <Icon className={`h-5 w-5 ${isActive ? "text-[#f5d77f]" : "text-[#c2b59b]"}`} />
+              <Icon className={`h-5 w-5 ${isActive ? "text-teal-600" : "text-slate-500"}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -204,20 +207,20 @@ export default function SkillQuestApp() {
       </nav>
 
       {/* Main Content */}
-      <main className="min-h-screen w-full overflow-x-hidden px-4 py-8 pb-28 sm:px-6 md:px-10 lg:pl-72 lg:pr-12 lg:pb-12 bg-[#122017] text-[#f4ecd8]">
+      <main className="min-h-screen w-full overflow-x-hidden px-4 py-8 pb-28 sm:px-6 md:px-10 lg:pl-72 lg:pr-12 lg:pb-12 bg-[#e6ecf2] text-slate-800">
         <section className="mx-auto w-full max-w-5xl min-w-0">
 
           {/* Page heading */}
-          <div className="mb-8 w-full min-w-0 border-b-2 border-[#d4af37]/30 pb-4">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-guild text-gold-etched">
-              {activeTab === "feed" && "Activity Chronicle"}
-              {activeTab === "quests" && "Guild Quest Board"}
-              {activeTab === "profile" && "Adventurer Dossier"}
+          <div className="mb-8 w-full min-w-0 border-b border-slate-200/80 pb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-800">
+              {activeTab === "feed" && "Recent Activity"}
+              {activeTab === "quests" && "Explore Hub"}
+              {activeTab === "profile" && "Member Profile"}
             </h1>
-            <p className="mt-1.5 text-xs sm:text-sm text-[#eddcc4]">
-              {activeTab === "feed" && "Witness the triumphs and proof of deed shared by fellow guild adventurers."}
-              {activeTab === "quests" && "Inspect open bounties, track your requirements, and submit proof of completion."}
-              {activeTab === "profile" && "Your character statistics, prestige titles, and lifetime deeds."}
+            <p className="mt-1.5 text-xs sm:text-sm text-slate-600 font-medium">
+              {activeTab === "feed" && "Discover new hobbies, find learning partners, and celebrate what the community is building."}
+              {activeTab === "quests" && "Browse explorations, track your skills, and submit verifications."}
+              {activeTab === "profile" && "Your professional overview, verified badges, and milestone progress."}
             </p>
           </div>
 
@@ -225,13 +228,13 @@ export default function SkillQuestApp() {
           {activeTab === "feed" && (
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start w-full min-w-0">
               <div className="space-y-6 w-full min-w-0">
-                <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-5 sm:p-6 shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-[#2b2118] w-full min-w-0 overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-[#c1b087] pb-4 mb-5">
-                    <h2 className="text-lg font-guild font-bold text-[#4a2e18] flex items-center gap-2">
-                      <BookOpen className="h-5 w-5 text-[#8c6239]" />
-                      <span>Guild Activity Chronicle</span>
+                <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-5 sm:p-6 shadow-neu-raised-lg text-slate-800 w-full min-w-0 overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-4 mb-5">
+                    <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-teal-600" />
+                      <span>Hobby Discovery &amp; Skill Exchange</span>
                     </h2>
-                    <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2.5 py-0.5 text-xs font-guild font-bold text-[#5c3a1a]">Live Missives</span>
+                    <span className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-3 py-1 text-xs font-bold text-teal-600 shadow-neu-inset-sm">Live</span>
                   </div>
                   <div className="w-full min-w-0">
                     <GuildFeed />
@@ -249,28 +252,28 @@ export default function SkillQuestApp() {
           {activeTab === "quests" && (
             <div className="space-y-8 w-full min-w-0">
               {/* Journey Overview Parchment */}
-              <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-6 sm:p-8 shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-[#2b2118] w-full min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#c1b087] pb-6">
+              <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-6 sm:p-8 shadow-neu-raised-lg text-slate-800 w-full min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
                   <div>
-                    <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">Mastery Progress</p>
-                    <h2 className="mt-1 text-2xl font-bold font-guild text-[#4a2e18]">Journey Map & Bounties</h2>
+                    <p className="text-xs font-bold uppercase tracking-wider text-teal-600">Skill Progress</p>
+                    <h2 className="mt-1 text-2xl font-bold text-slate-800">Skill Roadmap &amp; Explorations</h2>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <button
                       type="button"
                       onClick={() => setCustomQuestOpen(true)}
-                      className="inline-flex items-center gap-2 rounded-lg btn-bronze px-5 py-2.5 text-sm font-guild font-bold"
+                      className="inline-flex items-center gap-2 rounded-xl btn-bronze px-5 py-2.5 text-sm font-bold shadow-neu-raised transition hover:scale-[1.01]"
                     >
                       <PenLine className="h-4 w-4" />
-                      <span>Inscribe Custom Deed</span>
+                      <span>Create Custom Exploration</span>
                     </button>
-                    <div className="flex items-center gap-3 border border-[#8c6239] bg-[#fff8ea] rounded-lg px-4 py-2.5 shadow-inner">
+                    <div className="flex items-center gap-3 border border-slate-200/80 bg-[#e6ecf2] rounded-xl px-4 py-2.5 shadow-neu-inset-sm">
                       <div className="text-right">
-                        <p className="text-xs text-[#8c6239] font-guild font-bold">Total Mastery</p>
-                        <p className="text-sm font-bold text-[#4a2e18]">{completedQuests.length} / {QUESTS.length}</p>
+                        <p className="text-xs text-slate-500 font-bold">Completed Skills</p>
+                        <p className="text-sm font-bold text-slate-800">{completedQuests.length} / {QUESTS.length}</p>
                       </div>
-                      <div className="h-10 w-10 rounded-full border-2 border-[#8c6239] bg-[#ebdcc0] flex items-center justify-center text-[#4a2e18] font-guild font-bold text-xs shadow-sm">
+                      <div className="h-10 w-10 rounded-full border border-slate-200/80 bg-[#f0f4f8] flex items-center justify-center text-teal-600 font-bold text-xs shadow-neu-raised-sm">
                         {totalProgressPercent}%
                       </div>
                     </div>
@@ -279,13 +282,13 @@ export default function SkillQuestApp() {
 
                 {/* Progress Bar */}
                 <div className="mt-6 space-y-2">
-                  <div className="flex justify-between text-xs font-guild font-bold text-[#6e5338]">
-                    <span>Guild Ranking Progression</span>
-                    <span className="text-[#4a2e18]">{QUESTS.length - completedQuests.length} deeds remaining</span>
+                  <div className="flex justify-between text-xs font-bold text-slate-600">
+                    <span>Overall Skill Progression</span>
+                    <span className="text-slate-800">{QUESTS.length - completedQuests.length} explorations remaining</span>
                   </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full border border-[#8c6239] bg-[#ebdcc0] p-0.5 shadow-inner">
+                  <div className="h-3.5 w-full overflow-hidden rounded-full border border-slate-200/80 bg-[#e6ecf2] p-0.5 shadow-neu-inset-sm">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#235338] via-[#1b432d] to-[#10b981] transition-all duration-1000"
+                      className="h-full rounded-full bg-gradient-to-r from-teal-500 via-teal-600 to-cyan-500 transition-all duration-1000"
                       style={{ width: `${totalProgressPercent}%` }}
                     />
                   </div>
@@ -293,8 +296,8 @@ export default function SkillQuestApp() {
 
                 {/* Recommended Next */}
                 <div className="mt-8 space-y-4">
-                  <h3 className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped">
-                    Recommended Bounties
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-teal-600">
+                    Recommended Explorations
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 w-full min-w-0">
                     {recommendedNext.map((q) => (
@@ -302,23 +305,23 @@ export default function SkillQuestApp() {
                         key={q.id}
                         type="button"
                         onClick={() => setSelectedQuest(q)}
-                        className="group rounded-xl border-2 border-[#8c6239] bg-[#fff8ea] p-5 text-left transition hover:bg-[#fdfaf3] hover:border-[#4a2e18] hover:shadow-md w-full min-w-0 flex flex-col justify-between shadow-sm"
+                        className="group rounded-2xl border border-slate-200/80 bg-[#e6ecf2] p-5 text-left transition hover:bg-[#f0f4f8] hover:shadow-neu-raised w-full min-w-0 flex flex-col justify-between shadow-neu-inset-sm"
                       >
                         <div>
                           <div className="flex items-center justify-between gap-2 mb-2">
-                            <span className="text-[10px] font-guild font-bold uppercase tracking-wider text-[#8c6239] truncate">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-teal-600 truncate">
                               {q.category}
                             </span>
-                            <span className="text-[10px] font-guild font-bold text-[#4a2e18] px-2 py-0.5 bg-[#ebdcc0] border border-[#c1b087] rounded shrink-0">
-                              +{q.xpReward} XP
+                            <span className="text-[10px] font-bold text-slate-800 px-2 py-0.5 bg-[#f0f4f8] border border-slate-200/80 rounded shrink-0 shadow-neu-raised-sm">
+                              +{q.xpReward} pts
                             </span>
                           </div>
-                          <p className="font-bold font-guild text-[#4a2e18] text-base group-hover:text-[#8c6239] transition line-clamp-1">{q.title}</p>
-                          <p className="mt-1 text-xs text-[#5c3a1a] line-clamp-2 leading-relaxed">{q.description}</p>
+                          <p className="font-bold text-slate-800 text-base group-hover:text-teal-600 transition line-clamp-1">{q.title}</p>
+                          <p className="mt-1 text-xs text-slate-600 line-clamp-2 leading-relaxed">{q.description}</p>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-[#d8caa8] flex items-center justify-between text-xs font-guild font-bold text-[#8c6239]">
+                        <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-bold text-slate-600">
                           <span>{q.level}</span>
-                          <span className="flex items-center gap-1 group-hover:translate-x-1 transition">Inspect <Play className="h-3 w-3 fill-[#8c6239]" /></span>
+                          <span className="flex items-center gap-1 group-hover:translate-x-1 transition text-teal-600">View <Play className="h-3 w-3 fill-teal-600 text-teal-600" /></span>
                         </div>
                       </button>
                     ))}
@@ -326,59 +329,59 @@ export default function SkillQuestApp() {
                 </div>
               </div>
 
-              {/* Quest Board Wood Container */}
-              <div className="rounded-xl border-4 border-[#4a2e18] bg-wood p-5 sm:p-8 shadow-[0_12px_32px_rgba(0,0,0,0.8)] text-[#f4ecd8] w-full min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#8c6239]/60 pb-6">
+              {/* Available Challenges Container */}
+              <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-5 sm:p-8 shadow-neu-raised-lg text-slate-800 w-full min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
                   <div>
-                    <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-etched">Open Contracts</p>
-                    <h2 className="text-xl sm:text-2xl font-bold font-guild text-[#fff8ea]">Available Quests</h2>
+                    <p className="text-xs font-bold uppercase tracking-wider text-teal-600">Open Explorations</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800">Available Explorations</h2>
                   </div>
 
                   {/* Sort */}
-                  <div className="flex items-center gap-2 border border-[#d4af37]/60 bg-[#1c3829] px-3.5 py-2 rounded-lg text-xs font-guild font-semibold shadow-inner">
-                    <ArrowUpDown className="h-3.5 w-3.5 text-[#f5d77f] shrink-0" />
-                    <span className="text-[#c2b59b] shrink-0">Sort Bounties:</span>
+                  <div className="flex items-center gap-2 border border-slate-200/80 bg-[#e6ecf2] px-3.5 py-2 rounded-xl text-xs font-semibold shadow-neu-inset-sm">
+                    <ArrowUpDown className="h-3.5 w-3.5 text-teal-600 shrink-0" />
+                    <span className="text-slate-600 shrink-0 font-bold">Sort By:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="bg-transparent text-[#f5d77f] font-bold focus:outline-none cursor-pointer"
+                      className="bg-transparent text-slate-800 font-bold focus:outline-none cursor-pointer"
                     >
-                      <option value="recommended" className="bg-[#162a1e] text-[#f4ecd8]">Recommended</option>
-                      <option value="xp-desc" className="bg-[#162a1e] text-[#f4ecd8]">Highest XP Reward</option>
-                      <option value="level-asc" className="bg-[#162a1e] text-[#f4ecd8]">Novice to Legendary</option>
-                      <option value="progress-desc" className="bg-[#162a1e] text-[#f4ecd8]">Most Progress</option>
+                      <option value="recommended" className="bg-[#f0f4f8] text-slate-800">Recommended</option>
+                      <option value="xp-desc" className="bg-[#f0f4f8] text-slate-800">Highest Progress Steps</option>
+                      <option value="level-asc" className="bg-[#f0f4f8] text-slate-800">Foundational to Masterclass</option>
+                      <option value="progress-desc" className="bg-[#f0f4f8] text-slate-800">Most Progress</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-4 w-full mt-6">
                   {/* Status & Level Filters */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#160d07]/80 p-2.5 rounded-xl border border-[#8c6239]/60 w-full shadow-inner">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#e6ecf2] p-2.5 rounded-2xl border border-slate-200/80 w-full shadow-neu-inset-sm">
                     <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full max-w-full">
                       {["All", "Active", "Completed"].map((status) => (
                         <button
                           key={status}
                           type="button"
                           onClick={() => setStatusFilter(status as any)}
-                          className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold transition ${
+                          className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-bold transition ${
                             statusFilter === status
-                              ? "btn-bronze"
-                              : "text-[#c2b59b] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
+                              ? "btn-bronze shadow-neu-raised-sm"
+                              : "text-slate-600 hover:bg-[#f0f4f8] hover:text-slate-900"
                           }`}
                         >
-                          {status === "Active" ? "Open Bounties" : status === "Completed" ? "Mastered" : "All Scrolls"}
+                          {status === "Active" ? "Active" : status === "Completed" ? "Completed" : "All Explorations"}
                         </button>
                       ))}
-                      <div className="w-px h-5 bg-[#8c6239]/60 mx-1 hidden sm:block"></div>
+                      <div className="w-px h-5 bg-slate-200/80 mx-1 hidden sm:block"></div>
                       {levels.map((lvl) => (
                         <button
                           key={lvl}
                           type="button"
                           onClick={() => setLevelFilter(lvl)}
-                          className={`shrink-0 rounded-lg px-3 py-1.5 text-[11px] sm:text-xs font-guild font-semibold transition ${
+                          className={`shrink-0 rounded-xl px-3 py-1.5 text-[11px] sm:text-xs font-semibold transition ${
                             levelFilter === lvl
-                              ? "btn-enamel text-[#eafee8]"
-                              : "text-[#bba78c] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
+                              ? "btn-bronze shadow-neu-raised-sm"
+                              : "text-slate-600 hover:bg-[#f0f4f8] hover:text-slate-900"
                           }`}
                         >
                           {lvl}
@@ -390,16 +393,16 @@ export default function SkillQuestApp() {
                   {/* Search & Category */}
                   <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-3 w-full">
                     <div className="relative w-full xl:w-72 shrink-0">
-                      <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#d4af37]" />
+                      <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                       <input
                         type="search"
-                        placeholder="Search quest scrolls..."
+                        placeholder="Search explorations..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-[#8c6239] bg-[#160d07] py-2.5 pl-10 pr-10 text-sm text-[#f4ecd8] placeholder:text-[#8c6239] focus:outline-none focus:ring-2 focus:ring-[#d4af37] transition shadow-inner"
+                        className="w-full rounded-xl border border-slate-200/80 bg-[#e6ecf2] py-2.5 pl-10 pr-10 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition shadow-neu-inset-sm font-medium"
                       />
                       {search && (
-                        <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#c2b59b] hover:text-[#f5d77f] p-1 rounded transition">
+                        <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 rounded transition">
                           <X className="w-3.5 h-3.5" />
                         </button>
                       )}
@@ -414,14 +417,14 @@ export default function SkillQuestApp() {
                             key={cat}
                             type="button"
                             onClick={() => setCategory(cat)}
-                            className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-guild font-semibold transition flex items-center gap-1.5 ${
+                            className={`shrink-0 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 ${
                               isActive
-                                ? "btn-enamel text-[#eafee8]"
-                                : "bg-[#160d07] border border-[#8c6239]/60 text-[#c2b59b] hover:bg-[#2e1d11] hover:text-[#f4ecd8]"
+                                ? "btn-bronze shadow-neu-raised-sm"
+                                : "bg-[#e6ecf2] border border-slate-200/80 text-slate-600 hover:bg-[#f0f4f8] hover:text-slate-900 shadow-neu-inset-sm"
                             }`}
                           >
                             <span>{cat}</span>
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] ${isActive ? "bg-[#10301d] text-[#f5d77f]" : "bg-[#2d1b10] text-[#bba78c]"}`}>
+                            <span className={`px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${isActive ? "bg-teal-700/30 text-white" : "bg-[#f0f4f8] text-slate-600 border border-slate-200/80"}`}>
                               {count}
                             </span>
                           </button>
@@ -432,13 +435,13 @@ export default function SkillQuestApp() {
                 </div>
 
                 {/* Filter Counter */}
-                <div className="mt-6 flex items-center justify-between text-xs text-[#c2b59b] border-b border-[#8c6239]/60 pb-3 font-guild">
-                  <span>Displaying <strong className="text-[#f5d77f]">{filteredQuests.length}</strong> of {QUESTS.length} guild scrolls</span>
-                  {(search || category !== "All" || statusFilter !== "All" || levelFilter !== "All Levels") && (
+                <div className="mt-6 flex items-center justify-between text-xs text-slate-600 border-b border-slate-200/80 pb-3 font-medium">
+                  <span>Showing <strong className="text-slate-800 font-bold">{filteredQuests.length}</strong> of {QUESTS.length} explorations</span>
+                  {(search || category !== "All" || statusFilter !== "All" || levelFilter !== "All Phases") && (
                     <button
                       type="button"
                       onClick={resetFilters}
-                      className="inline-flex items-center gap-1.5 text-[#f5d77f] hover:text-white font-bold transition"
+                      className="inline-flex items-center gap-1.5 text-teal-600 hover:text-teal-700 font-bold transition"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                       <span>Reset Filters</span>
@@ -449,16 +452,16 @@ export default function SkillQuestApp() {
                 {/* Quests Grid */}
                 <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 w-full min-w-0">
                   {filteredQuests.length === 0 ? (
-                    <div className="col-span-full rounded-xl border-2 border-[#8c6239] bg-parchment p-12 text-center space-y-3 text-[#2b2118]">
-                      <Search className="mx-auto h-8 w-8 text-[#8c6239]" />
-                      <h3 className="text-base font-guild font-bold text-[#4a2e18]">No scrolls match your inquiry</h3>
-                      <p className="text-sm text-[#6e5338] max-w-md mx-auto">
-                        Adjust your filter criteria or search phrase to reveal hidden deeds.
+                    <div className="col-span-full rounded-2xl border border-slate-200/80 bg-[#e6ecf2] p-12 text-center space-y-3 text-slate-800 shadow-neu-inset-sm">
+                      <Search className="mx-auto h-8 w-8 text-slate-400" />
+                      <h3 className="text-base font-bold text-slate-800">No explorations match your filters</h3>
+                      <p className="text-sm text-slate-600 max-w-md mx-auto">
+                        Adjust your filter criteria or search phrase to see more explorations.
                       </p>
                       <button
                         type="button"
                         onClick={resetFilters}
-                        className="inline-flex items-center gap-2 rounded-lg btn-bronze px-5 py-2.5 text-sm font-guild font-bold"
+                        className="inline-flex items-center gap-2 rounded-xl btn-bronze px-5 py-2.5 text-sm font-bold shadow-neu-raised transition hover:scale-[1.01]"
                       >
                         <RotateCcw className="h-4 w-4" />
                         <span>Reset All Filters</span>

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Shield,
   BookOpen,
   Compass,
   Map,
@@ -19,7 +18,7 @@ import {
   HelpCircle,
   User,
   Medal,
-  Scroll
+  Clock
 } from "lucide-react";
 
 export default function GuidePage() {
@@ -28,91 +27,91 @@ export default function GuidePage() {
   const steps = [
     {
       id: "enlist",
-      title: "1. Enlist & Inscribe Your Hero Dossier",
-      subtitle: "Join the registry, claim your Hero Name, and choose your class specialization.",
+      title: "1. Join & Personalize Your Member Profile",
+      subtitle: "Set up your professional overview, claim your name, and choose your focus area.",
       icon: User,
-      badge: "Novice Initiate",
+      badge: "Phase 1 Member",
       content: (
-        <div className="space-y-4 text-[#2b2118] text-sm sm:text-base leading-relaxed">
+        <div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
           <p>
-            Welcome, newcomer! When you first step through the oaken doors of the Adventurer&apos;s Guild, you begin as a <strong>Novice Initiate (Level 1)</strong>. Your first duty is to formalize your identity within our registry.
+            Welcome to <strong>SkillHub</strong>! When you first join our universal skill-sharing community, you start at <strong>Phase 1 (Foundational)</strong>. Your first step is to personalize your member profile.
           </p>
-          <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 shadow-inner space-y-2 text-xs sm:text-sm">
-            <h4 className="font-guild font-bold text-[#4a2e18] flex items-center gap-1.5">
-              <Scroll className="h-4 w-4 text-[#8c6239]" />
-              <span>How to Customize Your Dossier:</span>
+          <div className="rounded-2xl border border-slate-200/80 bg-[#e6ecf2] p-5 shadow-neu-inset-sm space-y-3 text-xs sm:text-sm">
+            <h4 className="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+              <User className="h-4 w-4 text-teal-600 shrink-0" />
+              <span>How to Customize Your Member Profile:</span>
             </h4>
-            <ul className="list-disc pl-5 space-y-1 text-[#5c3a1a]">
-              <li>Click your <strong>Hero Pill (Level badge)</strong> in the upper right header to open your personal <strong>Guild Dossier</strong>.</li>
-              <li>Switch to the <strong>Edit Dossier</strong> tab to update your <strong>Adventurer Name</strong> and write your personal <strong>Chronicle Bio</strong>.</li>
-              <li>Select your preferred <strong>Class Specialization</strong> (e.g., <em>Fullstack Developer, AI Engineer, Systems Architect, Creative Explorer</em>).</li>
-              <li>Upload a portrait illustration or sign in with Google via <strong>Enter Guild</strong> to permanently seal your progress across realms.</li>
+            <ul className="list-disc pl-5 space-y-1.5 text-slate-700">
+              <li>Click your <strong>Phase badge</strong> in the upper right header to open your personal <strong>Member Profile</strong>.</li>
+              <li>Switch to the <strong>Edit Profile</strong> tab to update your <strong>Full Name</strong> and write your professional summary.</li>
+              <li>Select your preferred <strong>Focus Specialization</strong> (e.g., <em>Fullstack Developer, AI Engineer, Systems Architect, Creative Explorer</em>).</li>
+              <li>Upload a professional photo or sign in with Google to sync your progress across devices.</li>
             </ul>
           </div>
         </div>
       ),
     },
     {
-      id: "bounties",
-      title: "2. Inspect Open Bounties & The Quest Board",
-      subtitle: "Browse contracts from Novice to Legendary and track your mastery.",
+      id: "explorations",
+      title: "2. Explore Projects & The Roadmap",
+      subtitle: "Browse explorations from Foundational to Masterclass and track your mastery.",
       icon: Map,
-      badge: "Bounty Hunter",
+      badge: "Active Explorer",
       content: (
-        <div className="space-y-4 text-[#2b2118] text-sm sm:text-base leading-relaxed">
+        <div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
           <p>
-            The <strong>Bounty Board</strong> is where self-learners and builders discover actionable challenges. Quests are classified into five distinct difficulty tiers, each awarding prestige and experience points (`XP`):
+            The <strong>Explore Hub</strong> is where self-learners and creators discover actionable projects. Explorations are classified into five distinct skill phases, each awarding prestige and <strong>Progress Steps</strong>:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-3 shadow-sm">
-              <p className="font-guild font-bold text-[#4a2e18] text-xs">Novice Contract</p>
-              <p className="text-xs text-[#6e5338] mt-0.5">+50 XP &middot; Quick foundational wins & setup tasks.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-4 shadow-neu-inset-sm">
+              <p className="font-bold text-slate-800 text-sm">Foundational Exploration</p>
+              <p className="text-xs text-slate-600 mt-1">+50 Progress Steps &middot; Quick foundational wins &amp; core setup tasks.</p>
             </div>
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-3 shadow-sm">
-              <p className="font-guild font-bold text-[#4a2e18] text-xs">Journeyman Contract</p>
-              <p className="text-xs text-[#6e5338] mt-0.5">+100 XP &middot; Intermediate build & deployment deeds.</p>
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-4 shadow-neu-inset-sm">
+              <p className="font-bold text-slate-800 text-sm">Journeyman Exploration</p>
+              <p className="text-xs text-slate-600 mt-1">+100 Progress Steps &middot; Intermediate builds &amp; practical projects.</p>
             </div>
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-3 shadow-sm">
-              <p className="font-guild font-bold text-[#4a2e18] text-xs">Adventurer Contract</p>
-              <p className="text-xs text-[#6e5338] mt-0.5">+200 XP &middot; Full feature implementation & architecture.</p>
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-4 shadow-neu-inset-sm">
+              <p className="font-bold text-slate-800 text-sm">Adventurer Exploration</p>
+              <p className="text-xs text-slate-600 mt-1">+200 Progress Steps &middot; Full feature implementation &amp; system design.</p>
             </div>
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-3 shadow-sm">
-              <p className="font-guild font-bold text-[#4a2e18] text-xs">Epic / Legendary Bounties</p>
-              <p className="text-xs text-[#6e5338] mt-0.5">+300 to +500 XP &middot; Master-level system overhauls & live launches.</p>
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-4 shadow-neu-inset-sm">
+              <p className="font-bold text-slate-800 text-sm">Advanced / Masterclass Projects</p>
+              <p className="text-xs text-slate-600 mt-1">+300 to +500 Progress Steps &middot; Master-level architecture &amp; live deployments.</p>
             </div>
           </div>
-          <div className="rounded-lg border border-[#8c6239] bg-[#ebdcc0]/60 p-4 mt-3 text-xs sm:text-sm text-[#4a2e18]">
-            <p><strong>Note on 0% Progress:</strong> When you browse the board, any quest that you have not started yet accurately displays <strong>0% Mastered</strong>. Click any bounty card to inspect its exact requirements checklist and track your sub-tasks step by step!</p>
+          <div className="rounded-xl border border-slate-200/80 bg-[#f0f4f8] p-4 mt-3 text-xs sm:text-sm text-slate-700 shadow-neu-raised-sm">
+            <p><strong>Note on 0% Progress:</strong> When you browse the hub, any project that you have not started yet accurately displays <strong>0% Progress</strong>. Click any exploration card to view its checklist and track sub-tasks step by step!</p>
           </div>
         </div>
       ),
     },
     {
       id: "proof",
-      title: "3. Sealing Deeds & Inscribing Custom Bounties",
-      subtitle: "Submit visual proof and pen your Adventurer Reflection.",
+      title: "3. Verifying Projects & Creating Custom Explorations",
+      subtitle: "Submit visual verifications and share your key takeaways.",
       icon: PenLine,
-      badge: "Deed Sealer",
+      badge: "Project Verifier",
       content: (
-        <div className="space-y-4 text-[#2b2118] text-sm sm:text-base leading-relaxed">
+        <div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
           <p>
-            In our guild, a deed is not merely checked off—it must be proven and reflected upon so that all comrades may learn from your journey.
+            In our platform, a project completion is verified and shared so that fellow members can learn from your journey and technical decisions.
           </p>
-          <div className="space-y-3">
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 shadow-inner text-xs sm:text-sm space-y-2">
-              <h4 className="font-guild font-bold text-[#4a2e18]">Sealing a Pre-Existing Bounty:</h4>
-              <p className="text-[#5c3a1a]">
-                Once you finish a quest from the board, click <strong>Upload Proof & Complete Quest</strong> inside the inspection scroll. Attach a screenshot of your work and fill in the <strong>Adventurer Reflection & Chronicle Story</strong> (&quot;What did you learn? What obstacles arose and how did you overcome them?&quot;).
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-slate-200/80 bg-[#e6ecf2] p-5 shadow-neu-inset-sm text-xs sm:text-sm space-y-2">
+              <h4 className="font-bold text-slate-800 text-sm sm:text-base">Verifying a Featured Exploration:</h4>
+              <p className="text-slate-700">
+                Once you complete a project from the roadmap, click <strong>Verify &amp; Share Exploration</strong> inside the project modal. Attach a screenshot of your work and summarize your learnings (&quot;What did you build? What challenges arose and how did you resolve them?&quot;).
               </p>
             </div>
 
-            <div className="rounded-lg border-2 border-[#8c6239] bg-[#fdfaf3] p-4 shadow-md text-xs sm:text-sm space-y-2">
-              <h4 className="font-guild font-bold text-[#8c6239] flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-[#d4af37]" />
-                <span>Posting Your Own Custom Deed (+ Post Custom Deed):</span>
+            <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-5 shadow-neu-raised text-xs sm:text-sm space-y-2">
+              <h4 className="font-bold text-teal-700 flex items-center gap-2 text-sm sm:text-base">
+                <Sparkles className="h-4 w-4 text-teal-600 shrink-0" />
+                <span>Creating Your Own Custom Exploration (+ Create Custom Exploration):</span>
               </h4>
-              <p className="text-[#5c3a1a]">
-                Don&apos;t want to do a pre-existing quest on the board because you already accomplished a personal project or milestone? No problem! Click the <strong>+ Post Custom Deed</strong> button at the top of the header anytime. You can name your custom deed, choose its category and medal rank (Bronze, Silver, Gold, Platinum, or Legendary), and pen your reflection right to the guild registry!
+              <p className="text-slate-700">
+                Did you accomplish a personal project or milestone outside our featured roadmap? No problem! Click the <strong>+ Create Custom Exploration</strong> button at the top of the header anytime. You can name your custom project, choose its category and tier (Foundational, Journeyman, Adventurer, Advanced, or Masterclass), and publish your verification right to the community!
               </p>
             </div>
           </div>
@@ -120,33 +119,33 @@ export default function GuidePage() {
       ),
     },
     {
-      id: "chronicle",
-      title: "4. The Activity Chronicle & Missives (Comments)",
-      subtitle: "Witness triumphs, award Prestige Applause, and write congratulations.",
+      id: "activity",
+      title: "4. Recent Activity & Community Discussions",
+      subtitle: "Discover community achievements, award recognition, and share feedback.",
       icon: BookOpen,
-      badge: "Guild Chronicler",
+      badge: "Active Contributor",
       content: (
-        <div className="space-y-4 text-[#2b2118] text-sm sm:text-base leading-relaxed">
+        <div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
           <p>
-            The <strong>Activity Chronicle</strong> (`Chronicle Feed` tab) is a live, shared parchment where all completed deeds and custom triumphs are published in real time.
+            The <strong>Recent Activity</strong> tab is a live community stream where verified projects and custom milestones are published in real time.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 shadow-sm space-y-1.5">
-              <h4 className="font-guild font-bold text-[#4a2e18] flex items-center gap-1.5 text-xs sm:text-sm">
-                <Heart className="h-4 w-4 fill-[#8c6239] text-[#8c6239]" />
-                <span>Prestige Applause:</span>
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-5 shadow-neu-inset-sm space-y-2">
+              <h4 className="font-bold text-slate-800 flex items-center gap-2 text-xs sm:text-sm">
+                <Heart className="h-4 w-4 fill-teal-600 text-teal-600 shrink-0" />
+                <span>Prestige Recognition:</span>
               </h4>
-              <p className="text-xs text-[#5c3a1a] leading-relaxed">
-                Click the heart seal on any post to bestow <strong>Prestige Applause</strong> (+1 Like). Every round of applause boosts the author&apos;s standing across the guild!
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                Click the recognition button on any post to bestow applause (+1 Like). Supporting others highlights great work and fosters an inclusive, growth-oriented culture!
               </p>
             </div>
-            <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 shadow-sm space-y-1.5">
-              <h4 className="font-guild font-bold text-[#4a2e18] flex items-center gap-1.5 text-xs sm:text-sm">
-                <MessageSquare className="h-4 w-4 text-[#8c6239]" />
-                <span>Inscribed Missives (Comments):</span>
+            <div className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] p-5 shadow-neu-inset-sm space-y-2">
+              <h4 className="font-bold text-slate-800 flex items-center gap-2 text-xs sm:text-sm">
+                <MessageSquare className="h-4 w-4 text-teal-600 shrink-0" />
+                <span>Constructive Discussions:</span>
               </h4>
-              <p className="text-xs text-[#5c3a1a] leading-relaxed">
-                Click the missives row on any post—whether on the live feed OR right inside an adventurer&apos;s <strong>Dossier Profile</strong>—to read comments, ask questions about their code/build, and post your congratulations!
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                Click the comments section on any activity item—whether on the live feed OR inside a member&apos;s profile—to ask questions about their implementation and post constructive feedback!
               </p>
             </div>
           </div>
@@ -155,39 +154,39 @@ export default function GuidePage() {
     },
     {
       id: "progression",
-      title: "5. Rank Progression & Prestige Ranks",
-      subtitle: "Rise from Novice Initiate to Legendary Grandmaster.",
+      title: "5. Skill Phases & Journey Milestones",
+      subtitle: "Grow from Phase 1 to Masterclass expertise.",
       icon: Trophy,
-      badge: "Grandmaster",
+      badge: "Masterclass",
       content: (
-        <div className="space-y-4 text-[#2b2118] text-sm sm:text-base leading-relaxed">
+        <div className="space-y-4 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
           <p>
-            As your `XP` accumulates from completed bounties and custom accomplishments, your character automatically ascends through the hierarchy of guild prestige ranks:
+            As your <strong>Progress Steps</strong> accumulate from verified projects and custom accomplishments, your profile automatically advances through skill phases and unlocks <strong>Journey Milestones</strong>:
           </p>
-          <div className="rounded-lg border border-[#8c6239] bg-[#fff8ea] p-4 shadow-inner space-y-2.5 text-xs sm:text-sm">
-            <div className="flex items-center justify-between border-b border-[#c1b087]/60 pb-2">
-              <span className="font-guild font-bold text-[#4a2e18]">Level 1 - 2 (0 - 300 XP)</span>
-              <span className="font-guild font-bold text-[#8c6239]">Novice Initiate</span>
+          <div className="rounded-2xl border border-slate-200/80 bg-[#e6ecf2] p-5 shadow-neu-inset-sm space-y-3 text-xs sm:text-sm">
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+              <span className="font-bold text-slate-700">Phase 1 - 2 (0 - 300 Progress Steps)</span>
+              <span className="font-bold text-teal-700">Foundational</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#c1b087]/60 pb-2">
-              <span className="font-guild font-bold text-[#4a2e18]">Level 3 - 4 (300 - 1,000 XP)</span>
-              <span className="font-guild font-bold text-[#8c6239]">Apprentice Adventurer</span>
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+              <span className="font-bold text-slate-700">Phase 3 - 4 (300 - 1,000 Progress Steps)</span>
+              <span className="font-bold text-teal-700">Journeyman</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#c1b087]/60 pb-2">
-              <span className="font-guild font-bold text-[#4a2e18]">Level 5 - 6 (1,000 - 2,200 XP)</span>
-              <span className="font-guild font-bold text-[#8c6239]">Journeyman Scholar</span>
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+              <span className="font-bold text-slate-700">Phase 5 - 6 (1,000 - 2,200 Progress Steps)</span>
+              <span className="font-bold text-teal-700">Adventurer</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#c1b087]/60 pb-2">
-              <span className="font-guild font-bold text-[#4a2e18]">Level 7 - 8 (2,200 - 4,000 XP)</span>
-              <span className="font-guild font-bold text-[#8c6239]">Master of Deeds</span>
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+              <span className="font-bold text-slate-700">Phase 7 - 8 (2,200 - 4,000 Progress Steps)</span>
+              <span className="font-bold text-teal-700">Advanced</span>
             </div>
             <div className="flex items-center justify-between pt-1">
-              <span className="font-guild font-bold text-[#4a2e18]">Level 9+ (4,000+ XP)</span>
-              <span className="font-guild font-bold text-gold-stamped">Legendary Grandmaster</span>
+              <span className="font-bold text-slate-700">Phase 9+ (4,000+ Progress Steps)</span>
+              <span className="font-bold text-teal-600">Masterclass</span>
             </div>
           </div>
-          <p className="text-xs text-[#6e5338] italic text-center pt-1">
-            &ldquo;Every master was once a beginner who refused to leave the quest incomplete.&rdquo;
+          <p className="text-xs text-slate-500 italic text-center pt-1">
+            &ldquo;Every master began by completing their first foundational exploration and building consistently.&rdquo;
           </p>
         </div>
       ),
@@ -195,56 +194,56 @@ export default function GuidePage() {
   ];
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-[#122017] text-[#f4ecd8] px-4 py-8 sm:px-6 md:px-10 pb-24">
+    <main className="min-h-screen w-full overflow-x-hidden bg-[#e6ecf2] text-slate-800 px-4 py-8 sm:px-6 md:px-10 pb-24 font-sans">
       <div className="mx-auto w-full max-w-5xl">
         {/* Top return navigation */}
         <div className="mb-6 flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-lg border border-[#d4af37]/40 bg-[#1c3829] px-4 py-2 text-xs sm:text-sm font-guild font-bold text-[#eddcc4] hover:bg-[#234935] hover:text-[#f4ecd8] transition shadow-sm"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200/80 bg-[#f0f4f8] px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-800 hover:bg-[#e6ecf2] transition shadow-neu-raised-sm"
           >
-            <ArrowLeft className="h-4 w-4 text-[#d4af37]" />
-            <span>Return to Quest Registry</span>
+            <ArrowLeft className="h-4 w-4 text-teal-600" />
+            <span>Return to Explore Hub</span>
           </Link>
-          <span className="text-xs font-guild font-bold uppercase tracking-wider text-gold-etched hidden sm:inline-block">
-            Official Guild Compendium
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-600 hidden sm:inline-block">
+            SkillHub Guidebook
           </span>
         </div>
 
-        {/* Hero Title Banner (Wood Container) */}
-        <div className="rounded-xl border-4 border-[#4a2e18] bg-wood p-6 sm:p-10 shadow-[0_12px_32px_rgba(0,0,0,0.8)] text-[#f4ecd8] mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#8c6239]/60 pb-6">
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-xl bg-gradient-to-br from-[#f5d77f] via-[#d4af37] to-[#8c6239] border-2 border-[#fff1aa] shadow-[0_4px_12px_rgba(0,0,0,0.7)] shrink-0">
-                <BookOpen className="h-8 w-8 text-[#122017]" />
+        {/* Hero Title Banner (Soft Neumorphic Container) */}
+        <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-6 sm:p-10 shadow-neu-raised-lg text-slate-800 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-[#e6ecf2] border border-slate-200/80 shadow-neu-inset shrink-0">
+                <Compass className="h-8 w-8 text-teal-600" />
               </div>
               <div>
-                <p className="text-xs font-guild font-bold uppercase tracking-widest text-gold-etched">Adventurer&apos;s Handbook</p>
-                <h1 className="text-2xl sm:text-4xl font-bold font-guild text-[#fff8ea] tracking-wide mt-0.5">
-                  Newcomer&apos;s Guide to the Guild
+                <p className="text-xs font-bold uppercase tracking-widest text-teal-600">Platform Orientation</p>
+                <h1 className="text-2xl sm:text-4xl font-bold text-slate-800 tracking-tight mt-0.5">
+                  Welcome to SkillHub
                 </h1>
               </div>
             </div>
             <div className="shrink-0">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#d4af37] bg-[#162a1e] px-4 py-1.5 text-xs font-guild font-bold text-[#f5d77f] shadow-inner">
-                <Shield className="h-3.5 w-3.5 fill-[#f5d77f]" />
-                <span>Guild Orientation V0.1</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-[#e6ecf2] px-4 py-1.5 text-xs font-bold text-teal-700 shadow-neu-inset-sm">
+                <BookOpen className="h-3.5 w-3.5 text-teal-600" />
+                <span>Guidebook V2.0</span>
               </span>
             </div>
           </div>
-          <p className="mt-4 text-sm sm:text-base text-[#eddcc4] leading-relaxed max-w-3xl font-serif italic">
-            &ldquo;Whether you come to forge new code, master artificial intelligence, or craft complex systems, this registry is your sanctuary. Follow these five tenets to track your deeds and rise among fellow guild adventurers.&rdquo;
+          <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed max-w-3xl font-medium">
+            &ldquo;Whether you come to learn modern web development, explore artificial intelligence, or build professional projects, SkillHub is your open platform for growth. Follow these guidelines to track your explorations and connect with fellow creators.&rdquo;
           </p>
         </div>
 
         {/* Interactive Step Navigator + Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8 items-start">
-          {/* Step Selector Sidebar (Parchment Container) */}
-          <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-4 sm:p-5 shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-[#2b2118]">
-            <p className="text-xs font-guild font-bold uppercase tracking-wider text-gold-stamped mb-3 px-2">
-              Walkthrough Chapters
+          {/* Step Selector Sidebar */}
+          <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-5 shadow-neu-raised-lg text-slate-800">
+            <p className="text-xs font-bold uppercase tracking-wider text-teal-600 mb-3 px-2">
+              Walkthrough Topics
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {steps.map((step, idx) => {
                 const Icon = step.icon;
                 const isActive = activeStep === idx;
@@ -253,40 +252,40 @@ export default function GuidePage() {
                     key={step.id}
                     type="button"
                     onClick={() => setActiveStep(idx)}
-                    className={`w-full flex items-center justify-between gap-3 rounded-lg px-3.5 py-3 text-left transition font-guild text-xs sm:text-sm shadow-sm ${
+                    className={`w-full flex items-center justify-between gap-3 rounded-xl px-4 py-3.5 text-left transition text-xs sm:text-sm font-bold ${
                       isActive
-                        ? "btn-enamel text-[#eafee8] font-bold"
-                        : "border border-[#c1b087]/60 bg-[#fff8ea] text-[#4a2e18] hover:bg-[#ebdcc0] hover:border-[#8c6239]"
+                        ? "bg-[#e6ecf2] text-teal-700 shadow-neu-inset border border-slate-200/80"
+                        : "border border-slate-200/80 bg-[#f0f4f8] text-slate-700 hover:bg-[#e6ecf2] shadow-neu-raised-sm"
                     }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#f5d77f]" : "text-[#8c6239]"}`} />
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-teal-600" : "text-slate-500"}`} />
                       <span className="truncate">{step.title}</span>
                     </div>
-                    <ChevronRight className={`h-4 w-4 shrink-0 ${isActive ? "text-[#f5d77f]" : "text-[#8c6239]"}`} />
+                    <ChevronRight className={`h-4 w-4 shrink-0 ${isActive ? "text-teal-600" : "text-slate-400"}`} />
                   </button>
                 );
               })}
             </div>
 
             {/* Quick Tip Box */}
-            <div className="mt-6 pt-5 border-t border-[#c1b087] text-xs text-[#6e5338] space-y-1.5 px-1">
-              <p className="font-guild font-bold text-[#4a2e18] flex items-center gap-1.5">
-                <HelpCircle className="h-3.5 w-3.5 text-[#8c6239]" />
-                <span>Need immediate assistance?</span>
+            <div className="mt-6 pt-5 border-t border-slate-200/80 text-xs text-slate-600 space-y-1.5 px-1">
+              <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                <HelpCircle className="h-3.5 w-3.5 text-teal-600" />
+                <span>Need support or feedback?</span>
               </p>
-              <p>Click <strong>Dispatch</strong> in the top header to send a courier missive directly to our guildmasters!</p>
+              <p className="font-medium">Explore the Recent Activity feed or share a question right inside any exploration discussion!</p>
             </div>
           </div>
 
-          {/* Active Chapter Display Card (Parchment Container) */}
-          <div className="rounded-xl border-2 border-[#8c6239] bg-parchment p-6 sm:p-8 shadow-[0_12px_32px_rgba(0,0,0,0.8)] text-[#2b2118] space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#c1b087] pb-5">
+          {/* Active Chapter Display Card */}
+          <div className="rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-6 sm:p-8 shadow-neu-raised-lg text-slate-800 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-5">
               <div>
-                <span className="rounded border border-[#8c6239] bg-[#ebdcc0] px-2.5 py-0.5 text-xs font-guild font-bold text-[#5c3a1a]">
-                  Chapter {activeStep + 1} of {steps.length} &middot; {steps[activeStep].badge}
+                <span className="rounded-lg border border-slate-200/80 bg-[#e6ecf2] px-3 py-1 text-xs font-bold text-teal-700 shadow-neu-inset-sm">
+                  Topic {activeStep + 1} of {steps.length} &middot; {steps[activeStep].badge}
                 </span>
-                <h2 className="text-xl sm:text-2xl font-bold font-guild text-[#4a2e18] mt-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-2.5">
                   {steps[activeStep].title}
                 </h2>
               </div>
@@ -295,7 +294,7 @@ export default function GuidePage() {
                   type="button"
                   disabled={activeStep === 0}
                   onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
-                  className="rounded-lg border border-[#8c6239] bg-[#fff8ea] px-3 py-1.5 text-xs font-guild font-bold text-[#4a2e18] hover:bg-[#ebdcc0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-3.5 py-2 text-xs font-bold text-slate-800 hover:bg-[#f0f4f8] disabled:opacity-40 disabled:cursor-not-allowed transition shadow-neu-raised-sm"
                 >
                   Previous
                 </button>
@@ -303,15 +302,15 @@ export default function GuidePage() {
                   type="button"
                   disabled={activeStep === steps.length - 1}
                   onClick={() => setActiveStep((prev) => Math.min(steps.length - 1, prev + 1))}
-                  className="rounded-lg btn-bronze px-4 py-1.5 text-xs font-guild font-bold disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="rounded-xl btn-bronze px-4 py-2 text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-neu-raised-sm"
                 >
-                  Next Chapter
+                  Next Topic
                 </button>
               </div>
             </div>
 
             {/* Chapter Subtitle Banner */}
-            <p className="text-sm font-semibold text-[#8c6239] italic border-l-4 border-[#8c6239] pl-3 py-0.5 bg-[#fff8ea] rounded-r">
+            <p className="text-sm font-semibold text-teal-700 border-l-4 border-teal-600 pl-3.5 py-1 bg-[#e6ecf2] rounded-r-xl shadow-neu-inset-sm">
               {steps[activeStep].subtitle}
             </p>
 
@@ -321,26 +320,26 @@ export default function GuidePage() {
             </div>
 
             {/* Chapter Footer Navigation */}
-            <div className="pt-6 border-t border-[#c1b087] flex items-center justify-between gap-4">
-              <span className="text-xs text-[#6e5338] font-semibold">
-                You can return to any chapter from the left menu.
+            <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-xs text-slate-600 font-semibold text-center sm:text-left">
+                You can switch between topics anytime from the left menu.
               </span>
               {activeStep === steps.length - 1 ? (
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 rounded-lg btn-bronze px-6 py-2.5 text-sm font-guild font-bold shadow-md hover:scale-105 transition"
+                  className="inline-flex items-center gap-2 rounded-xl btn-bronze px-6 py-3 text-sm font-bold shadow-neu-raised transition hover:scale-[1.01]"
                 >
-                  <CheckCircle2 className="h-4 w-4 text-[#10b981]" />
-                  <span>Start Your Guild Journey</span>
+                  <CheckCircle2 className="h-4 w-4 text-teal-600" />
+                  <span>Start Exploring Now</span>
                 </Link>
               ) : (
                 <button
                   type="button"
                   onClick={() => setActiveStep((prev) => prev + 1)}
-                  className="inline-flex items-center gap-2 rounded-lg btn-bronze px-5 py-2 text-xs sm:text-sm font-guild font-bold transition"
+                  className="inline-flex items-center gap-2 rounded-xl btn-bronze px-5 py-2.5 text-xs sm:text-sm font-bold transition shadow-neu-raised"
                 >
-                  <span>Continue to Next Chapter</span>
-                  <ChevronRight className="h-4 w-4 text-[#f5d77f]" />
+                  <span>Continue to Next Topic</span>
+                  <ChevronRight className="h-4 w-4 text-teal-600" />
                 </button>
               )}
             </div>
@@ -348,20 +347,20 @@ export default function GuidePage() {
         </div>
 
         {/* Bottom Call to Action */}
-        <div className="mt-12 rounded-xl border-2 border-[#d4af37]/60 bg-[#162a1e] p-8 text-center space-y-4 shadow-lg">
-          <h3 className="text-xl sm:text-2xl font-bold font-guild text-gold-etched">
-            Ready to Inscribe Your First Accomplishment?
+        <div className="mt-12 rounded-2xl border border-slate-200/80 bg-[#f0f4f8] p-8 sm:p-10 text-center space-y-4 shadow-neu-raised-lg">
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-800">
+            Ready to Verify Your First Exploration?
           </h3>
-          <p className="text-xs sm:text-sm text-[#c2b59b] max-w-xl mx-auto leading-relaxed">
-            Whether you choose a Novice contract from the Bounty Board or click <strong>+ Post Custom Deed</strong> to chronicle what you built today, your guild awaits your contribution!
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed font-medium">
+            Whether you choose a Foundational project from the roadmap or click <strong>+ Create Custom Exploration</strong> to share what you built today, the community looks forward to your contributions!
           </p>
-          <div className="pt-2">
+          <div className="pt-3">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-lg btn-enamel px-8 py-3 font-guild font-bold text-sm tracking-wide shadow-md hover:scale-105 transition"
+              className="inline-flex items-center gap-2 rounded-xl btn-bronze px-8 py-3.5 font-bold text-sm shadow-neu-raised hover:scale-[1.01] transition"
             >
-              <Shield className="h-4 w-4 text-[#f5d77f]" />
-              <span>Enter the Registry & Begin</span>
+              <Compass className="h-4.5 w-4.5 text-teal-600" />
+              <span>Enter Explore Hub &amp; Begin</span>
             </Link>
           </div>
         </div>

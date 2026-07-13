@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import ProfileModal from "./ProfileModal";
 import ShareModal from "./ShareModal";
-import { Mail, LogIn, LogOut, User as UserIcon, Shield, PenLine, BookOpen, Share2 } from "lucide-react";
+import { Mail, LogIn, LogOut, User as UserIcon, Compass, PenLine, BookOpen, Share2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export default function Header() {
@@ -23,7 +23,7 @@ export default function Header() {
       localStorage.setItem("lastContact", JSON.stringify({ name, email, message }));
     } catch (err) {}
     setOpen(false);
-    alert("Thanks! Missive saved locally.");
+    alert("Thanks! Message saved.");
   }
 
   const displayAvatar = profile.avatarUrl || user?.photoURL;
@@ -36,36 +36,36 @@ export default function Header() {
     <>
       <ProfileModal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)} />
       <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} />
-      <header className="sticky top-0 z-40 w-full border-b-2 border-[#d4af37]/40 bg-[#162a1e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-[#f0f4f8]/95 backdrop-blur-md shadow-neu-raised-sm">
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 md:px-8 lg:px-12">
           <div className="flex w-full items-center justify-between gap-3 sm:gap-4">
             <Link href="/" className="flex items-center gap-3 shrink-0 min-w-0 hover:opacity-95 transition">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#f5d77f] via-[#d4af37] to-[#8c6239] border border-[#fff1aa] text-[#122017] font-guild font-black text-sm shadow-[0_2px_4px_rgba(0,0,0,0.6)] shrink-0">
-                <Shield className="h-5 w-5 fill-[#122017] text-[#122017]" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f0f4f8] border border-slate-200/70 text-teal-600 shadow-neu-raised-sm shrink-0">
+                <Compass className="h-5 w-5 text-teal-600" />
               </div>
               <div className="min-w-0">
-                <p className="text-base sm:text-lg font-bold tracking-wide text-gold-etched leading-tight truncate">SkillQuest</p>
-                <p className="text-[11px] font-medium text-[#c2b59b] hidden xs:block truncate">Adventurer&apos;s Guild Registry</p>
+                <p className="text-base sm:text-lg font-extrabold tracking-tight text-slate-800 leading-tight truncate">SkillHub</p>
+                <p className="text-[11px] font-semibold text-slate-500 hidden xs:block truncate">Explore Hub &amp; Explorations</p>
               </div>
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <Link
                 href="/guide"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold text-[#f5d77f] hover:bg-[#234935] hover:scale-[1.02] transition shrink-0 shadow-sm"
-                title="Newcomer's Walkthrough & Guild Handbook"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-teal-600 hover:scale-[1.02] transition shrink-0 shadow-neu-raised-sm"
+                title="Platform Guide & Walkthrough"
               >
-                <BookOpen className="h-4 w-4 text-[#f5d77f]" />
-                <span>Handbook</span>
+                <BookOpen className="h-4 w-4 text-teal-600" />
+                <span>Guide</span>
               </Link>
 
               <button
                 type="button"
                 onClick={() => setShareModalOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/60 bg-[#1b3626] px-3.5 py-1.5 text-xs sm:text-sm font-guild font-bold text-[#eafee8] hover:bg-[#234935] hover:scale-[1.02] transition shrink-0 shadow-sm"
-                title="Share Guild Registry & Invite Comrades"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-teal-600 hover:scale-[1.02] transition shrink-0 shadow-neu-raised-sm"
+                title="Share Platform & Invite Members"
               >
-                <Share2 className="h-4 w-4 text-[#f5d77f]" />
+                <Share2 className="h-4 w-4 text-teal-600" />
                 <span>Share</span>
               </button>
 
@@ -73,36 +73,36 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={triggerCustomQuestModal}
-                  className="inline-flex items-center gap-2 rounded-lg btn-bronze px-4 py-1.5 text-xs sm:text-sm font-guild font-bold shadow-md hover:scale-[1.02] transition"
-                  title="Post your own accomplishment with bio & reflection"
+                  className="inline-flex items-center gap-2 rounded-xl btn-bronze px-4 py-1.5 text-xs sm:text-sm font-semibold shadow-neu-raised-sm hover:scale-[1.02] transition"
+                  title="Share a new skill or project verification"
                 >
-                  <PenLine className="h-4 w-4 text-[#f5d77f]" />
-                  <span>Post Custom Deed</span>
+                  <PenLine className="h-4 w-4 text-blue-600" />
+                  <span>Share a New Skill</span>
                 </button>
               </div>
 
               {/* Profile Pill */}
-              <div className="flex items-center gap-1.5 sm:gap-2 border border-[#d4af37]/40 bg-[#1b3626] rounded-full pl-2 pr-1.5 py-1 sm:pl-3 sm:pr-2 sm:py-1.5 shrink-0 max-w-[170px] sm:max-w-none shadow-inner">
+              <div className="flex items-center gap-1.5 sm:gap-2 border border-slate-200/60 bg-[#f0f4f8] rounded-full pl-2 pr-1.5 py-1 sm:pl-3 sm:pr-2 sm:py-1.5 shrink-0 max-w-[170px] sm:max-w-none shadow-neu-inset-sm">
                 <button
                   type="button"
                   onClick={() => setProfileModalOpen(true)}
                   className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition text-left min-w-0"
                 >
                   {displayAvatar ? (
-                    <img src={displayAvatar} alt={profile.name} className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover border border-[#d4af37] shrink-0" />
+                    <img src={displayAvatar} alt={profile.name} className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover border border-slate-300 shrink-0 shadow-sm" />
                   ) : (
-                    <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-[#8c6239] border border-[#f5d77f] flex items-center justify-center text-[10px] sm:text-xs font-bold text-[#fff8ea] shrink-0">
+                    <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-teal-600 border border-teal-400 flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shrink-0 shadow-sm">
                       {profile.name.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <span className="hidden sm:inline text-sm font-semibold text-[#f4ecd8] max-w-[100px] truncate">{profile.name}</span>
-                  <span className="text-[10px] sm:text-xs bg-gradient-to-b from-[#d4af37] to-[#8c6239] text-[#122017] px-2 py-0.5 rounded-full font-guild font-bold shrink-0 shadow-sm">Lvl {profile.level}</span>
+                  <span className="hidden sm:inline text-sm font-bold text-slate-800 max-w-[100px] truncate">{profile.name}</span>
+                  <span className="text-[10px] sm:text-xs bg-teal-600 text-white px-2 py-0.5 rounded-full font-bold shrink-0 shadow-sm">Phase {profile.level}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setProfileModalOpen(true)}
                   title="View / Edit Profile"
-                  className="rounded-full p-1 text-[#c2b59b] hover:text-[#f5d77f] transition shrink-0"
+                  className="rounded-full p-1 text-slate-500 hover:text-teal-600 transition shrink-0"
                 >
                   <UserIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
@@ -114,92 +114,92 @@ export default function Header() {
                   type="button"
                   onClick={logout}
                   title="Sign Out"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/40 bg-[#1c3829] px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-xs sm:text-sm font-semibold text-[#c2b59b] hover:bg-[#234935] hover:text-[#f4ecd8] transition shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-red-600 transition shrink-0 shadow-neu-raised-sm"
                 >
-                  <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[#d4af37]" />
-                  <span className="hidden sm:inline">Depart</span>
+                  <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-slate-400" />
+                  <span className="hidden sm:inline">Sign Out</span>
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={login}
-                  className="inline-flex items-center gap-1.5 rounded-lg btn-enamel px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-guild tracking-wide shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-xl btn-enamel px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-semibold tracking-wide shrink-0 shadow-neu-raised-sm"
                 >
                   <LogIn className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                  <span>Enter Guild</span>
+                  <span>Sign In</span>
                 </button>
               )}
 
               <button
                 onClick={() => setOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/40 bg-[#1c3829] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-[#eddcc4] hover:bg-[#234935] transition shrink-0"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-teal-600 transition shrink-0 shadow-neu-raised-sm"
               >
-                <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[#d4af37]" />
-                <span>Dispatch</span>
+                <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-teal-600" />
+                <span>Contact</span>
               </button>
             </div>
           </div>
 
           {/* Mobile bottom action bar */}
-          <div className="flex md:hidden w-full items-center justify-between gap-1.5 mt-2.5 pt-2.5 border-t border-[#d4af37]/20">
+          <div className="flex md:hidden w-full items-center justify-between gap-1.5 mt-2.5 pt-2.5 border-t border-slate-200/60">
             <Link
               href="/guide"
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-[#d4af37]/60 bg-[#1c3829] px-2.5 py-2 text-xs font-guild font-bold text-[#f5d77f] hover:bg-[#234935] shrink-0 shadow-sm"
-              title="Guild Handbook"
+              className="inline-flex items-center justify-center gap-1 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-2.5 py-2 text-xs font-semibold text-slate-700 hover:text-teal-600 shrink-0 shadow-neu-raised-sm"
+              title="Platform Guide"
             >
-              <BookOpen className="h-3.5 w-3.5 text-[#f5d77f]" />
+              <BookOpen className="h-3.5 w-3.5 text-teal-600" />
               <span className="hidden xs:inline">Guide</span>
             </Link>
             <button
               type="button"
               onClick={() => setShareModalOpen(true)}
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-[#d4af37]/60 bg-[#1b3626] px-2.5 py-2 text-xs font-guild font-bold text-[#eafee8] hover:bg-[#234935] shrink-0 shadow-sm"
-              title="Share Registry"
+              className="inline-flex items-center justify-center gap-1 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-2.5 py-2 text-xs font-semibold text-slate-700 hover:text-teal-600 shrink-0 shadow-neu-raised-sm"
+              title="Share Platform"
             >
-              <Share2 className="h-3.5 w-3.5 text-[#f5d77f]" />
+              <Share2 className="h-3.5 w-3.5 text-teal-600" />
               <span>Share</span>
             </button>
             <button
               type="button"
               onClick={triggerCustomQuestModal}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg btn-bronze px-3 py-2 text-xs font-guild font-bold shadow-sm"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl btn-bronze px-3 py-2 text-xs font-semibold shadow-neu-raised-sm"
             >
-              <PenLine className="h-4 w-4 text-[#f5d77f]" />
-              <span>Post Custom Deed & Reflection</span>
+              <PenLine className="h-4 w-4 text-blue-600" />
+              <span>Share a New Skill</span>
             </button>
             <button
               onClick={() => setOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[#d4af37]/40 bg-[#1c3829] px-3.5 py-2 text-xs font-semibold text-[#eddcc4] hover:bg-[#234935] transition shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-[#f0f4f8] px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-teal-600 transition shrink-0 shadow-neu-raised-sm"
             >
-              <Mail className="h-3.5 w-3.5 shrink-0 text-[#d4af37]" />
-              <span>Dispatch</span>
+              <Mail className="h-3.5 w-3.5 shrink-0 text-teal-600" />
+              <span>Contact</span>
             </button>
           </div>
         </div>
 
         {open && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-            <div className="mx-4 w-full max-w-md rounded-xl bg-parchment border-2 border-[#8c6239] p-8 shadow-[0_12px_32px_rgba(0,0,0,0.8)] text-[#2b2118]">
-              <h3 className="text-xl font-bold font-guild text-[#5c3a1a]">Dispatch Courier to Guildmasters</h3>
-              <p className="text-xs text-[#6e5338] mt-1">Send a missive or inquiry to the guild administrative council.</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="mx-4 w-full max-w-md rounded-2xl bg-[#f0f4f8] border border-slate-200/80 p-8 shadow-neu-raised-lg text-slate-800">
+              <h3 className="text-xl font-bold text-slate-800">Contact Platform Support</h3>
+              <p className="text-xs text-slate-500 mt-1">Send a message or inquiry to our support team.</p>
               <form onSubmit={submitContact} className="mt-6 grid gap-4">
                 <input
                   name="name"
-                  placeholder="Your Adventurer Name"
-                  className="w-full rounded-lg border border-[#c1b087] bg-[#fdfaf3] px-4 py-3 text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#8c6239]"
+                  placeholder="Your Name"
+                  className="w-full rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-neu-inset-sm"
                   required
                 />
                 <input
                   name="email"
                   type="email"
-                  placeholder="Pigeon / Email Address"
-                  className="w-full rounded-lg border border-[#c1b087] bg-[#fdfaf3] px-4 py-3 text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#8c6239]"
+                  placeholder="Email Address"
+                  className="w-full rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-neu-inset-sm"
                   required
                 />
                 <textarea
                   name="message"
-                  placeholder="State your business..."
-                  className="w-full rounded-lg border border-[#c1b087] bg-[#fdfaf3] px-4 py-3 text-[#2b2118] placeholder:text-[#9e886d] focus:outline-none focus:ring-2 focus:ring-[#8c6239]"
+                  placeholder="How can we help you?"
+                  className="w-full rounded-xl border border-slate-200/80 bg-[#e6ecf2] px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-neu-inset-sm"
                   rows={4}
                   required
                 />
@@ -207,15 +207,15 @@ export default function Header() {
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-5 py-2 text-[#6e5338] hover:bg-[#ebdcc0] font-semibold transition"
+                    className="rounded-xl px-5 py-2 text-slate-600 hover:bg-slate-200/50 font-semibold transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="rounded-lg btn-bronze px-6 py-2 font-guild text-sm"
+                    className="rounded-xl btn-bronze px-6 py-2 text-sm font-semibold shadow-neu-raised-sm"
                   >
-                    Send Missive
+                    Send Message
                   </button>
                 </div>
               </form>

@@ -7,7 +7,7 @@ export const QUESTS: Quest[] = [
     title: "Master Next.js Fullstack",
     category: "Coding & Tech",
     icon: "Code2",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 500,
     description:
@@ -24,7 +24,7 @@ export const QUESTS: Quest[] = [
     title: "Build an AI Assistant",
     category: "Coding & Tech",
     icon: "Cpu",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 580,
     description:
@@ -41,7 +41,7 @@ export const QUESTS: Quest[] = [
     title: "Open Source Contributor",
     category: "Coding & Tech",
     icon: "Globe",
-    level: "Legendary",
+    level: "Masterclass",
     progress: 0,
     xpReward: 850,
     description:
@@ -58,7 +58,7 @@ export const QUESTS: Quest[] = [
     title: "Indie Game Demo Maker",
     category: "Coding & Tech",
     icon: "Gamepad2",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 620,
     description:
@@ -111,7 +111,7 @@ export const QUESTS: Quest[] = [
     title: "Artisan Sourdough Masterclass",
     category: "Culinary & Baking",
     icon: "Cake",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 520,
     description:
@@ -270,7 +270,7 @@ export const QUESTS: Quest[] = [
     title: "30-Day Movement & Gym Streak",
     category: "Fitness & Outdoors",
     icon: "Dumbbell",
-    level: "Legendary",
+    level: "Masterclass",
     progress: 0,
     xpReward: 750,
     description:
@@ -320,8 +320,8 @@ export const QUESTS: Quest[] = [
     id: "handstand",
     title: "Master the Freestanding Handstand",
     category: "Fitness & Outdoors",
-    icon: "Flame",
-    level: "Epic",
+    icon: "Sprout",
+    level: "Advanced",
     progress: 0,
     xpReward: 550,
     description:
@@ -391,7 +391,7 @@ export const QUESTS: Quest[] = [
     title: "Conversational Fluency Sprint",
     category: "Mindfulness & Reading",
     icon: "Languages",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 510,
     description:
@@ -427,14 +427,14 @@ export const QUESTS: Quest[] = [
     title: "Game Master an RPG Campaign",
     category: "Community & Gaming",
     icon: "Trophy",
-    level: "Epic",
+    level: "Advanced",
     progress: 0,
     xpReward: 560,
     description:
       "Write an exciting fantasy questline and Game Master a live Dungeons & Dragons or Tabletop RPG session for your friends.",
     requirements: [
       { id: "r1", label: "Design campaign setting & NPCs", description: "Create compelling villains, town maps, and plot hooks." },
-      { id: "r2", label: "Prepare combat encounters & puzzles", description: "Balance monster challenge ratings and design interactive riddles." },
+      { id: "r2", label: "Prepare combat encounters & puzzles", description: "Balance encounter difficulty ratings and design interactive riddles." },
       { id: "r3", label: "Host 3+ hour tabletop gaming session", description: "Guide players through immersive roleplay and tactical combat." },
       { id: "r4", label: "Upload gaming table photo", description: "Photograph your dice, character sheets, and smiling game group." },
     ],
@@ -444,7 +444,7 @@ export const QUESTS: Quest[] = [
     title: "Community Service & Impact",
     category: "Community & Gaming",
     icon: "Users",
-    level: "Legendary",
+    level: "Masterclass",
     progress: 0,
     xpReward: 800,
     description:
@@ -495,11 +495,11 @@ export const QUESTS: Quest[] = [
 ];
 
 export const LEVEL_TITLES = [
-  "Novice Wanderer",
-  "Apprentice Hero",
-  "Journeyman Explorer",
-  "Guild Champion",
-  "Legendary Sage",
+  "Beginner Member",
+  "Apprentice Contributor",
+  "Skilled Practitioner",
+  "Advanced Professional",
+  "Master Expert",
 ];
 
 export function xpForLevel(level: number): number {
@@ -515,8 +515,11 @@ export function badgeForQuest(level: Quest["level"]): string {
     Novice: "Bronze",
     Journeyman: "Silver",
     Adventurer: "Gold",
-    Epic: "Platinum",
-    Legendary: "Legendary",
+    Foundational: "Foundational",
+    Advanced: "Advanced",
+    Masterclass: "Masterclass",
+    Epic: "Advanced",
+    Legendary: "Masterclass",
   };
-  return map[level];
+  return map[level] ?? level;
 }

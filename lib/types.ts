@@ -1,4 +1,4 @@
-export type QuestLevel = "Novice" | "Journeyman" | "Adventurer" | "Epic" | "Legendary";
+export type QuestLevel = "Foundational" | "Advanced" | "Masterclass" | "Novice" | "Journeyman" | "Adventurer" | "Epic" | "Legendary";
 
 export interface QuestRequirement {
   id: string;
@@ -54,4 +54,28 @@ export interface UserProfile {
   classTitle?: string;
   followers?: string[];
   following?: string[];
+  /** Skills / hobbies this person can teach or share */
+  offering?: string[];
+  /** Skills / hobbies this person wants to learn */
+  seeking?: string[];
+  /** Mutual connections (bi-directional follow) */
+  connections?: string[];
+  /** Users who have mentored this member */
+  mentors?: string[];
+}
+
+export interface PrivateMessage {
+  id: string;
+  fromId: string;
+  fromName: string;
+  fromAvatar?: string;
+  text: string;
+  createdAt: number;
+}
+
+export interface MessageThread {
+  peerId: string;
+  peerName: string;
+  peerAvatar?: string;
+  messages: PrivateMessage[];
 }
